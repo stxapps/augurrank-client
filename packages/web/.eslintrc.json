@@ -1,0 +1,14 @@
+{
+  "extends": ["next/core-web-vitals", "plugin:tailwindcss/recommended"],
+  "plugins": ["@stylistic"],
+  "rules": {
+    "prefer-const": [1],
+    "@stylistic/semi": [1, "always"],
+    "@stylistic/no-extra-semi": [1],
+    "@stylistic/comma-dangle": [1, "always-multiline"],
+    "@stylistic/quotes": [
+      1, "single", { "avoidEscape": true, "allowTemplateLiterals": true }
+    ],
+    "@stylistic/jsx-quotes": [1, "prefer-double"]
+  }
+}

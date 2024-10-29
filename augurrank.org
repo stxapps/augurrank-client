@@ -1,0 +1,69 @@
+* Brain dumps
+- gamification, leader dashboard, 
+- wisdom rank stored on Stacks blockchain -> Bitcoin
+- events, bets, outcomes
+- Each account call a smart contract to predict the future
+- rank who predict/bet accurate the most
+- reputation, brag, your wisdom stores on chain forever
+- An influencer set a question, community to play, and lucky draw for a winner
+- One smart contract is for one question
+  + If known answer, sign/encrypt in the smart contract
+  + Author can call the smart contract to reveal the answer later if > specify date
+- Are you a visionary? If yes, make the record on Bitcoin
+- Your rank on Bitcoin forever
+- Try NoCodeClarity?
+- Affiliate, referral to bet services? ads? legal? privacy?
+- Omens: events or signs that are believed to predict future events. They can be anything from the flight of a bird to a strange dream.
+- Request and vote for features: canny.io
+- Riddle?
+- Give nfts but not transferable? can give just badges on an account?
+- Can store just a text, prediction in text, call a smart contract to predict
+- Predict and also comment,quote,give a reason?
+* Inspirations
+- Augur, Eigen, PolyMarket, Gnosis
+- HackerRank, Kaggle, Duolingo
+- zeroauthority.xyz
+- mccrindle.com.au, predicthq.com, kalshi, predictit, UK-based Betfair, Intrade
+- FiveThirtyEight, Silver Bulletin
+* Terms
+- event, question, competition
+- bet, vote, 
+- outcome
+- user, winner,
+- leader board, lives, progress, journey, experience points, day streak
+- prediction game
+* Thoughts
+- Should not use a word "bet"? It's a game?
+- How to get the outcome? from oracle? voting? commitee? DAO?
+- Propose events, vote, admin pick and refine, community review, create a contract, add to db, on web, start predict, end period, submit outcome,
+- AugurRank - Your visionary on chain
+  Challenge yourself to envision the future, keep score on the chain, and brag about it forever.
+- The pain point we're trying to solve is there is no concrete evidence that we were right!
+- challenge, fun, proud, information
+  + blockchain -> decentralization -> permanent/last forever, open/public -> undeniable evidence/truth
+- how we will win?
+  + genuine, ethics, decentralized, tranparency
+  + community owned and driven, user truly owned accounts and data
+  + target customers: Stacks believer + Bitcoin believer + Gamer + News enthusiate
+  +
+* Functions
+- Bet and remove? Bet and bet again? bet and change side?
+- Time out, deadline
+- Decentralized Oracles (UMA): Polymarket primarily leverages UMA’s Optimistic Oracle for resolving markets (Pyth is also used for some markets). If there is a dispute on the outcome of a particular event, UMA token holders vote to determine the correct outcome.
+- Vetting Proposals: The Polymarket team is currently responsible for vetting new event-related proposals, acting as a necessary centralized actor to ensure correct wording of event contracts.
+* MVP
+- Use Console for community, discussion, submit questions/events
+- predict BTC price day by day
+  + every prediction will check accuracy at next xxx bitcoin blocks
+  + get average price at the block from oracle?
+  + prevent dup predict within xxx blocks?
+  + get price from pth network? at specific time? or block?
+  + three possible outcomes? up, down, equal! how to solve it?
+    ~ predict up or down if equal or otherwise -> not correct
+- Leaderboard
+- Profile
+* NextJs steps
+- npx create-next-app@latest
+  + Choose javascript, tailwind and eslint
+  + scripts dev - add --experimental-https --hostname
+- npm install -D autoprefixer @headlessui/react @heroicons/react @tailwindcss/typography
