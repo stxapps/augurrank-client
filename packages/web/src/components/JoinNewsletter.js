@@ -1,6 +1,8 @@
 'use client';
 import { useState } from 'react';
 
+import { ADD_NEWSLETTER_EMAIL_URL, VALID } from '@/types/const';
+
 const STATUS_INIT = 'STATUS_INIT';
 const STATUS_JOINING = 'STATUS_JOINING';
 const STATUS_INVALID = 'STATUS_INVALID';
@@ -35,12 +37,31 @@ export function JoinNewsletter() {
     }
 
     setState(state => ({ ...state, status: STATUS_JOINING, extraMsg: '' }));
+    try {
+      const res = await fetch(ADD_NEWSLETTER_EMAIL_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        referrerPolicy: 'strict-origin',
+        body: JSON.stringify({ email: state.email }),
+      });
+      if (!res.ok) {
+        const extraMsg = res.statusText;
+        setState(state => ({ ...state, status: STATUS_ROLLBACK, extraMsg }));
+        return;
+      }
 
-    const res = await fetch('/', { method: 'POST' });
-    if (res.ok) {
+      const json = await res.json();
+      if (json.status !== VALID) {
+        const extraMsg = 'Invalid reqBody or email';
+        setState(state => ({ ...state, status: STATUS_ROLLBACK, extraMsg }));
+        return;
+      }
+
       setState(state => ({ ...state, status: STATUS_COMMIT, extraMsg: '' }));
-    } else {
-      const extraMsg = res.statusText;
+    } catch (error) {
+      const extraMsg = error.message;
       setState(state => ({ ...state, status: STATUS_ROLLBACK, extraMsg }));
     }
   };
