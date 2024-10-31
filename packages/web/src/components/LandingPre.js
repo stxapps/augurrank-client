@@ -163,7 +163,7 @@ export function LandingPre() {
         <div className="mt-20 flex flex-col items-center">
           <p className="text-sm text-gray-500">Brought to you by</p>
           <Link className="group mt-2.5 flex items-center justify-start" href="https://www.stxapps.com" target="_blank" rel="noreferrer">
-            <Image className="h-8 w-auto" src={LogoStxApps} alt="STX Apps" />
+            <Image className="h-8 w-auto" src={LogoStxApps} alt="STX Apps" placeholder="empty" />
             <div className="ml-2 text-2xl font-extrabold text-gray-100 group-hover:text-white">STX Apps</div>
           </Link>
         </div>
