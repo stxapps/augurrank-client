@@ -67,3 +67,8 @@
   + Choose javascript, tailwind and eslint
   + scripts dev - add --experimental-https --hostname
 - npm install -D autoprefixer @headlessui/react @heroicons/react @tailwindcss/typography
+* servers
+** test server
+- https://d1uzxgq8or64c4.cloudfront.net
+** prod
+- https://augurrank.com

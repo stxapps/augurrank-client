@@ -41,7 +41,7 @@ export function JoinNewsletter() {
       const res = await fetch(ADD_NEWSLETTER_EMAIL_URL, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         referrerPolicy: 'strict-origin',
         body: JSON.stringify({ email: state.email }),
@@ -71,7 +71,7 @@ export function JoinNewsletter() {
       <p className="text-xl font-medium text-gray-100">Stay up to date</p>
       <p className="mt-2.5 text-sm text-gray-400">Get notified when we have something new, and unsubscribe at any time.</p>
       <input className="mt-5 block w-full rounded-full border border-gray-700 bg-gray-700 px-4 py-1.5 text-sm text-gray-200 placeholder:text-gray-400 focus:outline focus:outline-orange-400" onChange={onEmailInputChange} type="email" autoComplete="email" placeholder="Email address" value={state.email} autoCapitalize="none" disabled={[STATUS_JOINING, STATUS_COMMIT].includes(state.status)} />
-      <div className="min-h-[5.25rem] pt-3 pb-1.5">
+      <div className="min-h-[5.25rem] pb-1.5 pt-3">
         {[STATUS_INIT, STATUS_INVALID, STATUS_ROLLBACK].includes(state.status) && <button onClick={onJoinBtnClick} className="rounded-full bg-orange-400 px-4 py-1.5 text-sm font-semibold text-white" disabled={[STATUS_JOINING, STATUS_COMMIT].includes(state.status)}>Join</button>}
         {[STATUS_INVALID, STATUS_ROLLBACK].includes(state.status) && <p className="pt-1.5 text-sm text-red-500">{getMsg(state.status)}</p>}
         {([STATUS_ROLLBACK].includes(state.status) && state.extraMsg) && <p className="pt-1.5 text-sm text-red-500">{state.extraMsg}</p>}
