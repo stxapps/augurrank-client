@@ -68,9 +68,9 @@ export function JoinNewsletter() {
 
   return (
     <div className="px-7 pt-10">
-      <p className="text-xl font-medium text-gray-100">Stay up to date</p>
-      <p className="mt-2.5 text-sm text-gray-400">Get notified when we have something new, and unsubscribe at any time.</p>
-      <input className="mt-5 block w-full rounded-full border border-gray-700 bg-gray-700 px-4 py-1.5 text-sm text-gray-200 placeholder:text-gray-400 focus:outline focus:outline-orange-400" onChange={onEmailInputChange} type="email" autoComplete="email" placeholder="Email address" value={state.email} autoCapitalize="none" disabled={[STATUS_JOINING, STATUS_COMMIT].includes(state.status)} />
+      <p className="text-xl font-medium text-slate-100">Stay up to date</p>
+      <p className="mt-2.5 text-sm text-slate-400">Get notified when we have something new, and unsubscribe at any time.</p>
+      <input className="mt-5 block w-full rounded-full border border-slate-700 bg-slate-700 px-4 py-1.5 text-sm text-slate-200 placeholder:text-slate-400 focus:outline focus:outline-orange-400" onChange={onEmailInputChange} type="email" autoComplete="email" placeholder="Email address" value={state.email} autoCapitalize="none" disabled={[STATUS_JOINING, STATUS_COMMIT].includes(state.status)} />
       <div className="min-h-[5.25rem] pb-1.5 pt-3">
         {[STATUS_INIT, STATUS_INVALID, STATUS_ROLLBACK].includes(state.status) && <button onClick={onJoinBtnClick} className="rounded-full bg-orange-400 px-4 py-1.5 text-sm font-semibold text-white" disabled={[STATUS_JOINING, STATUS_COMMIT].includes(state.status)}>Join</button>}
         {[STATUS_INVALID, STATUS_ROLLBACK].includes(state.status) && <p className="pt-1.5 text-sm text-red-500">{getMsg(state.status)}</p>}
@@ -79,7 +79,7 @@ export function JoinNewsletter() {
           <div className="ball-clip-rotate-blk">
             <div />
           </div>
-          <p className="ml-2 text-sm text-gray-300">{getMsg(state.status)}</p>
+          <p className="ml-2 text-sm text-slate-300">{getMsg(state.status)}</p>
         </div>}
         {[STATUS_COMMIT].includes(state.status) && <p className="mt-1 text-sm font-medium text-green-500">{getMsg(state.status)}</p>}
       </div>

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next-image-export-optimizer';
-import { CheckIcon, TrophyIcon, EnvelopeIcon } from '@heroicons/react/24/solid';
+import { CheckIcon, TrophyIcon, EnvelopeIcon, NewspaperIcon } from '@heroicons/react/24/solid';
 
 import { StarField } from '@/components/StarField';
 import { JoinNewsletter } from '@/components/JoinNewsletter';
@@ -34,43 +34,43 @@ function GithubIcon(props) {
 function MiddleOne() {
   return (
     <div className="px-7 py-10">
-      <p className="text-base text-gray-300">Challenge yourself to envision the future, keep score on the chain, and brag about it forever.</p>
+      <p className="text-base text-slate-300">Challenge yourself to envision the future, store your predictions on the chain, and brag about your accuracy forever.</p>
       <ul className="mt-5 space-y-2.5">
         <li className="flex">
           <CheckIcon className="size-5 text-green-500" />
-          <p className="ml-2.5 text-base text-gray-300">Permanent</p>
+          <p className="ml-2.5 text-base text-slate-300">Permanent</p>
         </li>
         <li className="flex">
           <CheckIcon className="size-5 text-green-500" />
-          <p className="ml-2.5 text-base text-gray-300">Verifiable</p>
+          <p className="ml-2.5 text-base text-slate-300">Verifiable</p>
         </li>
         <li className="flex">
           <CheckIcon className="size-5 text-green-500" />
-          <p className="ml-2.5 text-base text-gray-300">Community driven</p>
+          <p className="ml-2.5 text-base text-slate-300">Community driven</p>
         </li>
         <li className="flex">
           <CheckIcon className="size-5 text-green-500" />
-          <p className="ml-2.5 text-base text-gray-300">Fun</p>
+          <p className="ml-2.5 text-base text-slate-300">Fun</p>
         </li>
       </ul>
-      <p className="mt-7 text-base text-gray-300">Concrete evidence that you were right! Nothing in the world comes close!</p>
-      <p className="mt-7 text-base text-gray-300">Powered by Stacks - the Bitcoin L2</p>
+      <p className="mt-7 text-base text-slate-300">Concrete proof that you were right forever!</p>
+      <p className="mt-7 text-base text-slate-300">Powered by Stacks - the Bitcoin L2</p>
       <ul className="mt-5 space-y-2.5">
         <li className="flex">
           <CheckIcon className="size-5 text-green-500" />
-          <p className="ml-2.5 text-base text-gray-300">Secure</p>
+          <p className="ml-2.5 text-base text-slate-300">Secure</p>
         </li>
         <li className="flex">
           <CheckIcon className="size-5 text-green-500" />
-          <p className="ml-2.5 text-base text-gray-300">Decentralized</p>
+          <p className="ml-2.5 text-base text-slate-300">Decentralized</p>
         </li>
         <li className="flex">
           <CheckIcon className="size-5 text-green-500" />
-          <p className="ml-2.5 text-base text-gray-300">Scalable</p>
+          <p className="ml-2.5 text-base text-slate-300">Scalable</p>
         </li>
         <li className="flex">
           <CheckIcon className="size-5 text-green-500" />
-          <p className="ml-2.5 text-base text-gray-300">Affordable</p>
+          <p className="ml-2.5 text-base text-slate-300">Affordable</p>
         </li>
       </ul>
     </div>
@@ -84,11 +84,11 @@ function MiddleTwo() {
 function MiddleThree() {
   return (
     <div className="px-7 py-10">
-      <h2 className="text-xl font-medium text-gray-100">How to visionary?</h2>
+      <h2 className="text-xl font-medium text-slate-100">How to visionary?</h2>
       <ol className="mt-5 list-inside list-decimal space-y-2.5">
-        <li className="text-base text-gray-400">Predict the future</li>
-        <li className="text-base text-gray-400">Store it on the chain</li>
-        <li className="text-base text-gray-400">
+        <li className="text-base text-slate-400">Predict the future</li>
+        <li className="text-base text-slate-400">Store it on the chain</li>
+        <li className="text-base text-slate-400">
           <span className="relative">
             Rank to the top!
             <TrophyIcon className="absolute -top-0.5 left-full ml-1 size-6 text-yellow-400" />
@@ -102,8 +102,8 @@ function MiddleThree() {
 function MiddleFour() {
   return (
     <div className="px-7 py-10">
-      <h2 className="text-center text-xl font-medium text-gray-100">A new prediction game</h2>
-      <p className="mt-2.5 text-center text-sm text-gray-400">Powered by Stacks</p>
+      <h2 className="text-center text-xl font-medium text-slate-100">A new prediction game</h2>
+      <p className="mt-2.5 text-center text-sm text-slate-400">Powered by Stacks</p>
     </div>
   );
 }
@@ -114,57 +114,60 @@ export function LandingPre() {
       <StarField className="-left-64 w-[55.0625rem] rotate-12 sm:-left-20" />
       <main className="relative p-24 px-6 py-20">
         <div className="flex flex-col items-center justify-start sm:flex-row sm:justify-center">
-          <div className="rounded-full border-2 border-gray-800 p-2">
+          <div className="rounded-full border-2 border-slate-800 p-2">
             <Image className="size-32" src={Logo} alt="" />
           </div>
           <div className="mt-6 sm:ml-6 sm:mt-0">
             <h1 className="text-center text-5xl font-medium text-white sm:text-left">AugurRank</h1>
-            <p className="mt-3 text-center text-xl text-gray-400 sm:text-left">Your visionary on chain</p>
+            <p className="mt-3 text-center text-xl text-slate-400 sm:text-left">Your vision on chain</p>
           </div>
         </div>
-        <div className="mt-10 rounded-xl bg-gray-800/75">
+        <div className="mt-10 rounded-xl bg-slate-800/75">
           <div className="sm:hidden">
             <MiddleOne />
-            <div className="h-px bg-gray-700" />
+            <div className="h-px bg-slate-700" />
             <MiddleTwo />
-            <div className="h-px bg-gray-700" />
+            <div className="h-px bg-slate-700" />
             <MiddleThree />
-            <div className="h-px bg-gray-700" />
+            <div className="h-px bg-slate-700" />
             <MiddleFour />
           </div>
           <div className="hidden sm:flex sm:items-stretch sm:justify-stretch">
             <div className="flex-1">
               <MiddleOne />
             </div>
-            <div className="w-px bg-gray-700" />
+            <div className="w-px bg-slate-700" />
             <div className="flex-1">
               <MiddleTwo />
-              <div className="h-px bg-gray-700" />
+              <div className="h-px bg-slate-700" />
               <MiddleThree />
-              <div className="h-px bg-gray-700" />
+              <div className="h-px bg-slate-700" />
               <MiddleFour />
             </div>
           </div>
         </div>
         <div className="mt-10 flex justify-center space-x-4">
-          <Link className="group flex size-10 items-center justify-center rounded-full bg-gray-800" href="https://x.com/AugurRank" target="_blank" rel="noreferrer">
+          <Link className="group flex size-10 items-center justify-center rounded-full bg-slate-800" href="https://x.com/AugurRank" target="_blank" rel="noreferrer">
             <TwitterIcon className="size-5 fill-blue-400 group-hover:fill-blue-300" />
           </Link>
-          <Link className="group flex size-10 items-center justify-center rounded-full bg-gray-800" href="https://www.threads.net/@augurrank" target="_blank" rel="noreferrer">
+          <Link className="group flex size-10 items-center justify-center rounded-full bg-slate-800" href="https://www.threads.net/@augurrank" target="_blank" rel="noreferrer">
             <ThreadsIcon className="size-[1.125rem] fill-pink-600 group-hover:fill-pink-500" />
           </Link>
-          <Link className="group flex size-10 items-center justify-center rounded-full bg-gray-800" href="https://github.com/stxapps/augurrank-smart-contracts" target="_blank" rel="noreferrer">
-            <GithubIcon className="size-5 fill-gray-400 group-hover:fill-gray-300" />
+          <Link className="group flex size-10 items-center justify-center rounded-full bg-slate-800" href="https://github.com/stxapps/augurrank-smart-contracts" target="_blank" rel="noreferrer">
+            <GithubIcon className="size-5 fill-slate-400 group-hover:fill-slate-300" />
           </Link>
-          <Link className="group flex size-10 items-center justify-center rounded-full bg-gray-800" href="&#109;&#097;&#105;&#108;&#116;&#111;:&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#064;&#097;&#117;&#103;&#117;&#114;&#114;&#097;&#110;&#107;&#046;&#099;&#111;&#109;">
+          <Link className="group flex size-10 items-center justify-center rounded-full bg-slate-800" href="&#109;&#097;&#105;&#108;&#116;&#111;:&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#064;&#097;&#117;&#103;&#117;&#114;&#114;&#097;&#110;&#107;&#046;&#099;&#111;&#109;">
             <EnvelopeIcon className="size-5 text-green-500 group-hover:fill-green-400" />
+          </Link>
+          <Link className="group flex size-10 items-center justify-center rounded-full bg-slate-800" href="https://blog.augurrank.com" target="_blank" rel="noreferrer">
+            <NewspaperIcon className="size-5 fill-orange-400 group-hover:fill-orange-300" />
           </Link>
         </div>
         <div className="mt-20 flex flex-col items-center">
-          <p className="text-sm text-gray-500">Brought to you by</p>
+          <p className="text-sm text-slate-500">Brought to you by</p>
           <Link className="group mt-2.5 flex items-center justify-start" href="https://www.stxapps.com" target="_blank" rel="noreferrer">
             <Image className="h-8 w-auto" src={LogoStxApps} alt="STX Apps" placeholder="empty" />
-            <div className="ml-2 text-2xl font-extrabold text-gray-100 group-hover:text-white">STX Apps</div>
+            <div className="ml-2 text-2xl font-extrabold text-slate-100 group-hover:text-white">STX Apps</div>
           </Link>
         </div>
       </main>

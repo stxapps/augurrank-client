@@ -1,8 +1,8 @@
-import { LandingPre } from '@/components/LandingPre';
 import { DOMAIN_NAME } from '@/types/const';
+import { LandingPre } from '@/components/LandingPre';
 
-const title = 'AugurRank - Your visionary on chain';
-const description = 'Challenge yourself to envision the future, keep score on the chain, and brag about it forever.';
+const title = 'AugurRank - Your vision on chain';
+const description = 'Challenge yourself to envision the future, store your predictions on the chain, and brag about your accuracy forever.';
 export const metadata = {
   title,
   description,

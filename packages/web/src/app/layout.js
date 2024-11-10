@@ -18,7 +18,7 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={clsx('h-full antialiased', inter.variable)} suppressHydrationWarning>
-      <body className="min-h-full bg-gray-900">
+      <body className="min-h-full bg-slate-900">
         <Providers>
           {children}
         </Providers>

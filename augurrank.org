@@ -36,7 +36,7 @@
 - Should not use a word "bet"? It's a game?
 - How to get the outcome? from oracle? voting? commitee? DAO?
 - Propose events, vote, admin pick and refine, community review, create a contract, add to db, on web, start predict, end period, submit outcome,
-- AugurRank - Your visionary on chain
+- AugurRank - Your vision on chain
   Challenge yourself to envision the future, keep score on the chain, and brag about it forever.
 - The pain point we're trying to solve is there is no concrete evidence that we were right!
 - challenge, fun, proud, information
