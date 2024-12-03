@@ -6,5 +6,4 @@ aws s3 sync out/nextImageExportOptimizer s3://augurrank-web/nextImageExportOptim
 
 aws s3 sync out s3://augurrank-web --exclude "_next/*" --exclude "nextImageExportOptimizer/*" --size-only --delete --cache-control max-age=86400 --profile justnote
 
-aws cloudfront create-invalidation --distribution-id E11UOUS0F79ED8 --paths /index.html /index.txt --profile justnote
-#aws cloudfront create-invalidation --distribution-id E11UOUS0F79ED8 --paths "/*" --profile justnote
+aws cloudfront create-invalidation --distribution-id E11UOUS0F79ED8 --paths "/*" --profile justnote
