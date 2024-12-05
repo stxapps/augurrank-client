@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "patch-js": "node bin/patch.js",
     "dev": "next dev --experimental-https --hostname 0.0.0.0",
     "build": "next build && next-image-export-optimizer",
     "start": "next start",
@@ -12,14 +13,23 @@
     "deploy-prod": "bash bin/deploy-prod.sh"
   },
   "dependencies": {
+    "@stacks/auth": "^7.0.2",
+    "@stacks/connect": "^7.9.0",
+    "@stacks/transactions": "^7.0.2",
     "clsx": "^2.1.1",
+    "idb-keyval": "^6.2.1",
     "motion": "^10.18.0",
     "next": "^14.2.16",
     "next-image-export-optimizer": "^1.15.1",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
-    "specifier-resolution-node": "^1.1.4"
+    "react-redux": "^8.1.2",
+    "redux": "^4.2.1",
+    "redux-loop": "^6.2.0",
+    "reselect": "^4.1.8",
+    "specifier-resolution-node": "^1.1.4",
+    "url-parse": "^1.5.10"
   },
   "devDependencies": {
     "@headlessui/react": "^2.1.6",

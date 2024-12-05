@@ -1,6 +1,23 @@
 'use client';
 import { useEffect } from 'react';
+import { Provider as ReduxProvider, useDispatch } from 'react-redux';
+import { legacy_createStore as createStore, compose } from 'redux';
+import { install as installReduxLoop } from 'redux-loop';
 import { ThemeProvider, useTheme } from 'next-themes';
+
+import { init } from '@/actions';
+import reducers from '@/reducers';
+
+const composeEnhancers = (
+  /** @ts-expect-error */
+  typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+);
+const store = createStore(
+  /** @type {any} */(reducers),
+  composeEnhancers(
+    installReduxLoop({ ENABLE_THUNK_MIGRATION: true }),
+  )
+);
 
 function ThemeWatcher() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -25,11 +42,24 @@ function ThemeWatcher() {
   return null;
 }
 
+function Initializer() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(init());
+  }, []);
+
+  return null;
+}
+
 export function Providers({ children }) {
   return (
     <ThemeProvider attribute="class" disableTransitionOnChange>
       <ThemeWatcher />
-      {children}
+      <ReduxProvider store={store}>
+        <Initializer />
+        {children}
+      </ReduxProvider>
     </ThemeProvider>
   );
 }

@@ -1,0 +1,7 @@
+export const INIT = 'INIT';
+
+export const UPDATE_WINDOW = 'UPDATE_WINDOW';
+export const UPDATE_USER = 'UPDATE_USER';
+export const UPDATE_JOIN_NEWSLETTER_STATE = 'UPDATE_JOIN_NEWSLETTER_STATE';
+
+export const RESET_STATE = 'RESET_STATE';
