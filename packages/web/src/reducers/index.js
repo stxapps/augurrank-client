@@ -4,7 +4,7 @@ import windowReducer from './windowReducer';
 import displayReducer from './displayReducer';
 import joinNewsletterReducer from './joinNewsletterReducer';
 import userReducer from './userReducer';
-import gamesReducer from './gamesReducer';
+import gameBtcReducer from './gameBtcReducer';
 import meReducer from './meReducer';
 import newsfeedReducer from './newsfeedReducer';
 
@@ -13,7 +13,7 @@ const reducers = combineReducers({
   display: displayReducer,
   joinNewsletter: joinNewsletterReducer,
   user: userReducer,
-  games: gamesReducer,
+  gameBtc: gameBtcReducer,
   me: meReducer,
   newsfeed: newsfeedReducer,
 });

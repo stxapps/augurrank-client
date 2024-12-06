@@ -1,4 +1,4 @@
-import { UPDATE_JOIN_NEWSLETTER_STATE } from '@/types/actionTypes';
+import { UPDATE_JOIN_NEWSLETTER } from '@/types/actionTypes';
 import { JOIN_NEWSLETTER_STATUS_INIT } from '@/types/const';
 
 const initialState = {
@@ -9,7 +9,7 @@ const initialState = {
 
 const joinNewsletterReducer = (state = initialState, action) => {
 
-  if (action.type === UPDATE_JOIN_NEWSLETTER_STATE) {
+  if (action.type === UPDATE_JOIN_NEWSLETTER) {
     return { ...state, ...action.payload };
   }
 

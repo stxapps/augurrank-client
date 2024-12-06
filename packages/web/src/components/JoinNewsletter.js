@@ -1,7 +1,7 @@
 'use client';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { updateJoinNewsletterState, joinNewsletter } from '@/actions';
+import { updateJoinNewsletter, joinNewsletter } from '@/actions';
 import {
   JOIN_NEWSLETTER_STATUS_INIT, JOIN_NEWSLETTER_STATUS_JOINING,
   JOIN_NEWSLETTER_STATUS_INVALID, JOIN_NEWSLETTER_STATUS_COMMIT,
@@ -27,7 +27,7 @@ export function JoinNewsletter() {
   const dispatch = useDispatch();
 
   const onEmailInputChange = async (e) => {
-    dispatch(updateJoinNewsletterState({
+    dispatch(updateJoinNewsletter({
       status: STATUS_INIT, email: e.target.value, extraMsg: '',
     }));
   };

@@ -4,6 +4,9 @@ export const APP_NAME = 'AugurRank';
 export const APP_ICON_NAME = 'logo-for-stacks-access.png';
 export const APP_SCOPES = ['store_write'];
 
+export const DID_AGREE_TERMS = 'didAgreeTerms';
+export const BTC_PRICE_OBJ = 'btcPriceObj';
+
 export const HTTP = 'http://';
 
 export const AUGUR_RANK_SERVER_URL = 'https://augurrank-001.uc.r.appspot.com';
@@ -16,3 +19,6 @@ export const JOIN_NEWSLETTER_STATUS_JOINING = 'JOIN_NEWSLETTER_STATUS_JOINING';
 export const JOIN_NEWSLETTER_STATUS_INVALID = 'JOIN_NEWSLETTER_STATUS_INVALID';
 export const JOIN_NEWSLETTER_STATUS_COMMIT = 'JOIN_NEWSLETTER_STATUS_COMMIT';
 export const JOIN_NEWSLETTER_STATUS_ROLLBACK = 'JOIN_NEWSLETTER_STATUS_ROLLBACK';
+
+export const GAME_STATUS_INIT = '';
+export const GAME_STATUS_READY = '';
