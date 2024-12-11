@@ -1,8 +1,9 @@
 import { showConnect } from '@stacks/connect';
 
 import userSession from '@/userSession';
+import idxApi from '@/apis';
 import {
-  INIT, UPDATE_WINDOW, UPDATE_USER, RESET_STATE, UPDATE_JOIN_NEWSLETTER_STATE,
+  INIT, UPDATE_WINDOW, UPDATE_USER, UPDATE_POPUP, UPDATE_JOIN_NEWSLETTER, RESET_STATE,
 } from '@/types/actionTypes';
 import {
   APP_NAME, APP_ICON_NAME, ADD_NEWSLETTER_EMAIL_URL, VALID,
@@ -13,6 +14,7 @@ import {
   extractUrl, getUrlPathQueryHash, getUserUsername, getUserImageUrl, throttle, isObject,
   validateEmail, getWindowInsets,
 } from '@/utils';
+import vars from '@/vars';
 
 let _didInit;
 export const init = () => async (dispatch, getState) => {
@@ -21,14 +23,20 @@ export const init = () => async (dispatch, getState) => {
 
   const isUserSignedIn = userSession.isUserSignedIn();
 
-  let username = null, userImage = null;
+  let username = null, userImage = null, didAgreeTerms = null;
   if (isUserSignedIn) {
     const userData = userSession.loadUserData();
     username = getUserUsername(userData);
     userImage = getUserImageUrl(userData);
+
+    const extraUserData = idxApi.getExtraUserData();
+    didAgreeTerms = extraUserData.didAgreeTerms;
   }
 
-  dispatch({ type: INIT, payload: { isUserSignedIn, username, userImage } });
+  dispatch({
+    type: INIT,
+    payload: { isUserSignedIn, username, userImage, didAgreeTerms },
+  });
 
   window.addEventListener('resize', throttle(() => {
     const insets = getWindowInsets();
@@ -83,35 +91,44 @@ const updateUserSignedIn = () => async (dispatch, getState) => {
   await resetState(dispatch);
 
   const userData = userSession.loadUserData();
-  dispatch({
-    type: UPDATE_USER,
-    payload: {
-      isUserSignedIn: true,
-      username: getUserUsername(userData),
-      image: getUserImageUrl(userData),
-    },
-  });
+  dispatch(updateUser({
+    isUserSignedIn: true,
+    username: getUserUsername(userData),
+    image: getUserImageUrl(userData),
+  }));
 };
 
 const resetState = async (dispatch) => {
+  idxApi.deleteExtraUserData();
+
+  vars.gameBtc.didFetch = false;
+  vars.me.didFetch = false;
+
   dispatch({ type: RESET_STATE });
 };
 
-export const updateJoinNewsletterState = (state) => {
-  return { type: UPDATE_JOIN_NEWSLETTER_STATE, payload: state };
+export const updateUser = (payload) => {
+  return { type: UPDATE_USER, payload };
+};
+
+export const updatePopup = (id, isShown, anchorPosition) => {
+  return {
+    type: UPDATE_POPUP,
+    payload: { id, isShown, anchorPosition },
+  };
 };
 
 export const joinNewsletter = () => async (dispatch, getState) => {
   const { email } = getState().joinNewsletter;
 
   if (!validateEmail(email)) {
-    dispatch(updateJoinNewsletterState({
+    dispatch(updateJoinNewsletter({
       status: JOIN_NEWSLETTER_STATUS_INVALID, extraMsg: ''
     }));
     return;
   }
 
-  dispatch(updateJoinNewsletterState({
+  dispatch(updateJoinNewsletter({
     status: JOIN_NEWSLETTER_STATUS_JOINING, extraMsg: '',
   }));
   try {
@@ -125,7 +142,7 @@ export const joinNewsletter = () => async (dispatch, getState) => {
     });
     if (!res.ok) {
       const extraMsg = res.statusText;
-      dispatch(updateJoinNewsletterState({
+      dispatch(updateJoinNewsletter({
         status: JOIN_NEWSLETTER_STATUS_ROLLBACK, extraMsg
       }));
       return;
@@ -134,19 +151,23 @@ export const joinNewsletter = () => async (dispatch, getState) => {
     const json = await res.json();
     if (json.status !== VALID) {
       const extraMsg = 'Invalid reqBody or email';
-      dispatch(updateJoinNewsletterState({
+      dispatch(updateJoinNewsletter({
         status: JOIN_NEWSLETTER_STATUS_ROLLBACK, extraMsg
       }));
       return;
     }
 
-    dispatch(updateJoinNewsletterState({
+    dispatch(updateJoinNewsletter({
       status: JOIN_NEWSLETTER_STATUS_COMMIT, extraMsg: ''
     }));
   } catch (error) {
     const extraMsg = error.message;
-    dispatch(updateJoinNewsletterState({
+    dispatch(updateJoinNewsletter({
       status: JOIN_NEWSLETTER_STATUS_ROLLBACK, extraMsg
     }));
   }
+};
+
+export const updateJoinNewsletter = (payload) => {
+  return { type: UPDATE_JOIN_NEWSLETTER, payload };
 };

@@ -2,7 +2,11 @@ export const INIT = 'INIT';
 
 export const UPDATE_WINDOW = 'UPDATE_WINDOW';
 export const UPDATE_USER = 'UPDATE_USER';
+export const UPDATE_POPUP = 'UPDATE_POPUP';
 export const UPDATE_JOIN_NEWSLETTER = 'UPDATE_JOIN_NEWSLETTER';
+export const UPDATE_ME = 'UPDATE_ME';
+
 export const UPDATE_GAME_BTC = 'UPDATE_GAME_BTC';
+export const REMOVE_GAME_BTC_PREDS = 'REMOVE_GAME_BTC_PREDS';
 
 export const RESET_STATE = 'RESET_STATE';

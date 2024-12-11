@@ -1,5 +1,8 @@
 import Url from 'url-parse';
-import { HTTP } from '@/types/const';
+import {
+  HTTP, PRED_STATUS_INIT, PRED_STATUS_IN_MEMPOOL, PRED_STATUS_CONFIRMED,
+  PRED_STATUS_VERIFYING, PRED_STATUS_VERIFIED,
+} from '@/types/const';
 
 export const containUrlProtocol = (url) => {
   const urlObj = new Url(url, {});
@@ -62,6 +65,36 @@ export const getUserImageUrl = (userData) => {
   return userImageUrl;
 };
 
+export const getUserStxAddr = (userData) => {
+  let stxAddr = null;
+  if (
+    isObject(userData) &&
+    isObject(userData.profile) &&
+    isObject(userData.profile.stxAddress) &&
+    isString(userData.profile.stxAddress.mainnet)
+  ) {
+    stxAddr = userData.profile.stxAddress.mainnet;
+  }
+  return stxAddr;
+};
+
+export const getUserIdAddr = (userData) => {
+  if (!isObject(userData) || !isString(userData.identityAddress)) return '';
+  return userData.identityAddress;
+};
+
+export const getUserStxAddrOrThrow = (userData) => {
+  const stxAddr = getUserStxAddr(userData);
+  if (isString(stxAddr) && stxAddr.length > 0) return stxAddr;
+  throw new Error('Invalid stxAddr');
+};
+
+export const getUserIdAddrOrThrow = (userData) => {
+  const idAddr = getUserIdAddr(userData);
+  if (isString(idAddr) && idAddr.length > 0) return idAddr;
+  throw new Error('Invalid idAddr');
+};
+
 export const throttle = (func, limit) => {
   let lastFunc;
   let lastRan;
@@ -97,6 +130,17 @@ export const isString = val => {
 
 export const isNumber = val => {
   return typeof val === 'number' && isFinite(val);
+};
+
+export const randomString = (length) => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  const charactersLength = characters.length;
+
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 };
 
 export const validateEmail = email => {
@@ -147,4 +191,50 @@ export const getWindowInsets = () => {
   }
 
   return { top, right, bottom, left };
+};
+
+export const getNewestPred = (preds) => {
+  let newestPred = null;
+  for (const cid in preds) {
+    const pred = preds[cid];
+    if (!isObject(newestPred) || pred.createDate > newestPred.createDate) {
+      newestPred = pred;
+    }
+  }
+  return newestPred;
+};
+
+export const getPendingPred = (preds, burnHeight) => {
+  const newestPred = getNewestPred(preds);
+  if (!isObject(newestPred)) return null;
+
+  if ([true, false].includes(newestPred.correct)) return null;
+
+  if (
+    isNumber(burnHeight) && burnHeight > 0 && isNumber(newestPred.anchorBurnHeight)
+  ) {
+    if (burnHeight > newestPred.anchorBurnHeight + 100) return null;
+  }
+
+  return newestPred;
+};
+
+export const getPredStatus = (pred) => {
+  if ('vResult' in pred) return PRED_STATUS_VERIFIED;
+  if ('vTxId' in pred) return PRED_STATUS_VERIFYING;
+  if ('result' in pred) return PRED_STATUS_CONFIRMED;
+  if ('txId' in pred) return PRED_STATUS_IN_MEMPOOL;
+  return PRED_STATUS_INIT;
+};
+
+export const deriveTxInfo = (txInfo) => {
+  /*{
+  obj.tx_status
+  obj.tx_result,
+      obj.block_height,
+  obj.burn_block_height,
+  obj.events[0],
+    }*/
+
+  return {};
 };

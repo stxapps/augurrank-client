@@ -1,4 +1,4 @@
-import { INIT, UPDATE_USER, RESET_STATE } from '../types/actionTypes';
+import { INIT, UPDATE_USER, UPDATE_GAME_BTC, RESET_STATE } from '../types/actionTypes';
 
 const initialState = {
   isUserSignedIn: null,
@@ -21,6 +21,13 @@ const userReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_USER) {
     return { ...state, ...action.payload };
+  }
+
+  if (action.type === UPDATE_GAME_BTC) {
+    const { didAgreeTerms } = action.payload;
+    if (didAgreeTerms === true) {
+      return { ...state, didAgreeTerms };
+    }
   }
 
   if (action.type === RESET_STATE) {
