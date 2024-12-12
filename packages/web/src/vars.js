@@ -20,11 +20,11 @@ const agreeTerms = {
   pred: null,
 };
 
-const pendingPreds = {
+const refreshPreds = {
   isRunning: false,
   timeId: null,
 };
 
-const vars = { btcPrice, burnHeight, gameBtc, me, agreeTerms, pendingPreds };
+const vars = { btcPrice, burnHeight, gameBtc, me, agreeTerms, refreshPreds };
 
 export default vars;

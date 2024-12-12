@@ -1,7 +1,12 @@
+import {
+  getPublicKeyFromPrivate, publicKeyToBtcAddress,
+} from '@stacks/encryption/dist/esm';
 import Url from 'url-parse';
 import {
-  HTTP, PRED_STATUS_INIT, PRED_STATUS_IN_MEMPOOL, PRED_STATUS_CONFIRMED,
-  PRED_STATUS_VERIFYING, PRED_STATUS_VERIFIED,
+  HTTP, PRED_STATUS_INIT, PRED_STATUS_IN_MEMPOOL, PRED_STATUS_PUT_OK,
+  PRED_STATUS_PUT_ERROR, PRED_STATUS_CONFIRMED_OK, PRED_STATUS_CONFIRMED_ERROR,
+  PRED_STATUS_VERIFIABLE, PRED_STATUS_VERIFYING, PRED_STATUS_VERIFIED_OK,
+  PRED_STATUS_VERIFIED_ERROR, SCS,
 } from '@/types/const';
 
 export const containUrlProtocol = (url) => {
@@ -66,33 +71,14 @@ export const getUserImageUrl = (userData) => {
 };
 
 export const getUserStxAddr = (userData) => {
-  let stxAddr = null;
-  if (
-    isObject(userData) &&
-    isObject(userData.profile) &&
-    isObject(userData.profile.stxAddress) &&
-    isString(userData.profile.stxAddress.mainnet)
-  ) {
-    stxAddr = userData.profile.stxAddress.mainnet;
-  }
+  const stxAddr = userData.profile.stxAddress.mainnet;
   return stxAddr;
 };
 
-export const getUserIdAddr = (userData) => {
-  if (!isObject(userData) || !isString(userData.identityAddress)) return '';
-  return userData.identityAddress;
-};
-
-export const getUserStxAddrOrThrow = (userData) => {
-  const stxAddr = getUserStxAddr(userData);
-  if (isString(stxAddr) && stxAddr.length > 0) return stxAddr;
-  throw new Error('Invalid stxAddr');
-};
-
-export const getUserIdAddrOrThrow = (userData) => {
-  const idAddr = getUserIdAddr(userData);
-  if (isString(idAddr) && idAddr.length > 0) return idAddr;
-  throw new Error('Invalid idAddr');
+export const getAppBtcAddr = (userData) => {
+  const appPubKey = getPublicKeyFromPrivate(userData.appPrivateKey);
+  const appBtcAddr = publicKeyToBtcAddress(appPubKey);
+  return appBtcAddr;
 };
 
 export const throttle = (func, limit) => {
@@ -193,48 +179,63 @@ export const getWindowInsets = () => {
   return { top, right, bottom, left };
 };
 
-export const getNewestPred = (preds) => {
-  let newestPred = null;
-  for (const cid in preds) {
-    const pred = preds[cid];
-    if (!isObject(newestPred) || pred.createDate > newestPred.createDate) {
-      newestPred = pred;
-    }
+export const getPredStatus = (pred, burnHeight = null) => {
+  if ('pStatus' in pred && pred.pStatus !== SCS) return PRED_STATUS_PUT_ERROR;
+  if ('cStatus' in pred && pred.cStatus !== SCS) {
+    return PRED_STATUS_CONFIRMED_ERROR;
   }
-  return newestPred;
-};
+  if ('vStatus' in pred && pred.vStatus !== SCS) return PRED_STATUS_VERIFIED_ERROR;
 
-export const getPendingPred = (preds, burnHeight) => {
-  const newestPred = getNewestPred(preds);
-  if (!isObject(newestPred)) return null;
-
-  if ([true, false].includes(newestPred.correct)) return null;
-
-  if (
-    isNumber(burnHeight) && burnHeight > 0 && isNumber(newestPred.anchorBurnHeight)
-  ) {
-    if (burnHeight > newestPred.anchorBurnHeight + 100) return null;
-  }
-
-  return newestPred;
-};
-
-export const getPredStatus = (pred) => {
-  if ('vResult' in pred) return PRED_STATUS_VERIFIED;
+  if ('vStatus' in pred) return PRED_STATUS_VERIFIED_OK;
   if ('vTxId' in pred) return PRED_STATUS_VERIFYING;
-  if ('result' in pred) return PRED_STATUS_CONFIRMED;
-  if ('txId' in pred) return PRED_STATUS_IN_MEMPOOL;
+  if ('cStatus' in pred) {
+    if (
+      isNumber(pred.targetBurnHeight) &&
+      isNumber(burnHeight) &&
+      pred.targetBurnHeight < burnHeight
+    ) {
+      return PRED_STATUS_VERIFIABLE;
+    }
+    return PRED_STATUS_CONFIRMED_OK;
+  }
+  if ('pStatus' in pred) return PRED_STATUS_PUT_OK;
+  if ('cTxId' in pred) return PRED_STATUS_IN_MEMPOOL;
   return PRED_STATUS_INIT;
 };
 
-export const deriveTxInfo = (txInfo) => {
-  /*{
-  obj.tx_status
-  obj.tx_result,
-      obj.block_height,
-  obj.burn_block_height,
-  obj.events[0],
-    }*/
+export const getPendingPred = (preds, burnHeight) => {
+  const stdPreds = Object.values(preds).sort((a, b) => b.createDate - a.createDate);
+  for (const pred of stdPreds) {
+    const status = getPredStatus(pred, burnHeight);
 
-  return {};
+    if ([
+      PRED_STATUS_VERIFIED_ERROR, PRED_STATUS_VERIFIED_OK, PRED_STATUS_VERIFYING,
+      PRED_STATUS_VERIFIABLE,
+    ].includes(status)) return null;
+
+    if ([PRED_STATUS_CONFIRMED_ERROR].includes(status)) continue;
+
+    if ([
+      PRED_STATUS_CONFIRMED_OK, PRED_STATUS_PUT_ERROR, PRED_STATUS_PUT_OK,
+      PRED_STATUS_IN_MEMPOOL, PRED_STATUS_INIT,
+    ].includes(status)) return pred;
+  }
+  return null;
+};
+
+export const deriveTxInfo = (txInfo) => {
+  const obj = {
+    txId: txInfo.tx_id,
+    height: txInfo.block_height,
+    burnHeight: txInfo.burn_block_height,
+    status: txInfo.tx_status,
+    result: txInfo.tx_result.repr,
+    vls: [],
+  };
+  if (Array.isArray(txInfo.events)) {
+    for (const evt of txInfo.events) {
+      obj.vls.push(evt.contract_log.value.repr);
+    }
+  }
+  return obj;
 };

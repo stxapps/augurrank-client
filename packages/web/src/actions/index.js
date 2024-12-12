@@ -99,7 +99,7 @@ const updateUserSignedIn = () => async (dispatch, getState) => {
 };
 
 const resetState = async (dispatch) => {
-  idxApi.deleteExtraUserData();
+  idxApi.deleteAllLocalFiles();
 
   vars.gameBtc.didFetch = false;
   vars.me.didFetch = false;

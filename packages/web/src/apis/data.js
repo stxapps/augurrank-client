@@ -8,7 +8,7 @@ import {
   BTC_PRICE_OBJ, BURN_HEIGHT_OBJ, GAME_URL, ME_URL, PRED_URL, VALID, TEST_STRING,
   GAME_BTC,
 } from '@/types/const';
-import { isString, getUserStxAddrOrThrow } from '@/utils';
+import { isString, getUserStxAddr } from '@/utils';
 
 const fetchBtcPrice = async () => {
   const str = lsgApi.getItemSync(BTC_PRICE_OBJ);
@@ -24,7 +24,7 @@ const fetchBtcPrice = async () => {
   }
 
   const userData = userSession.loadUserData();
-  const stxAddr = getUserStxAddrOrThrow(userData);
+  const stxAddr = getUserStxAddr(userData);
 
   const opts = {
     contractAddress: 'SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM',
@@ -104,7 +104,7 @@ const fetchTxInfo = async (txId) => {
 const getAuthData = () => {
   const userData = userSession.loadUserData();
   const sigObj = signECDSA(userData.appPrivateKey, TEST_STRING);
-  const stxAddr = getUserStxAddrOrThrow(userData);
+  const stxAddr = getUserStxAddr(userData);
   return { appPubKey: sigObj.publicKey, appSigStr: sigObj.signature, stxAddr };
 };
 

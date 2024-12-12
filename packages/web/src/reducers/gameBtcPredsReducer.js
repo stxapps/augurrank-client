@@ -8,12 +8,18 @@ const initialState = {};
 const gameBtcPredsReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_GAME_BTC) {
-    const { pred } = action.payload;
+    const { pred, preds } = action.payload;
+
+    const newState = { ...state };
     if (isObject(pred)) {
-      const newState = { ...state };
       newState[pred.id] = { ...newState[pred.id], ...pred };
-      return newState;
     }
+    if (Array.isArray(preds)) {
+      for (const pred of preds) {
+        newState[pred.id] = { ...newState[pred.id], ...pred };
+      }
+    }
+    return newState;
   }
 
   if (action.type === REMOVE_GAME_BTC_PREDS) {

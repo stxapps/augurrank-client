@@ -1,5 +1,5 @@
 const getItem = async (key) => {
-  const item = getItemSync(key);
+  const item = getItemSync(key); // if no key, item will be null.
   return item;
 };
 
@@ -9,6 +9,10 @@ const setItem = async (key, item) => {
 
 const removeItem = async (key) => {
   removeItemSync(key);
+};
+
+const listKeys = async () => {
+  return listKeysSync();
 };
 
 const getItemSync = (key) => {
@@ -24,8 +28,14 @@ const removeItemSync = (key) => {
   localStorage.removeItem(key);
 };
 
+const listKeysSync = () => {
+  const keys = Object.keys(localStorage);
+  return keys;
+}
+
 const localSg = {
-  getItem, setItem, removeItem, getItemSync, setItemSync, removeItemSync,
+  getItem, setItem, removeItem, listKeys, getItemSync, setItemSync, removeItemSync,
+  listKeysSync,
 };
 
 export default localSg;
