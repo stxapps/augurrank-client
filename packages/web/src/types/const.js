@@ -23,6 +23,7 @@ export const AUGUR_RANK_SERVER_URL = 'https://augurrank-001.uc.r.appspot.com';
 export const ADD_NEWSLETTER_EMAIL_URL = AUGUR_RANK_SERVER_URL + '/add-newsletter-email';
 export const GAME_URL = AUGUR_RANK_SERVER_URL + '/game';
 export const ME_URL = AUGUR_RANK_SERVER_URL + '/me';
+export const PREDS_URL = AUGUR_RANK_SERVER_URL + '/preds';
 export const PRED_URL = AUGUR_RANK_SERVER_URL + '/pred';
 
 export const JOIN_NEWSLETTER_STATUS_INIT = 'JOIN_NEWSLETTER_STATUS_INIT';
@@ -52,8 +53,12 @@ export const PRED_STATUS_VERIFYING = 'PRED_STATUS_VERIFYING';
 export const PRED_STATUS_VERIFIED_OK = 'PRED_STATUS_VERIFIED_OK';
 export const PRED_STATUS_VERIFIED_ERROR = 'PRED_STATUS_VERIFIED_ERROR';
 
+export const PDG = 'pending';
 export const SCS = 'success';
 export const ABT_BY_RES = 'abort_by_response';
 export const ABT_BY_PC = 'abort_by_post_condition';
+export const ABT_BY_NF = 'abort_by_not_found';
+
+export const NOT_FOUND_ERROR = 'NOT_FOUND_ERROR';
 
 export const UNSAVED_PREDS = 'unsaved-preds';

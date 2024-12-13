@@ -1,12 +1,10 @@
 import { UPDATE_GAME_BTC, RESET_STATE } from '@/types/actionTypes';
-//import { GAME_STATUS_INIT } from '@/types/const';
-import { isString, isNumber } from '@/utils';
+import { isNumber } from '@/utils';
 
 const initialState = {
   price: null,
   burnHeight: null,
   didFetch: null,
-  //status: GAME_STATUS_INIT,
 };
 
 const gameBtcReducer = (state = initialState, action) => {
@@ -20,7 +18,6 @@ const gameBtcReducer = (state = initialState, action) => {
     if (didFetch === null || [true, false].includes(didFetch)) {
       newState.didFetch = didFetch;
     }
-    //if (isString(status)) newState.status = status;
 
     return newState;
   }

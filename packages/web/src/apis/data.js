@@ -5,10 +5,10 @@ import { STACKS_MAINNET } from '@stacks/network/dist/esm';
 import userSession from '@/userSession';
 import lsgApi from '@/apis/localSg';
 import {
-  BTC_PRICE_OBJ, BURN_HEIGHT_OBJ, GAME_URL, ME_URL, PRED_URL, VALID, TEST_STRING,
-  GAME_BTC,
+  BTC_PRICE_OBJ, BURN_HEIGHT_OBJ, GAME_URL, ME_URL, PREDS_URL, PRED_URL, VALID,
+  TEST_STRING, UNSAVED_PREDS, NOT_FOUND_ERROR,
 } from '@/types/const';
-import { isString, getUserStxAddr } from '@/utils';
+import { isObject, isString, isNumber, getUserStxAddr } from '@/utils';
 
 const fetchBtcPrice = async () => {
   const str = lsgApi.getItemSync(BTC_PRICE_OBJ);
@@ -94,6 +94,9 @@ const fetchBurnHeight = async () => {
 
 const fetchTxInfo = async (txId) => {
   const res = await fetch(`https://api.hiro.so/extended/v1/tx/{txId}`);
+  if (res.status === 404) {
+    throw new Error(NOT_FOUND_ERROR);
+  }
   if (!res.ok) {
     throw new Error(res.statusText);
   }
@@ -135,18 +138,30 @@ const fetchMe = async () => {
 
 };
 
-const putPred = async (pred) => {
+const fetchPreds = async (ids, game, createDate, doDescendingOrder) => {
+  // 1. fetch per ids for an update i.e. verifiable to verified.
+  // 2. fetch previous items.
   const authData = getAuthData();
 
-  // check if should also put didAgreeTerms?
+  let reqData;
+  if (Array.isArray(ids)) {
+    reqData = { ids };
+  } else if (
+    isString(game) && isNumber(createDate) && [true, false].includes(doDescendingOrder)
+  ) {
+    reqData = { game, createDate, doDescendingOrder };
+  } else {
+    const msg = `Invalid args: ${ids}, ${game}, ${createDate}, ${doDescendingOrder}`;
+    throw new Error(msg);
+  }
 
-  const res = await fetch(PRED_URL, {
+  const res = await fetch(PREDS_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     referrerPolicy: 'strict-origin',
-    body: JSON.stringify({ ...authData }),
+    body: JSON.stringify({ ...authData, ...reqData }),
   });
   if (!res.ok) {
     throw new Error(res.statusText);
@@ -160,8 +175,65 @@ const putPred = async (pred) => {
   return obj;
 };
 
+const putPred = async (pred) => {
+  const authData = getAuthData();
+
+  const res = await fetch(PRED_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    referrerPolicy: 'strict-origin',
+    body: JSON.stringify({ ...authData, pred }),
+  });
+  if (!res.ok) {
+    throw new Error(res.statusText);
+  }
+
+  const obj = await res.json();
+  if (obj.status !== VALID) {
+    throw new Error('Invalid reqBody');
+  }
+
+  return obj;
+};
+
+const getUnsavedPreds = (game) => {
+  const keys = lsgApi.listKeysSync();
+
+  const preds = []
+  for (const key of keys) {
+    if (!key.startsWith(`${UNSAVED_PREDS}/`)) continue;
+    const str = lsgApi.getItemSync(key);
+
+    let pred;
+    try {
+      pred = JSON.parse(str);
+    } catch (error) {
+      console.log('In getUnsavedPreds, invalid str:', str);
+      continue;
+    }
+    if (!isObject(pred)) {
+      console.log('In getUnsavedPreds, invalid pred:', pred);
+      continue;
+    }
+    if (pred.game === game) preds.push(pred);
+  }
+
+  return preds;
+};
+
+const putUnsavedPred = (pred) => {
+  lsgApi.setItemSync(`${UNSAVED_PREDS}/${pred.id}`, JSON.stringify(pred));
+};
+
+const deleteUnsavedPred = (id) => {
+  lsgApi.removeItemSync(`${UNSAVED_PREDS}/${id}`);
+};
+
 const data = {
-  fetchBtcPrice, fetchBurnHeight, fetchTxInfo, fetchGame, fetchMe, putPred,
+  fetchBtcPrice, fetchBurnHeight, fetchTxInfo, fetchGame, fetchMe, fetchPreds, putPred,
+  getUnsavedPreds, putUnsavedPred, deleteUnsavedPred,
 };
 
 export default data;

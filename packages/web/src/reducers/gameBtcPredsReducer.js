@@ -1,7 +1,7 @@
 import {
   UPDATE_GAME_BTC, REMOVE_GAME_BTC_PREDS, RESET_STATE,
 } from '@/types/actionTypes';
-import { isObject } from '@/utils';
+import { isObject, mergePreds } from '@/utils';
 
 const initialState = {};
 
@@ -12,11 +12,11 @@ const gameBtcPredsReducer = (state = initialState, action) => {
 
     const newState = { ...state };
     if (isObject(pred)) {
-      newState[pred.id] = { ...newState[pred.id], ...pred };
+      newState[pred.id] = mergePreds(newState[pred.id], pred);
     }
     if (Array.isArray(preds)) {
       for (const pred of preds) {
-        newState[pred.id] = { ...newState[pred.id], ...pred };
+        newState[pred.id] = mergePreds(newState[pred.id], pred);
       }
     }
     return newState;

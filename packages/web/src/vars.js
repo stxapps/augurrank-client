@@ -23,6 +23,7 @@ const agreeTerms = {
 const refreshPreds = {
   isRunning: false,
   timeId: null,
+  seq: 0,
 };
 
 const vars = { btcPrice, burnHeight, gameBtc, me, agreeTerms, refreshPreds };

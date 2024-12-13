@@ -6,7 +6,7 @@ import {
   HTTP, PRED_STATUS_INIT, PRED_STATUS_IN_MEMPOOL, PRED_STATUS_PUT_OK,
   PRED_STATUS_PUT_ERROR, PRED_STATUS_CONFIRMED_OK, PRED_STATUS_CONFIRMED_ERROR,
   PRED_STATUS_VERIFIABLE, PRED_STATUS_VERIFYING, PRED_STATUS_VERIFIED_OK,
-  PRED_STATUS_VERIFIED_ERROR, SCS,
+  PRED_STATUS_VERIFIED_ERROR, PDG, SCS,
 } from '@/types/const';
 
 export const containUrlProtocol = (url) => {
@@ -179,16 +179,65 @@ export const getWindowInsets = () => {
   return { top, right, bottom, left };
 };
 
+export const mergePreds = (...preds) => {
+  const bin = {
+    updateDate: null,
+    pStatus: { scs: null, updg: null },
+    cStatus: { scs: null, updg: null },
+    vStatus: { scs: null, updg: null },
+  };
+
+  let newPred = {};
+  for (const pred of preds) {
+    if (isNumber(pred.updateDate)) {
+      if (!isNumber(bin.updateDate) || pred.updateDate > bin.updateDate) {
+        bin.updateDate = pred.updateDate;
+      }
+    }
+    if (isString(pred.pStatus)) {
+      if (pred.pStatus === SCS) bin.pStatus.scs = pred.pStatus;
+      else if (pred.pStatus !== PDG) bin.pStatus.updg = pred.pStatus;
+    }
+    if (isString(pred.cStatus)) {
+      if (pred.cStatus === SCS) bin.cStatus.scs = pred.cStatus;
+      else if (pred.cStatus !== PDG) bin.cStatus.updg = pred.cStatus;
+    }
+    if (isString(pred.vStatus)) {
+      if (pred.vStatus === SCS) bin.vStatus.scs = pred.vStatus;
+      else if (pred.vStatus !== PDG) bin.vStatus.updg = pred.vStatus;
+    }
+
+    newPred = { ...newPred, ...pred };
+  }
+
+  if (isNumber(bin.updateDate)) newPred.updateDate = bin.updateDate;
+
+  if (isString(bin.pStatus.scs)) newPred.pStatus = bin.pStatus.scs;
+  else if (isString(bin.pStatus.updg)) newPred.pStatus = bin.pStatus.updg;
+
+  if (isString(bin.cStatus.scs)) newPred.cStatus = bin.cStatus.scs;
+  else if (isString(bin.cStatus.updg)) newPred.cStatus = bin.cStatus.updg;
+
+  if (isString(bin.vStatus.scs)) newPred.vStatus = bin.vStatus.scs;
+  else if (isString(bin.vStatus.updg)) newPred.vStatus = bin.vStatus.updg;
+
+  return newPred;
+};
+
 export const getPredStatus = (pred, burnHeight = null) => {
-  if ('pStatus' in pred && pred.pStatus !== SCS) return PRED_STATUS_PUT_ERROR;
-  if ('cStatus' in pred && pred.cStatus !== SCS) {
+  if ('pStatus' in pred && ![PDG, SCS].includes(pred.pStatus)) {
+    return PRED_STATUS_PUT_ERROR;
+  }
+  if ('cStatus' in pred && ![PDG, SCS].includes(pred.cStatus)) {
     return PRED_STATUS_CONFIRMED_ERROR;
   }
-  if ('vStatus' in pred && pred.vStatus !== SCS) return PRED_STATUS_VERIFIED_ERROR;
+  if ('vStatus' in pred && ![PDG, SCS].includes(pred.vStatus)) {
+    return PRED_STATUS_VERIFIED_ERROR;
+  }
 
-  if ('vStatus' in pred) return PRED_STATUS_VERIFIED_OK;
+  if (pred.vStatus === SCS) return PRED_STATUS_VERIFIED_OK;
   if ('vTxId' in pred) return PRED_STATUS_VERIFYING;
-  if ('cStatus' in pred) {
+  if (pred.cStatus === SCS) {
     if (
       isNumber(pred.targetBurnHeight) &&
       isNumber(burnHeight) &&
@@ -198,7 +247,7 @@ export const getPredStatus = (pred, burnHeight = null) => {
     }
     return PRED_STATUS_CONFIRMED_OK;
   }
-  if ('pStatus' in pred) return PRED_STATUS_PUT_OK;
+  if (pred.pStatus === SCS) return PRED_STATUS_PUT_OK;
   if ('cTxId' in pred) return PRED_STATUS_IN_MEMPOOL;
   return PRED_STATUS_INIT;
 };
@@ -226,16 +275,37 @@ export const getPendingPred = (preds, burnHeight) => {
 export const deriveTxInfo = (txInfo) => {
   const obj = {
     txId: txInfo.tx_id,
-    height: txInfo.block_height,
-    burnHeight: txInfo.burn_block_height,
     status: txInfo.tx_status,
-    result: txInfo.tx_result.repr,
-    vls: [],
+    height: null,
+    burnHeight: null,
+    result: null,
+    vls: null,
   };
+  if (isNumber(txInfo.block_height)) obj.height = txInfo.block_height;
+  if (isNumber(txInfo.burn_block_height)) obj.burnHeight = txInfo.burn_block_height;
+  if (isObject(txInfo.tx_result) && isString(txInfo.tx_result.repr)) {
+    obj.result = txInfo.tx_result.repr;
+  }
   if (Array.isArray(txInfo.events)) {
+    obj.vls = [];
     for (const evt of txInfo.events) {
       obj.vls.push(evt.contract_log.value.repr);
     }
   }
   return obj;
+};
+
+export const getPredSeq = (txInfo) => {
+  const regex = /u(\d+)\)/; // (ok (tuple (seq u532)))
+  try {
+    const match = txInfo.result.match(regex);
+    if (match) {
+      const seq = parseInt(match[1]);
+      if (isNumber(seq)) return seq;
+    }
+  } catch (error) {
+    // txInfo.result might not be string.
+  }
+
+  return -1;
 };
