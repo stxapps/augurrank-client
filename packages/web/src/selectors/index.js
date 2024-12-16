@@ -73,3 +73,12 @@ export const getPendingGameBtcPred = createSelector(
     return getPendingPred(preds, burnHeight);
   }
 );
+
+export const getMePreds = createSelector(
+  state => state.gameBtcPreds,
+  (gameBtcPreds) => {
+    const preds = Object.values(gameBtcPreds);
+    preds.sort((a, b) => b.createDate - a.createDate);
+    return preds;
+  }
+);

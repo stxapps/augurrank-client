@@ -3,7 +3,7 @@ import {
 } from '@stacks/encryption/dist/esm';
 import Url from 'url-parse';
 import {
-  HTTP, PRED_STATUS_INIT, PRED_STATUS_IN_MEMPOOL, PRED_STATUS_PUT_OK,
+  HTTP, GAME_BTC, PRED_STATUS_INIT, PRED_STATUS_IN_MEMPOOL, PRED_STATUS_PUT_OK,
   PRED_STATUS_PUT_ERROR, PRED_STATUS_CONFIRMED_OK, PRED_STATUS_CONFIRMED_ERROR,
   PRED_STATUS_VERIFIABLE, PRED_STATUS_VERIFYING, PRED_STATUS_VERIFIED_OK,
   PRED_STATUS_VERIFIED_ERROR, PDG, SCS,
@@ -179,6 +179,44 @@ export const getWindowInsets = () => {
   return { top, right, bottom, left };
 };
 
+export const unionPreds = (data, unsavedPreds) => {
+  const predsPerId = {}, newPredPerId = {};
+  if (isObject(data.pred)) {
+    if (!Array.isArray(predsPerId[data.pred.id])) predsPerId[data.pred.id] = [];
+    predsPerId[data.pred.id].push(data.pred);
+  }
+  if (Array.isArray(data.preds)) {
+    for (const pred of data.preds) {
+      if (!Array.isArray(predsPerId[pred.id])) predsPerId[pred.id] = [];
+      predsPerId[pred.id].push(pred);
+    }
+  }
+  for (const pred of unsavedPreds) {
+    if (!Array.isArray(predsPerId[pred.id])) predsPerId[pred.id] = [];
+    predsPerId[pred.id].push(pred);
+  }
+  for (const preds of Object.values(predsPerId)) {
+    const newPred = mergePreds(...preds);
+    newPredPerId[newPred.id] = newPred;
+  }
+  return newPredPerId;
+};
+
+export const sepPreds = (data) => {
+  const btcGamePreds = [];
+  if (Array.isArray(data.preds)) {
+    for (const pred of data.preds) {
+      if (pred.game === GAME_BTC) {
+        btcGamePreds.push(pred);
+      } else {
+        console.log('Invalid game:', pred);
+      }
+    }
+  }
+
+  return { btcGamePreds };
+};
+
 export const mergePreds = (...preds) => {
   const bin = {
     updateDate: null,
@@ -189,6 +227,8 @@ export const mergePreds = (...preds) => {
 
   let newPred = {};
   for (const pred of preds) {
+    if (!isObject(pred)) continue;
+
     if (isNumber(pred.updateDate)) {
       if (!isNumber(bin.updateDate) || pred.updateDate > bin.updateDate) {
         bin.updateDate = pred.updateDate;
@@ -308,4 +348,22 @@ export const getPredSeq = (txInfo) => {
   }
 
   return -1;
+};
+
+export const getFetchMeMoreParams = (gameBtcPreds) => {
+  const [game, operator, excludingIds] = ['me', '<=', []];
+
+  const preds = Object.values(gameBtcPreds);
+
+  let createDate = null;
+  for (const pred of preds) {
+    if (createDate === null || pred.createDate < createDate) {
+      createDate = pred.createDate;
+    }
+  }
+  for (const pred of preds) {
+    if (pred.createDate === createDate) excludingIds.push(pred.id);
+  }
+
+  return { game, createDate, operator, excludingIds };
 };

@@ -135,10 +135,29 @@ const fetchGame = async (game) => {
 };
 
 const fetchMe = async () => {
+  const authData = getAuthData();
 
+  const res = await fetch(ME_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    referrerPolicy: 'strict-origin',
+    body: JSON.stringify({ ...authData }),
+  });
+  if (!res.ok) {
+    throw new Error(res.statusText);
+  }
+
+  const obj = await res.json();
+  if (obj.status !== VALID) {
+    throw new Error('Invalid reqBody');
+  }
+
+  return obj;
 };
 
-const fetchPreds = async (ids, game, createDate, doDescendingOrder) => {
+const fetchPreds = async (ids, game, createDate, operator, excludingIds) => {
   // 1. fetch per ids for an update i.e. verifiable to verified.
   // 2. fetch previous items.
   const authData = getAuthData();
@@ -147,11 +166,12 @@ const fetchPreds = async (ids, game, createDate, doDescendingOrder) => {
   if (Array.isArray(ids)) {
     reqData = { ids };
   } else if (
-    isString(game) && isNumber(createDate) && [true, false].includes(doDescendingOrder)
+    isString(game) && isNumber(createDate) &&
+    isString(operator) && Array.isArray(excludingIds)
   ) {
-    reqData = { game, createDate, doDescendingOrder };
+    reqData = { game, createDate, operator, excludingIds };
   } else {
-    const msg = `Invalid args: ${ids}, ${game}, ${createDate}, ${doDescendingOrder}`;
+    const msg = `Invalid args: ${ids}, ${game}, ${createDate}, ${operator}`;
     throw new Error(msg);
   }
 

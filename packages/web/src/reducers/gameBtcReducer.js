@@ -4,7 +4,7 @@ import { isNumber } from '@/utils';
 const initialState = {
   price: null,
   burnHeight: null,
-  didFetch: null,
+  didFetch: null, // didFetch: null: not yet, true: fetched, false: error
 };
 
 const gameBtcReducer = (state = initialState, action) => {
@@ -15,7 +15,7 @@ const gameBtcReducer = (state = initialState, action) => {
     const newState = { ...state };
     if (price === null || isNumber(price)) newState.price = price;
     if (burnHeight === null || isNumber(burnHeight)) newState.burnHeight = burnHeight;
-    if (didFetch === null || [true, false].includes(didFetch)) {
+    if ([null, true, false].includes(didFetch)) {
       newState.didFetch = didFetch;
     }
 

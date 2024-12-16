@@ -13,8 +13,8 @@ import {
   NOT_FOUND_ERROR,
 } from '@/types/const';
 import {
-  getUserStxAddr, getAppBtcAddr, isObject, randomString, mergePreds, getPredStatus,
-  getPendingPred, deriveTxInfo, getPredSeq,
+  getUserStxAddr, getAppBtcAddr, isObject, randomString, unionPreds, sepPreds,
+  getPredStatus, getPendingPred, deriveTxInfo, getPredSeq, getFetchMeMoreParams,
 } from '@/utils';
 import vars from '@/vars';
 
@@ -118,25 +118,7 @@ export const fetchGameBtc = (doForce = false) => async (dispatch, getState) => {
   const burnHeight = getState().gameBtc.burnHeight;
   const unsavedPreds = dataApi.getUnsavedPreds(GAME_BTC);
 
-  const predsPerId = {}, newPredPerId = {}, newData = {};
-  if (isObject(data.pred)) {
-    if (!Array.isArray(predsPerId[data.pred.id])) predsPerId[data.pred.id] = [];
-    predsPerId[data.pred.id].push(data.pred);
-  }
-  if (Array.isArray(data.preds)) {
-    for (const pred of data.preds) {
-      if (!Array.isArray(predsPerId[pred.id])) predsPerId[pred.id] = [];
-      predsPerId[pred.id].push(pred);
-    }
-  }
-  for (const pred of unsavedPreds) {
-    if (!Array.isArray(predsPerId[pred.id])) predsPerId[pred.id] = [];
-    predsPerId[pred.id].push(pred);
-  }
-  for (const preds of Object.values(predsPerId)) {
-    const newPred = mergePreds(...preds);
-    newPredPerId[newPred.id] = newPred;
-  }
+  const newPredPerId = unionPreds(data, unsavedPreds);
 
   for (const pred of unsavedPreds) {
     const newPred = newPredPerId[pred.id];
@@ -151,6 +133,7 @@ export const fetchGameBtc = (doForce = false) => async (dispatch, getState) => {
     }
   }
 
+  const newData = {}
   for (const key in data) {
     if (['pred', 'preds'].includes(key)) continue;
     newData[key] = data[key];
@@ -181,7 +164,56 @@ export const fetchMe = (doForce = false) => async (dispatch, getState) => {
   if (!doForce && vars.me.didFetch) return;
   vars.me.didFetch = true;
 
+  let data;
+  try {
+    data = await dataApi.fetchMe();
+  } catch (error) {
+    console.log('fetchMe error:', error);
+    dispatch(updateMe({ didFetch: false }));
+    return;
+  }
 
+  // should getUnsavedPreds for all games if not yet done?
+
+  const { btcGamePreds } = sepPreds(data);
+  data.btcGamePreds = btcGamePreds;
+
+  dispatch(updateMe({ ...data, didFetch: true }));
+
+  setTimeout(() => {
+    dispatch(refreshPreds());
+  }, 1000); // Call refreshPreds after state updated.
+};
+
+export const fetchMeMore = (doForce) => async (dispatch, getState) => {
+  const isUserSignedIn = getState().user.isUserSignedIn;
+  if (!isUserSignedIn) return;
+
+  const fetchingMore = getState().me.fetchingMore;
+  if (fetchingMore === true) return;
+  if (!doForce && fetchingMore !== null) return;
+  dispatch(updateMe({ fetchingMore: true }));
+
+  const gameBtcPreds = getState().gameBtcPreds;
+  const {
+    game, createDate, operator, excludingIds,
+  } = getFetchMeMoreParams(gameBtcPreds);
+
+  let data;
+  try {
+    data = await dataApi.fetchPreds(
+      null, game, createDate, operator, excludingIds
+    );
+  } catch (error) {
+    console.log('fetchMeMore error:', error);
+    dispatch(updateMe({ fetchingMore: false }));
+    return;
+  }
+
+  const { btcGamePreds } = sepPreds(data);
+  data.btcGamePreds = btcGamePreds;
+
+  dispatch(updateMe({ ...data, fetchingMore: null }));
 
   setTimeout(() => {
     dispatch(refreshPreds());
@@ -190,10 +222,6 @@ export const fetchMe = (doForce = false) => async (dispatch, getState) => {
 
 export const updateMe = (payload) => {
   return { type: UPDATE_ME, payload };
-};
-
-export const fetchMeMorePreds = () => async (dispatch, getState) => {
-
 };
 
 export const agreeTerms = () => async (dispatch, getState) => {
