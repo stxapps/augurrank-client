@@ -311,7 +311,7 @@ const refreshUnconfirmedPreds = async (preds, dispatch) => {
   for (const pred of preds) {
     let txInfo;
     try {
-      txInfo = await dataApi.fetchTxInfo(pred.txId);
+      txInfo = await dataApi.fetchTxInfo(pred.cTxId);
     } catch (error) {
       if (error.message !== NOT_FOUND_ERROR) {
         continue; // server error, network error, do it later or by server.
@@ -321,7 +321,7 @@ const refreshUnconfirmedPreds = async (preds, dispatch) => {
       }
 
       // Not in mempool anymore like cannot confirm i.e. wrong nonce, not enough fee
-      txInfo = { tx_id: pred.txId, status: ABT_BY_NF };
+      txInfo = { tx_id: pred.cTxId, status: ABT_BY_NF };
     }
     txInfo = deriveTxInfo(txInfo);
     if (txInfo.status === PDG) continue;

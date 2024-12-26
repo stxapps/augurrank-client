@@ -20,7 +20,7 @@
     "@stacks/transactions": "^7.0.2",
     "clsx": "^2.1.1",
     "idb-keyval": "^6.2.1",
-    "motion": "^11.13.3",
+    "motion": "^11.15.0",
     "next": "^14.2.16",
     "next-image-export-optimizer": "^1.15.1",
     "next-themes": "^0.3.0",

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useId, useRef } from 'react';
 import clsx from 'clsx';
-import { animate, timeline } from 'motion';
+import { animate } from 'motion';
 
 /** @type any  */
 const stars = [
@@ -70,25 +70,22 @@ function Star({ blurId, point: [cx, cy, dim, blur] }) {
   const ref = useRef(null);
 
   useEffect(() => {
-    if (!groupRef.current || !ref.current) {
-      return;
-    }
+    if (!groupRef.current || !ref.current) return;
 
     const delay = Math.random() * 2;
-
     const animations = [
       animate(groupRef.current, { opacity: 1 }, { duration: 4, delay }),
       animate(
         ref.current,
         {
+          r: dim ? [1, 1.2] : [1.2, 1],
           opacity: dim ? [0.2, 0.5] : [1, 0.6],
-          scale: dim ? [1, 1.2] : [1.2, 1],
         },
         {
           delay,
           duration: Math.random() * 2 + 2,
-          direction: 'alternate',
           repeat: Infinity,
+          repeatType: 'reverse',
         },
       ),
     ];
@@ -101,17 +98,13 @@ function Star({ blurId, point: [cx, cy, dim, blur] }) {
   }, [dim]);
 
   return (
-    <g ref={groupRef} className="opacity-0">
+    <g ref={groupRef} opacity={0}>
       <circle
         ref={ref}
         cx={cx}
         cy={cy}
-        r={1}
-        style={{
-          transformOrigin: `${cx / 16}rem ${cy / 16}rem`,
-          opacity: dim ? 0.2 : 1,
-          transform: `scale(${dim ? 1 : 1.2})`,
-        }}
+        r={dim ? 1 : 1.2}
+        opacity={dim ? 0.2 : 1}
         filter={blur ? `url(#${blurId})` : undefined}
       />
     </g>
@@ -120,16 +113,13 @@ function Star({ blurId, point: [cx, cy, dim, blur] }) {
 
 function Constellation({ points, blurId }) {
   const ref = useRef(null);
-  const uniquePoints = points.filter(
-    (point, pointIndex) =>
-      points.findIndex((p) => String(p) === String(point)) === pointIndex,
-  );
+  const uniquePoints = points.filter((point, pointIndex) => {
+    return points.findIndex((p) => String(p) === String(point)) === pointIndex;
+  });
   const isFilled = uniquePoints.length !== points.length;
 
   useEffect(() => {
-    if (!ref.current) {
-      return;
-    }
+    if (!ref.current) return;
 
     const sequence = [
       [
@@ -138,7 +128,6 @@ function Constellation({ points, blurId }) {
         { duration: 5, delay: Math.random() * 3 + 2 },
       ],
     ];
-
     if (isFilled) {
       sequence.push([
         ref.current,
@@ -146,9 +135,8 @@ function Constellation({ points, blurId }) {
         { duration: 1 },
       ]);
     }
-
     /** @ts-expect-error */
-    const animation = timeline(sequence);
+    const animation = animate(sequence);
 
     return () => {
       animation.cancel();
@@ -160,13 +148,13 @@ function Constellation({ points, blurId }) {
       <path
         ref={ref}
         stroke="white"
-        strokeOpacity="0.2"
+        strokeOpacity={0.2}
         strokeDasharray={1}
         strokeDashoffset={1}
         pathLength={1}
         fill="transparent"
         d={`M ${points.join('L')}`}
-        className="invisible"
+        visibility="hidden"
       />
       {uniquePoints.map((point, pointIndex) => (
         <Star key={pointIndex} point={point} blurId={blurId} />

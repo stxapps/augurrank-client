@@ -335,19 +335,23 @@ export const deriveTxInfo = (txInfo) => {
   return obj;
 };
 
-export const getPredSeq = (txInfo) => {
-  const regex = /u(\d+)\)/; // (ok (tuple (seq u532)))
+const getPredNumber = (regex, txInfo) => {
   try {
     const match = txInfo.result.match(regex);
     if (match) {
-      const seq = parseInt(match[1]);
-      if (isNumber(seq)) return seq;
+      const nmbr = parseInt(match[1]);
+      if (isNumber(nmbr)) return nmbr;
     }
   } catch (error) {
     // txInfo.result might not be string.
   }
 
   return -1;
+};
+
+export const getPredSeq = (txInfo) => {
+  const regex = /\(seq\s+u(\d+)\)/; // (ok (tuple (seq u532)))
+  return getPredNumber(regex, txInfo);
 };
 
 export const getFetchMeMoreParams = (gameBtcPreds) => {
