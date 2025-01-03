@@ -39,7 +39,7 @@ export const fetchBtcPrice = (doForce = false, doLoad = false) => async (
   dispatch(updateGameBtc({ price }));
 
   const burnHeight = getState().gameBtc.burnHeight;
-  const preds = getState().preds;
+  const preds = getState().gameBtcPreds;
   const pendingPred = getPendingPred(preds, burnHeight);
   const ms = getBtcPriceTime(pendingPred);
 
@@ -79,7 +79,7 @@ export const fetchBurnHeight = (doForce = false, doLoad = false) => async (
 
   dispatch(updateGameBtc({ burnHeight }));
 
-  const preds = getState().preds;
+  const preds = getState().gameBtcPreds;
   const pendingPred = getPendingPred(preds, burnHeight);
   const ms = getBurnHeightTime(pendingPred);
 

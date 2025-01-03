@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { StarField } from '@/components/StarField';
 import { TopBar } from '@/components/TopBar';
 import { Footer } from '@/components/Footer';
+import { AgreePopup } from '@/components/AgreePoup';
 
 import './globals.css';
 import { Providers } from './providers';
@@ -31,6 +32,7 @@ export default function RootLayout({ children }) {
           <TopBar />
           {children}
           <Footer />
+          <AgreePopup />
         </Providers>
       </body>
     </html>

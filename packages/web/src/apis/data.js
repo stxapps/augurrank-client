@@ -10,6 +10,28 @@ import {
 } from '@/types/const';
 import { isObject, isString, isNumber, getUserStxAddr } from '@/utils';
 
+const _fetchBtcPrice = async () => {
+  try {
+    const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+    const obj = await res.json();
+    const price = obj.bitcoin.usd;
+    return price;
+  } catch (error) {
+    // Ignore to try another api
+  }
+
+  const res = await fetch('https://api.blockchain.info/ticker');
+  if (!res.ok) {
+    throw new Error(res.statusText);
+  }
+  const obj = await res.json();
+  const price = obj.USD.last;
+  return price;
+};
+
 const fetchBtcPrice = async () => {
   const str = lsgApi.getItemSync(BTC_PRICE_OBJ);
   if (isString(str)) {
@@ -23,25 +45,7 @@ const fetchBtcPrice = async () => {
     }
   }
 
-  const userData = userSession.loadUserData();
-  const stxAddr = getUserStxAddr(userData);
-
-  const opts = {
-    contractAddress: 'SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM',
-    contractName: 'amm-pool-v2-01',
-    functionName: 'get-helper-a',
-    functionArgs: [
-      Cl.principal('SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-abtc'),
-      Cl.principal('SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-wstx-v2'),
-      Cl.principal('SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-susdt'),
-      Cl.uint(100000000),
-      Cl.uint(100000000),
-      Cl.uint(1),
-    ],
-    network: STACKS_MAINNET,
-    senderAddress: stxAddr,
-  };
-  const price = await fetchCallReadOnlyFunction(opts);
+  const price = await _fetchBtcPrice();
 
   lsgApi.setItemSync(
     BTC_PRICE_OBJ, JSON.stringify({ price, createDate: Date.now() })

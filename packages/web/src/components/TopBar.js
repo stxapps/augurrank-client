@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
 import Image from 'next-image-export-optimizer';
-import { ChevronLeftIcon } from '@heroicons/react/20/solid';
+import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 
 import { signIn, signOut } from '@/actions';
 import Logo from '@/images/logo.svg';

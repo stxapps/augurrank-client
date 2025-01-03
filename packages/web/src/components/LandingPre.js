@@ -121,7 +121,7 @@ function MiddleFour() {
 
 export function LandingPre() {
   return (
-    <main className="relative mx-auto max-w-2xl overflow-hidden px-6 py-20">
+    <main className="relative mx-auto max-w-2xl overflow-hidden px-4 sm:px-6 lg:px-8 xl:px-12 py-20">
       <div className="flex flex-col items-center justify-start sm:flex-row sm:justify-center">
         <div className="rounded-full border-2 border-slate-800 p-2">
           <Image className="size-32" src={Logo} alt="" />
