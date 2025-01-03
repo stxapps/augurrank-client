@@ -48,4 +48,10 @@
       transform: rotate(360deg) scale(.8);
     }
   }
+
+  .e-mail:before {
+    content: attr(data-website) "\0040" attr(data-user);
+    unicode-bidi: bidi-override;
+    direction: rtl;
+  }
 }

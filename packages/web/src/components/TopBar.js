@@ -21,20 +21,32 @@ export function TopBar() {
     dispatch(signOut());
   };
 
-  const leftPane = (
-    <div className="relative flex grow basis-0 items-center">
-      {pathname === '/game-btc' && <Link className="flex items-center justify-center text-slate-100 hover:text-orange-200 p-1 focus:outline-none group" href="/">
+  let leftItem;
+  if (pathname === '/') {
+    leftItem = null;
+  } else if (pathname === '/game-btc') {
+    leftItem = (
+      <Link className="flex items-center justify-center text-slate-100 hover:text-orange-200 p-1 focus:outline-none group" href="/">
         <div className="flex items-center justify-center rounded-full group-focus-visible:outline group-focus-visible:outline-1">
           <ChevronLeftIcon className="size-9" />
         </div>
-      </Link>}
-      {pathname === '/me' && <Link className="flex items-center justify-center p-0.5 text-slate-100 focus:outline-none group hover:brightness-110" href="/">
+      </Link>
+    );
+  } else {
+    leftItem = (
+      <Link className="flex items-center justify-center p-0.5 text-slate-100 focus:outline-none group hover:brightness-110" href="/">
         <div className="flex items-center justify-center rounded-full group-focus-visible:outline group-focus-visible:outline-1 p-0.5">
           <Image className="h-8 w-auto" src={Logo} alt="" placeholder="empty" priority={true} />
         </div>
-      </Link>}
+      </Link>
+    );
+  }
+  const leftPane = (
+    <div className="relative flex grow basis-0 items-center">
+      {leftItem}
     </div>
   );
+
   const rightPane = (
     <div className="relative flex grow basis-0 justify-end items-center space-x-5">
       {pathname !== '/game-btc' && <Link className="group text-lg font-medium text-slate-100 hover:text-orange-200 px-0.5 py-1.5 focus:outline-none" href="/game-btc">
