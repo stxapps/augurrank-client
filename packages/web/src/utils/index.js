@@ -118,6 +118,10 @@ export const isNumber = val => {
   return typeof val === 'number' && isFinite(val);
 };
 
+export const isZrOrPst = (number) => {
+  return isNumber(number) && number >= 0;
+};
+
 export const randomString = (length) => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
   const charactersLength = characters.length;
@@ -127,6 +131,14 @@ export const randomString = (length) => {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
+};
+
+export const upperCaseFirstChar = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+export const localeNumber = (num) => {
+  return num.toLocaleString();
 };
 
 export const validateEmail = email => {
@@ -293,6 +305,11 @@ export const getPredStatus = (pred, burnHeight = null) => {
 };
 
 export const getPendingPred = (preds, burnHeight) => {
+  const { pred } = getPndgPredWthSts(preds, burnHeight);
+  return pred;
+};
+
+export const getPndgPredWthSts = (preds, burnHeight) => {
   const stdPreds = Object.values(preds).sort((a, b) => b.createDate - a.createDate);
   for (const pred of stdPreds) {
     const status = getPredStatus(pred, burnHeight);
@@ -300,16 +317,16 @@ export const getPendingPred = (preds, burnHeight) => {
     if ([
       PRED_STATUS_VERIFIED_ERROR, PRED_STATUS_VERIFIED_OK, PRED_STATUS_VERIFYING,
       PRED_STATUS_VERIFIABLE,
-    ].includes(status)) return null;
+    ].includes(status)) return { pred: null, status: null };
 
     if ([PRED_STATUS_CONFIRMED_ERROR].includes(status)) continue;
 
     if ([
       PRED_STATUS_CONFIRMED_OK, PRED_STATUS_PUT_ERROR, PRED_STATUS_PUT_OK,
       PRED_STATUS_IN_MEMPOOL, PRED_STATUS_INIT,
-    ].includes(status)) return pred;
+    ].includes(status)) return { pred, status };
   }
-  return null;
+  return { pred: null, status: null };
 };
 
 export const deriveTxInfo = (txInfo) => {

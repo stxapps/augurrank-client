@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 
-import { isNumber, getPendingPred } from '../utils';
+import { isNumber, getPndgPredWthSts } from '../utils';
 
 const _getInsets = (insetTop, insetRight, insetBottom, insetLeft) => {
   let [top, right, bottom, left] = [0, 0, 0, 0];
@@ -66,11 +66,11 @@ export const getSafeAreaInsets = createSelector(
   }
 );
 
-export const getPendingGameBtcPred = createSelector(
+export const getPndgGameBtcPredWthSts = createSelector(
   state => state.gameBtc.burnHeight,
   state => state.gameBtcPreds,
   (burnHeight, preds) => {
-    return getPendingPred(preds, burnHeight);
+    return getPndgPredWthSts(preds, burnHeight);
   }
 );
 

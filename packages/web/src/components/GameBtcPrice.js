@@ -28,7 +28,7 @@ export function GameBtcPrice() {
   let pPane;
   if (price === null || burnHeight === null) { // loading
     pPane = (
-      <div className="mt-2 h-8 animate-pulse rounded-lg w-28 bg-slate-700"></div>
+      <div className="mt-2 h-8 animate-pulse rounded-lg w-28 bg-slate-700/40"></div>
     )
   } else if (price === -1 || burnHeight === -1) { // show error and retry button
     pPane = (

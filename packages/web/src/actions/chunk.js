@@ -99,14 +99,17 @@ const getBurnHeightTime = (pendingPred) => {
   return dms;
 };
 
-export const fetchGameBtc = (doForce = false) => async (dispatch, getState) => {
+export const fetchGameBtc = (doForce = false, doLoad = false) => async (
+  dispatch, getState
+) => {
   const isUserSignedIn = getState().user.isUserSignedIn;
   if (!isUserSignedIn) return;
 
   if (!doForce && vars.gameBtc.didFetch) return;
   vars.gameBtc.didFetch = true;
 
-  let data;
+  let data = null;
+  if (doLoad) dispatch(updateGameBtc({ didFetch: null }));
   try {
     data = await dataApi.fetchGame(GAME_BTC);
   } catch (error) {

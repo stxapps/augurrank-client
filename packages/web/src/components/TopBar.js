@@ -28,7 +28,7 @@ export function TopBar() {
     leftItem = (
       <Link className="flex items-center justify-center text-slate-100 hover:text-orange-200 p-1 focus:outline-none group" href="/">
         <div className="flex items-center justify-center rounded-full group-focus-visible:outline group-focus-visible:outline-1">
-          <ChevronLeftIcon className="size-9" />
+          <ChevronLeftIcon className="size-8" />
         </div>
       </Link>
     );
@@ -49,10 +49,10 @@ export function TopBar() {
 
   const rightPane = (
     <div className="relative flex grow basis-0 justify-end items-center space-x-5">
-      {pathname !== '/game-btc' && <Link className="group text-lg font-medium text-slate-100 hover:text-orange-200 px-0.5 py-1.5 focus:outline-none" href="/game-btc">
+      {pathname !== '/game-btc' && <Link className="group text-lg font-medium text-slate-100 hover:text-orange-200 px-0.5 py-1.5 focus:outline-none" href="/game-btc" prefetch={true}>
         <div className="rounded-full px-2 py-0.5 group-focus-visible:outline group-focus-visible:outline-1">Game</div>
       </Link>}
-      {(isUserSignedIn && pathname !== '/me') && <Link className="text-lg font-medium text-slate-100 hover:text-orange-200 px-0.5 py-1.5 focus:outline-none group" href="/me">
+      {(isUserSignedIn && pathname !== '/me') && <Link className="text-lg font-medium text-slate-100 hover:text-orange-200 px-0.5 py-1.5 focus:outline-none group" href="/me" prefetch={false}>
         <div className="px-2 py-0.5 group-focus-visible:outline group-focus-visible:outline-1 rounded-full">Me</div>
       </Link>}
       {!isUserSignedIn && <button onClick={onSignInBtnClick} className="rounded-full bg-orange-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110">
