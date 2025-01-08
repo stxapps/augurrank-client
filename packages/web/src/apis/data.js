@@ -1,6 +1,4 @@
-import { fetchCallReadOnlyFunction, Cl } from '@stacks/transactions/dist/esm';
 import { signECDSA } from '@stacks/encryption/dist/esm';
-import { STACKS_MAINNET } from '@stacks/network/dist/esm';
 
 import userSession from '@/userSession';
 import lsgApi from '@/apis/localSg';

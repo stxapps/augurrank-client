@@ -118,6 +118,10 @@ export const isNumber = val => {
   return typeof val === 'number' && isFinite(val);
 };
 
+export const isFldStr = val => {
+  return isString(val) && val.length > 0;
+};
+
 export const isZrOrPst = (number) => {
   return isNumber(number) && number >= 0;
 };

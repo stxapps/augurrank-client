@@ -7,7 +7,6 @@ import {
 import { JoinNewsletter } from '@/components/JoinNewsletter';
 import { TwitterIcon, ThreadsIcon, BSkyIcon, GithubIcon } from '@/components/Icons';
 import Logo from '@/images/logo.svg';
-import LogoStxApps from '@/images/logo-stx-apps.svg';
 
 function MiddleOne() {
   return (
@@ -143,13 +142,6 @@ export function LandingPre() {
         </Link>
         <Link className="group flex size-10 items-center justify-center rounded-full bg-slate-800" href="https://blog.augurrank.com" target="_blank" rel="noreferrer">
           <NewspaperIcon className="size-5 fill-orange-400 group-hover:fill-orange-300" />
-        </Link>
-      </div>
-      <div className="mt-20 flex flex-col items-center">
-        <p className="text-sm text-slate-500">Brought to you by</p>
-        <Link className="group mt-2.5 flex items-center justify-start" href="https://www.stxapps.com" target="_blank" rel="noreferrer">
-          <Image className="h-8 w-auto" src={LogoStxApps} alt="STX Apps" placeholder="empty" />
-          <div className="ml-2 text-2xl font-extrabold text-slate-100 group-hover:text-white">STX Apps</div>
         </Link>
       </div>
     </main>

@@ -4,6 +4,7 @@ const initialState = {
   isUserSignedIn: null,
   username: null,
   image: null,
+  stxAddr: null,
   didAgreeTerms: null,
 };
 
@@ -15,6 +16,7 @@ const userReducer = (state = initialState, action) => {
       isUserSignedIn: action.payload.isUserSignedIn,
       username: action.payload.username,
       image: action.payload.userImage,
+      stxAddr: action.payload.userStxAddr,
       didAgreeTerms: action.payload.didAgreeTerms,
     };
   }

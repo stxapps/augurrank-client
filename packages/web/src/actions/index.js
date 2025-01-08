@@ -11,8 +11,8 @@ import {
   JOIN_NEWSLETTER_STATUS_COMMIT, JOIN_NEWSLETTER_STATUS_ROLLBACK,
 } from '@/types/const';
 import {
-  extractUrl, getUrlPathQueryHash, getUserUsername, getUserImageUrl, throttle, isObject,
-  validateEmail, getWindowInsets,
+  extractUrl, getUrlPathQueryHash, getUserUsername, getUserImageUrl, getUserStxAddr,
+  throttle, isObject, validateEmail, getWindowInsets,
 } from '@/utils';
 import vars from '@/vars';
 
@@ -23,11 +23,12 @@ export const init = () => async (dispatch, getState) => {
 
   const isUserSignedIn = userSession.isUserSignedIn();
 
-  let username = null, userImage = null, didAgreeTerms = null;
+  let username = null, userImage = null, userStxAddr = null, didAgreeTerms = null;
   if (isUserSignedIn) {
     const userData = userSession.loadUserData();
     username = getUserUsername(userData);
     userImage = getUserImageUrl(userData);
+    userStxAddr = getUserStxAddr(userData);
 
     const extraUserData = idxApi.getExtraUserData();
     didAgreeTerms = extraUserData.didAgreeTerms;
@@ -35,7 +36,7 @@ export const init = () => async (dispatch, getState) => {
 
   dispatch({
     type: INIT,
-    payload: { isUserSignedIn, username, userImage, didAgreeTerms },
+    payload: { isUserSignedIn, username, userImage, userStxAddr, didAgreeTerms },
   });
 
   window.addEventListener('resize', throttle(() => {
@@ -95,6 +96,7 @@ const updateUserSignedIn = () => async (dispatch, getState) => {
     isUserSignedIn: true,
     username: getUserUsername(userData),
     image: getUserImageUrl(userData),
+    stxAddr: getUserStxAddr(userData),
   }));
 };
 

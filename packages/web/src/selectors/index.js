@@ -1,6 +1,9 @@
 import { createSelector } from 'reselect';
 
-import { isNumber, getPndgPredWthSts } from '../utils';
+import {
+  PRED_STATUS_CONFIRMED_ERROR, PRED_STATUS_VERIFIED_OK, PRED_STATUS_VERIFIED_ERROR,
+} from '@/types/const';
+import { isObject, isNumber, getPndgPredWthSts, getPredStatus } from '@/utils';
 
 const _getInsets = (insetTop, insetRight, insetBottom, insetLeft) => {
   let [top, right, bottom, left] = [0, 0, 0, 0];
@@ -71,6 +74,51 @@ export const getPndgGameBtcPredWthSts = createSelector(
   state => state.gameBtcPreds,
   (burnHeight, preds) => {
     return getPndgPredWthSts(preds, burnHeight);
+  }
+);
+
+export const getMeStats = createSelector(
+  state => state.gameBtcPreds,
+  state => state.me.stats,
+  (gameBtcPreds, stats) => {
+    const meStats = {
+      nWins: 0, nLosses: 0, nPending: 0, nContDays: 0, nContWins: 0, maxContDays: 0,
+      maxContWins: 0,
+    };
+
+    for (const pred of Object.values(gameBtcPreds)) {
+      const status = getPredStatus(pred);
+      if (![
+        PRED_STATUS_CONFIRMED_ERROR, PRED_STATUS_VERIFIED_OK,
+        PRED_STATUS_VERIFIED_ERROR,
+      ].includes(status)) meStats.nPending += 1;
+    }
+
+    if (isObject(stats)) {
+      for (const [key, value] of Object.entries(stats)) {
+        if (!isNumber(value)) continue;
+
+        if (key.endsWith('-up-verified_ok-TRUE-count')) {
+          meStats.nWins += value;
+        } else if (key.endsWith('-up-verified_ok-FALSE-count')) {
+          meStats.nLosses += value;
+        } else if (key.endsWith('-down-verified_ok-TRUE-count')) {
+          meStats.nWins += value;
+        } else if (key.endsWith('-down-verified_ok-FALSE-count')) {
+          meStats.nLosses += value;
+        } else if (key.endsWith('-confirmed_ok-count-cont-day')) {
+          meStats.nContDays = value;
+        } else if (key.endsWith('-verified_ok-TRUE-count-cont')) {
+          meStats.nContWins = value;
+        } else if (key.endsWith('-confirmed_ok-max-cont-day')) {
+          meStats.maxContDays = value;
+        } else if (key.endsWith('-verified_ok-TRUE-max-cont')) {
+          meStats.maxContWins = value;
+        }
+      }
+    }
+
+    return meStats;
   }
 );
 
