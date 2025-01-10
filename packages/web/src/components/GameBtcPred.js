@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Link from 'next/link';
 import {
@@ -8,38 +8,15 @@ import {
 
 import { signIn } from '@/actions';
 import { fetchGameBtc, predictGameBtc } from '@/actions/chunk';
-import { PRED_STATUS_INIT, PRED_STATUS_CONFIRMED_OK } from '@/types/const';
+import {
+  CONTRACT_ADDR, PRED_STATUS_INIT, PRED_STATUS_CONFIRMED_OK,
+} from '@/types/const';
+import { PredTimer } from '@/components/PredTimer';
 import { LoadingIcon } from '@/components/Icons';
 import { getPndgGameBtcPredWthSts } from '@/selectors';
-import { isObject, isZrOrPst, upperCaseFirstChar, localeNumber } from '@/utils';
-
-function Timer(props) {
-  const { targetBurnHeight, burnHeight } = props;
-  const [secs, setSecs] = useState(
-    ((targetBurnHeight - burnHeight) * 10 * 60) - Math.floor(Math.random() * 59)
-  );
-
-  useEffect(() => {
-    const timeId = setInterval(() => {
-      setSecs(v => v - 1);
-    }, 1000);
-    return () => {
-      clearInterval(timeId);
-    };
-  }, [setSecs]);
-
-  const h = Math.floor(secs / 60 / 60);
-  const m = Math.floor((secs - (h * 60 * 60)) / 60);
-  const s = secs - (h * 60 * 60) - (m * 60);
-
-  const [mm, ss] = [`${m}`.padStart(2, '0'), `${s}`.padStart(2, '0')];
-
-  return (
-    <>
-      ~<span className="font-mono text-lg">{h}</span><span className="text-sm">h</span> <span className="font-mono text-lg">{mm}</span><span className="text-sm">m</span> <span className="font-mono text-lg">{ss}</span><span className="text-sm">s</span> left
-    </>
-  );
-}
+import {
+  isObject, isZrOrPst, upperCaseFirstChar, localeNumber, localeDate,
+} from '@/utils';
 
 export function GameBtcPred() {
   const isUserSignedIn = useSelector(state => state.user.isUserSignedIn);
@@ -147,19 +124,21 @@ export function GameBtcPred() {
   };
 
   const renderCfPdPane = () => {
+    const { pred } = predWthSts;
+
     return (
       <>
         <div className="flex space-x-2 justify-between items-center">
-          <p className="text-lg text-slate-200">{upperCaseFirstChar(predWthSts.pred.value)}</p>
-          <Link className="group flex items-center" href={`https://explorer.hiro.so/txid/${predWthSts.pred.cTxId}?chain=mainnet`} target="_blank" rel="noreferrer">
-            <p className="text-base text-green-500 group-hover:underline">In anticipation</p>
-            <ArrowTopRightOnSquareIcon className="ml-1 size-3.5 text-green-500" />
+          <p className="text-lg text-slate-200">{upperCaseFirstChar(pred.value)} <span className="text-sm text-slate-400">at #{localeNumber(pred.targetBurnHeight)}</span></p>
+          <Link className="group flex items-center overflow-hidden" href={`https://explorer.hiro.so/txid/${pred.cTxId}?chain=mainnet`} target="_blank" rel="noreferrer">
+            <p className="text-base text-sky-500 group-hover:underline">In anticipation</p>
+            <ArrowTopRightOnSquareIcon className="ml-1 size-3.5 text-sky-500" />
           </Link>
         </div>
-        <div className="mt-3 flex space-x-2 justify-between items-baseline">
-          <p className="text-sm text-slate-400">At #{localeNumber(predWthSts.pred.targetBurnHeight)}</p>
-          <p className="text-base text-slate-400">
-            <Timer targetBurnHeight={predWthSts.pred.targetBurnHeight} burnHeight={burnHeight} />
+        <div className="mt-2 flex space-x-2 justify-between items-baseline">
+          <p className="text-sm text-slate-400">{localeDate(pred.createDate)} ∙ <Link className="hover:underline" href={`https://explorer.hiro.so/txid/${CONTRACT_ADDR}.${pred.game}?chain=mainnet`}>{pred.game}</Link></p>
+          <p className="text-sm text-slate-400 text-right">
+            <PredTimer targetBurnHeight={pred.targetBurnHeight} />
           </p>
         </div>
       </>
@@ -167,17 +146,22 @@ export function GameBtcPred() {
   };
 
   const renderMpPdPane = () => {
+    const { pred } = predWthSts;
+
     return (
       <>
         <div className="flex space-x-2 justify-between items-center">
-          <p className="text-lg text-slate-200">{upperCaseFirstChar(predWthSts.pred.value)}</p>
-          <Link className="group flex items-center" href={`https://explorer.hiro.so/txid/${predWthSts.pred.cTxId}?chain=mainnet`} target="_blank" rel="noreferrer">
+          <p className="text-lg text-slate-200">{upperCaseFirstChar(pred.value)}</p>
+          <Link className="group flex items-center overflow-hidden" href={`https://explorer.hiro.so/txid/${pred.cTxId}?chain=mainnet`} target="_blank" rel="noreferrer">
             <LoadingIcon className="size-5 animate-spin stroke-slate-600 text-yellow-400" />
             <p className="ml-0.5 text-base text-yellow-400 group-hover:underline">In mempool</p>
             <ArrowTopRightOnSquareIcon className="ml-1 size-3.5 text-yellow-400" />
           </Link>
         </div>
-        <p className="mt-3 text-sm text-slate-400">Waiting to be stored on the chain.</p>
+        <div className="mt-2 flex space-x-2 justify-between items-baseline">
+          <p className="text-sm text-slate-400">{localeDate(pred.createDate)} ∙ <Link className="hover:underline" href={`https://explorer.hiro.so/txid/${CONTRACT_ADDR}.${pred.game}?chain=mainnet`}>{pred.game}</Link></p>
+          <p className="text-sm text-slate-400 text-right">Storing on the chain</p>
+        </div>
       </>
     );
   };

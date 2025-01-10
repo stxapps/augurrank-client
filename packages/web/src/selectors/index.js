@@ -78,16 +78,17 @@ export const getPndgGameBtcPredWthSts = createSelector(
 );
 
 export const getMeStats = createSelector(
+  state => state.gameBtc.burnHeight,
   state => state.gameBtcPreds,
   state => state.me.stats,
-  (gameBtcPreds, stats) => {
+  (burnHeight, gameBtcPreds, stats) => {
     const meStats = {
       nWins: 0, nLosses: 0, nPending: 0, nContDays: 0, nContWins: 0, maxContDays: 0,
       maxContWins: 0,
     };
 
     for (const pred of Object.values(gameBtcPreds)) {
-      const status = getPredStatus(pred);
+      const status = getPredStatus(pred, burnHeight);
       if (![
         PRED_STATUS_CONFIRMED_ERROR, PRED_STATUS_VERIFIED_OK,
         PRED_STATUS_VERIFIED_ERROR,
@@ -122,11 +123,17 @@ export const getMeStats = createSelector(
   }
 );
 
-export const getMePreds = createSelector(
+export const getMePredsWthSts = createSelector(
+  state => state.gameBtc.burnHeight,
   state => state.gameBtcPreds,
-  (gameBtcPreds) => {
-    const preds = Object.values(gameBtcPreds);
-    preds.sort((a, b) => b.createDate - a.createDate);
-    return preds;
+  (burnHeight, gameBtcPreds) => {
+    const predsWthSts = [];
+    for (const pred of Object.values(gameBtcPreds)) {
+      const status = getPredStatus(pred, burnHeight);
+      predsWthSts.push({ pred, status });
+    }
+
+    predsWthSts.sort((a, b) => b.pred.createDate - a.pred.createDate);
+    return predsWthSts;
   }
 );

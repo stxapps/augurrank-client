@@ -42,13 +42,13 @@ export function TopBar() {
     );
   }
   const leftPane = (
-    <div className="relative flex grow basis-0 items-center">
+    <div className="relative flex grow shrink-0 items-center">
       {leftItem}
     </div>
   );
 
   const rightPane = (
-    <div className="relative flex grow basis-0 justify-end items-center space-x-5">
+    <div className="relative flex grow shrink-0 justify-end items-center space-x-5">
       {pathname !== '/game-btc' && <Link className="group text-lg font-medium text-slate-100 hover:text-orange-200 px-0.5 py-1.5 focus:outline-none" href="/game-btc" prefetch={true}>
         <div className="rounded-full px-2 py-0.5 group-focus-visible:outline group-focus-visible:outline-1">Game</div>
       </Link>}

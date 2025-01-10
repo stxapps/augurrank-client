@@ -160,14 +160,17 @@ export const removeGameBtcPreds = (ids) => {
   return { type: REMOVE_GAME_BTC_PREDS, payload: { ids } };
 };
 
-export const fetchMe = (doForce = false) => async (dispatch, getState) => {
+export const fetchMe = (doForce = false, doLoad = false) => async (
+  dispatch, getState
+) => {
   const isUserSignedIn = getState().user.isUserSignedIn;
   if (!isUserSignedIn) return;
 
   if (!doForce && vars.me.didFetch) return;
   vars.me.didFetch = true;
 
-  let data;
+  let data = null;
+  if (doLoad) dispatch(updateMe({ didFetch: null }));
   try {
     data = await dataApi.fetchMe();
   } catch (error) {

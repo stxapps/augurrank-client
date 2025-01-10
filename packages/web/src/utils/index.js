@@ -145,6 +145,13 @@ export const localeNumber = (num) => {
   return num.toLocaleString();
 };
 
+export const localeDate = (dt) => {
+  const d = new Date(dt);
+  return d.toLocaleDateString(
+    undefined, { day: 'numeric', month: 'numeric', year: '2-digit' }
+  );
+};
+
 export const validateEmail = email => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
