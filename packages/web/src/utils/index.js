@@ -102,23 +102,23 @@ export const throttle = (func, limit) => {
   };
 };
 
-export const sleep = ms => {
+export const sleep = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 };
 
-export const isObject = val => {
+export const isObject = (val) => {
   return typeof val === 'object' && val !== null;
 };
 
-export const isString = val => {
+export const isString = (val) => {
   return typeof val === 'string';
 };
 
-export const isNumber = val => {
+export const isNumber = (val) => {
   return typeof val === 'number' && isFinite(val);
 };
 
-export const isFldStr = val => {
+export const isFldStr = (val) => {
   return isString(val) && val.length > 0;
 };
 
