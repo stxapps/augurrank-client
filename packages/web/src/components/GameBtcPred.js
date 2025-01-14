@@ -49,11 +49,11 @@ export function GameBtcPred() {
 
   useEffect(() => {
     dispatch(fetchGameBtc());
-  }, [isUserSignedIn]);
+  }, [isUserSignedIn, dispatch]);
 
   useEffect(() => {
     didClick.current = false;
-  }, [predWthSts]);
+  }, [predWthSts, dispatch]);
 
   const renderUdbsPane = () => {
     const disabled = (
@@ -63,15 +63,15 @@ export function GameBtcPred() {
     return (
       <>
         <p className="text-base text-slate-200">Will the price go up or down at the following 100 Bitcoin blocks (approximately 16 hrs)?</p>
-        <div className="mt-4 flex space-x-2 justify-stretch">
+        <div className="mt-4 flex justify-stretch space-x-2">
           <button onClick={onUpBtnClick} className="w-full rounded-full bg-orange-400 px-4 py-1.5 text-sm font-semibold text-white hover:brightness-110 disabled:brightness-75" disabled={disabled}>
-            <div className="flex justify-center items-center space-x-2">
+            <div className="flex items-center justify-center space-x-2">
               <span>Up</span>
               <ArrowTrendingUpIcon className="size-5" />
             </div>
           </button>
           <button onClick={onDownBtnClick} className="w-full rounded-full bg-orange-400 px-4 py-1.5 text-sm font-semibold text-white hover:brightness-110 disabled:brightness-75" disabled={disabled}>
-            <div className="flex justify-center items-center space-x-2">
+            <div className="flex items-center justify-center space-x-2">
               <span>Down</span>
               <ArrowTrendingDownIcon className="size-5" />
             </div>
@@ -114,7 +114,7 @@ export function GameBtcPred() {
         {renderUdbsPane()}
         <div className="absolute inset-0 bg-slate-800/85 backdrop-blur-sm"></div>
         <div className="absolute inset-0 flex items-center justify-center p-4">
-          <div className="relative text-center p-4">
+          <div className="relative p-4 text-center">
             <p className="text-base text-red-600">Something went wrong! Please wait and try again.</p>
             <button onClick={onRetryBtnClick} className="mt-3 rounded-full bg-slate-600 px-4 py-2 text-sm font-medium text-slate-300 hover:brightness-110">Retry</button>
           </div>
@@ -128,16 +128,16 @@ export function GameBtcPred() {
 
     return (
       <>
-        <div className="flex space-x-2 justify-between items-center">
+        <div className="flex items-center justify-between space-x-2">
           <p className="text-lg text-slate-200">{upperCaseFirstChar(pred.value)} <span className="text-sm text-slate-400">at #{localeNumber(pred.targetBurnHeight)}</span></p>
           <Link className="group flex items-center overflow-hidden" href={`https://explorer.hiro.so/txid/${pred.cTxId}?chain=mainnet`} target="_blank" rel="noreferrer">
             <p className="text-base text-sky-500 group-hover:underline">In anticipation</p>
             <ArrowTopRightOnSquareIcon className="ml-1 size-3.5 text-sky-500" />
           </Link>
         </div>
-        <div className="mt-2 flex space-x-2 justify-between items-baseline">
+        <div className="mt-2 flex items-baseline justify-between space-x-2">
           <p className="text-sm text-slate-400">{localeDate(pred.createDate)} ∙ <Link className="hover:underline" href={`https://explorer.hiro.so/txid/${CONTRACT_ADDR}.${pred.game}?chain=mainnet`}>{pred.game}</Link></p>
-          <p className="text-sm text-slate-400 text-right">
+          <p className="text-right text-sm text-slate-400">
             <PredTimer targetBurnHeight={pred.targetBurnHeight} />
           </p>
         </div>
@@ -150,7 +150,7 @@ export function GameBtcPred() {
 
     return (
       <>
-        <div className="flex space-x-2 justify-between items-center">
+        <div className="flex items-center justify-between space-x-2">
           <p className="text-lg text-slate-200">{upperCaseFirstChar(pred.value)}</p>
           <Link className="group flex items-center overflow-hidden" href={`https://explorer.hiro.so/txid/${pred.cTxId}?chain=mainnet`} target="_blank" rel="noreferrer">
             <LoadingIcon className="size-5 animate-spin stroke-slate-600 text-yellow-400" />
@@ -158,9 +158,9 @@ export function GameBtcPred() {
             <ArrowTopRightOnSquareIcon className="ml-1 size-3.5 text-yellow-400" />
           </Link>
         </div>
-        <div className="mt-2 flex space-x-2 justify-between items-baseline">
+        <div className="mt-2 flex items-baseline justify-between space-x-2">
           <p className="text-sm text-slate-400">{localeDate(pred.createDate)} ∙ <Link className="hover:underline" href={`https://explorer.hiro.so/txid/${CONTRACT_ADDR}.${pred.game}?chain=mainnet`}>{pred.game}</Link></p>
-          <p className="text-sm text-slate-400 text-right">Storing on the chain</p>
+          <p className="text-right text-sm text-slate-400">Storing on the chain</p>
         </div>
       </>
     );
@@ -190,7 +190,7 @@ export function GameBtcPred() {
   }
 
   return (
-    <div className="relative px-7 py-8 min-h">
+    <div className="relative px-7 py-8">
       {content}
     </div>
   );

@@ -4,7 +4,7 @@ import { MePreds } from '@/components/MePreds';
 export function Me() {
 
   return (
-    <main className="relative mx-auto max-w-2xl overflow-hidden px-4 sm:px-6 lg:px-8 xl:px-12 py-20">
+    <main className="relative mx-auto max-w-2xl overflow-hidden px-4 py-20 sm:px-6 lg:px-8 xl:px-12">
       <MeStats />
       <MePreds />
     </main>

@@ -125,7 +125,7 @@ export const joinNewsletter = () => async (dispatch, getState) => {
 
   if (!validateEmail(email)) {
     dispatch(updateJoinNewsletter({
-      status: JOIN_NEWSLETTER_STATUS_INVALID, extraMsg: ''
+      status: JOIN_NEWSLETTER_STATUS_INVALID, extraMsg: '',
     }));
     return;
   }
@@ -145,7 +145,7 @@ export const joinNewsletter = () => async (dispatch, getState) => {
     if (!res.ok) {
       const extraMsg = res.statusText;
       dispatch(updateJoinNewsletter({
-        status: JOIN_NEWSLETTER_STATUS_ROLLBACK, extraMsg
+        status: JOIN_NEWSLETTER_STATUS_ROLLBACK, extraMsg,
       }));
       return;
     }
@@ -154,18 +154,18 @@ export const joinNewsletter = () => async (dispatch, getState) => {
     if (json.status !== VALID) {
       const extraMsg = 'Invalid reqBody or email';
       dispatch(updateJoinNewsletter({
-        status: JOIN_NEWSLETTER_STATUS_ROLLBACK, extraMsg
+        status: JOIN_NEWSLETTER_STATUS_ROLLBACK, extraMsg,
       }));
       return;
     }
 
     dispatch(updateJoinNewsletter({
-      status: JOIN_NEWSLETTER_STATUS_COMMIT, extraMsg: ''
+      status: JOIN_NEWSLETTER_STATUS_COMMIT, extraMsg: '',
     }));
   } catch (error) {
     const extraMsg = error.message;
     dispatch(updateJoinNewsletter({
-      status: JOIN_NEWSLETTER_STATUS_ROLLBACK, extraMsg
+      status: JOIN_NEWSLETTER_STATUS_ROLLBACK, extraMsg,
     }));
   }
 };

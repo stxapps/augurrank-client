@@ -223,7 +223,7 @@ const putPred = async (pred) => {
 const getUnsavedPreds = (game) => {
   const keys = lsgApi.listKeysSync();
 
-  const preds = []
+  const preds = [];
   for (const key of keys) {
     if (!key.startsWith(`${UNSAVED_PREDS}/`)) continue;
     const str = lsgApi.getItemSync(key);

@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Link from 'next/link';
+import Image from 'next/image';
 import { UserIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 
@@ -32,14 +33,14 @@ export function MeStats() {
   useEffect(() => {
     dispatch(fetchBurnHeight());
     dispatch(fetchMe());
-  }, [isUserSignedIn]);
+  }, [isUserSignedIn, dispatch]);
 
   const renderUsrPane = () => {
     let userImagePane, usernamePane, stxAddrPane;
     if (renderCode === 2) {
       if (isFldStr(userImage)) {
         userImagePane = (
-          <img className="size-32" src={userImage} />
+          <Image className="size-32" src={userImage} alt="User image" />
         );
       } else {
         userImagePane = (
@@ -47,7 +48,7 @@ export function MeStats() {
         );
       }
       usernamePane = (
-        <h1 className="text-center text-4xl sm:text-5xl font-medium text-slate-100 sm:text-left">{isFldStr(username) ? username : 'Username'}</h1>
+        <h1 className="text-center text-4xl font-medium text-slate-100 sm:text-left sm:text-5xl">{isFldStr(username) ? username : 'Username'}</h1>
       );
       if (isFldStr(stxAddr)) {
         stxAddrPane = (
@@ -64,12 +65,12 @@ export function MeStats() {
       );
       usernamePane = (
         <div className="flex items-center justify-center sm:justify-start">
-          <div className={clsx('h-10 w-64 bg-slate-800 rounded', renderCode === 0 && 'animate-pulse')} />
+          <div className={clsx('h-10 w-64 rounded bg-slate-800', renderCode === 0 && 'animate-pulse')} />
         </div>
       );
       stxAddrPane = (
         <div className="flex items-center justify-center sm:justify-start">
-          <div className={clsx('mt-4 h-6 w-40 bg-slate-800 rounded', renderCode === 0 && 'animate-pulse')} />
+          <div className={clsx('mt-4 h-6 w-40 rounded bg-slate-800', renderCode === 0 && 'animate-pulse')} />
         </div>
       );
     }
@@ -88,7 +89,7 @@ export function MeStats() {
   const renderCwPane = () => {
     return (
       <div className="border-2 border-transparent py-1 sm:py-2">
-        <div className="flex flex-col items-center justify-center h-60 sm:h-32">
+        <div className="flex h-60 flex-col items-center justify-center sm:h-32">
           <p className="text-center text-3xl font-medium text-slate-200">Connect your wallet to get started.</p>
           <button onClick={onSignInBtnClick} className="mt-4 rounded-full bg-orange-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110">Connect Wallet</button>
         </div>
@@ -99,7 +100,7 @@ export function MeStats() {
   const renderRtPane = () => {
     return (
       <div className="border-2 border-transparent py-1 sm:py-2">
-        <div className="flex flex-col items-center justify-center h-60 sm:h-32">
+        <div className="flex h-60 flex-col items-center justify-center sm:h-32">
           <p className="text-center text-lg text-red-600">Something went wrong! Please wait and try again.</p>
           <button onClick={onRetryBtnClick} className="mt-3 rounded-full bg-slate-600 px-4 py-2 text-sm font-medium text-slate-300 hover:brightness-110">Retry</button>
         </div>
@@ -128,28 +129,28 @@ export function MeStats() {
   let winsPane, lossesPane, pendingPane;
   if (renderCode === 2) {
     winsPane = (
-      <p className="text-4xl font-medium tracking-tight text-slate-100 text-center">{localeNumber(stats.nWins)}</p>
+      <p className="text-center text-4xl font-medium tracking-tight text-slate-100">{localeNumber(stats.nWins)}</p>
     );
     lossesPane = (
-      <p className="text-4xl font-medium tracking-tight text-slate-100 text-center">{localeNumber(stats.nLosses)}</p>
+      <p className="text-center text-4xl font-medium tracking-tight text-slate-100">{localeNumber(stats.nLosses)}</p>
     );
     pendingPane = (
-      <p className="text-4xl font-medium tracking-tight text-slate-100 text-center">{localeNumber(stats.nPending)}</p>
+      <p className="text-center text-4xl font-medium tracking-tight text-slate-100">{localeNumber(stats.nPending)}</p>
     );
   } else {
     winsPane = (
       <div className="flex items-center justify-center">
-        <div className={clsx('size-10 bg-slate-700/75 rounded', renderCode === 0 && 'animate-pulse')} />
+        <div className={clsx('size-10 rounded bg-slate-700/75', renderCode === 0 && 'animate-pulse')} />
       </div>
     );
     lossesPane = (
       <div className="flex items-center justify-center">
-        <div className={clsx('size-10 bg-slate-700/75 rounded', renderCode === 0 && 'animate-pulse')} />
+        <div className={clsx('size-10 rounded bg-slate-700/75', renderCode === 0 && 'animate-pulse')} />
       </div>
     );
     pendingPane = (
       <div className="flex items-center justify-center">
-        <div className={clsx('size-10 bg-slate-700/75 rounded', renderCode === 0 && 'animate-pulse')} />
+        <div className={clsx('size-10 rounded bg-slate-700/75', renderCode === 0 && 'animate-pulse')} />
       </div>
     );
   }
@@ -157,20 +158,20 @@ export function MeStats() {
   let contWinsPane, contDaysPane;
   if (renderCode === 2) {
     contWinsPane = (
-      <p className="text-4xl font-medium tracking-tight text-slate-100 text-center">{localeNumber(stats.maxContWins)} / {localeNumber(stats.nContWins)}</p>
+      <p className="text-center text-4xl font-medium tracking-tight text-slate-100">{localeNumber(stats.maxContWins)} / {localeNumber(stats.nContWins)}</p>
     );
     contDaysPane = (
-      <p className="text-4xl font-medium tracking-tight text-slate-100 text-center">{localeNumber(stats.maxContDays)} / {localeNumber(stats.nContDays)}</p>
+      <p className="text-center text-4xl font-medium tracking-tight text-slate-100">{localeNumber(stats.maxContDays)} / {localeNumber(stats.nContDays)}</p>
     );
   } else {
     contWinsPane = (
       <div className="flex items-center justify-center">
-        <div className={clsx('size-10 bg-slate-700/75 rounded', renderCode === 0 && 'animate-pulse')} />
+        <div className={clsx('size-10 rounded bg-slate-700/75', renderCode === 0 && 'animate-pulse')} />
       </div>
     );
     contDaysPane = (
       <div className="flex items-center justify-center">
-        <div className={clsx('size-10 bg-slate-700/75 rounded', renderCode === 0 && 'animate-pulse')} />
+        <div className={clsx('size-10 rounded bg-slate-700/75', renderCode === 0 && 'animate-pulse')} />
       </div>
     );
   }
@@ -182,29 +183,29 @@ export function MeStats() {
         <div className="sm:flex sm:items-stretch sm:justify-stretch">
           <div className="flex-1 py-6">
             {winsPane}
-            <p className="mt-2 text-sm font-medium text-slate-400 text-center">Wins</p>
+            <p className="mt-2 text-center text-sm font-medium text-slate-400">Wins</p>
           </div>
-          <div className="h-px sm:h-auto sm:w-px bg-slate-700" />
+          <div className="h-px bg-slate-700 sm:h-auto sm:w-px" />
           <div className="flex-1 py-6">
             {lossesPane}
-            <p className="mt-2 text-sm font-medium text-slate-400 text-center">Losses</p>
+            <p className="mt-2 text-center text-sm font-medium text-slate-400">Losses</p>
           </div>
-          <div className="h-px sm:h-auto sm:w-px bg-slate-700" />
+          <div className="h-px bg-slate-700 sm:h-auto sm:w-px" />
           <div className="flex-1 py-6">
             {pendingPane}
-            <p className="mt-2 text-sm font-medium text-slate-400 text-center">Pending</p>
+            <p className="mt-2 text-center text-sm font-medium text-slate-400">Pending</p>
           </div>
         </div>
         <div className="h-px bg-slate-700" />
         <div className="sm:flex sm:items-stretch sm:justify-stretch">
           <div className="flex-1 py-6">
             {contWinsPane}
-            <p className="mt-2 text-sm font-medium text-slate-400 text-center">Longest / Current win streak</p>
+            <p className="mt-2 text-center text-sm font-medium text-slate-400">Longest / Current win streak</p>
           </div>
-          <div className="h-px sm:h-auto sm:w-px bg-slate-700" />
+          <div className="h-px bg-slate-700 sm:h-auto sm:w-px" />
           <div className="flex-1 py-6">
             {contDaysPane}
-            <p className="mt-2 text-sm font-medium text-slate-400 text-center">Longest / Current play streak</p>
+            <p className="mt-2 text-center text-sm font-medium text-slate-400">Longest / Current play streak</p>
           </div>
         </div>
       </div>

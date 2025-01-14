@@ -47,7 +47,7 @@ function Initializer() {
 
   useEffect(() => {
     dispatch(init());
-  }, []);
+  }, [dispatch]);
 
   return null;
 }

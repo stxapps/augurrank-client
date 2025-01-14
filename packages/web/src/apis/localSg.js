@@ -31,7 +31,7 @@ const removeItemSync = (key) => {
 const listKeysSync = () => {
   const keys = Object.keys(localStorage);
   return keys;
-}
+};
 
 const localSg = {
   getItem, setItem, removeItem, listKeys, getItemSync, setItemSync, removeItemSync,

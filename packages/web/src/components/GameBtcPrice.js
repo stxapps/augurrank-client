@@ -23,16 +23,16 @@ export function GameBtcPrice() {
   useEffect(() => {
     dispatch(fetchBtcPrice());
     dispatch(fetchBurnHeight());
-  }, []);
+  }, [dispatch]);
 
   let pPane;
   if (price === null || burnHeight === null) { // loading
     pPane = (
-      <div className="mt-2 h-8 animate-pulse rounded-lg w-28 bg-slate-700/40"></div>
-    )
+      <div className="mt-2 h-8 w-28 animate-pulse rounded-lg bg-slate-700/40"></div>
+    );
   } else if (price === -1 || burnHeight === -1) { // show error and retry button
     pPane = (
-      <div className="mt-2 space-x-2 flex items-center justify-between">
+      <div className="mt-2 flex items-center justify-between space-x-2">
         <p className="text-red-600">Something went wrong! Please wait and try again.</p>
         <button onClick={onRetryBtnClick} className="rounded-full bg-slate-600 px-4 py-2 text-sm font-medium text-slate-300 hover:brightness-110">Retry</button>
       </div>

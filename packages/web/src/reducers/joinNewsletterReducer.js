@@ -4,7 +4,7 @@ import { JOIN_NEWSLETTER_STATUS_INIT } from '@/types/const';
 const initialState = {
   status: JOIN_NEWSLETTER_STATUS_INIT,
   email: '',
-  extraMsg: ''
+  extraMsg: '',
 };
 
 const joinNewsletterReducer = (state = initialState, action) => {

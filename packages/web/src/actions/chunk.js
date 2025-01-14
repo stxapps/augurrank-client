@@ -136,7 +136,7 @@ export const fetchGameBtc = (doForce = false, doLoad = false) => async (
     }
   }
 
-  const newData = {}
+  const newData = {};
   for (const key in data) {
     if (['pred', 'preds'].includes(key)) continue;
     newData[key] = data[key];

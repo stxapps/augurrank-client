@@ -9,6 +9,7 @@
     "@stylistic/quotes": [
       1, "single", { "avoidEscape": true, "allowTemplateLiterals": true }
     ],
-    "@stylistic/jsx-quotes": [1, "prefer-double"]
+    "@stylistic/jsx-quotes": [1, "prefer-double"],
+    "react/no-unescaped-entities": [0]
   }
 }

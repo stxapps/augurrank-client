@@ -9,7 +9,7 @@ import LogoBtc from '@/images/logo-btc.svg';
 export function GameBtc() {
 
   return (
-    <main className="relative mx-auto max-w-2xl overflow-hidden px-4 sm:px-6 lg:px-8 xl:px-12 py-20">
+    <main className="relative mx-auto max-w-2xl overflow-hidden px-4 py-20 sm:px-6 lg:px-8 xl:px-12">
       <div className="flex flex-col items-center justify-start sm:flex-row sm:justify-center">
         <div className="rounded-full border-2 border-slate-800 p-2">
           <Image className="size-32" src={LogoBtc} alt="" />
@@ -19,8 +19,8 @@ export function GameBtc() {
           <p className="mt-3 text-center text-xl text-slate-400 sm:text-left">Your vision on Bitcoin price</p>
         </div>
       </div>
-      <div className="mt-10 rounded-xl bg-slate-800/75 mx-auto max-w-sm overflow-hidden">
-        <div className="px-7 pt-10 pb-8">
+      <div className="mx-auto mt-10 max-w-sm overflow-hidden rounded-xl bg-slate-800/75">
+        <div className="px-7 pb-8 pt-10">
           <p className="text-base text-slate-200">Challenge yourself to envision the future of Bitcoin price, store your predictions on the chain, and brag about your accuracy forever.</p>
         </div>
         <div className="h-px bg-slate-700" />
@@ -28,7 +28,7 @@ export function GameBtc() {
         <div className="h-px bg-slate-700" />
         <GameBtcPred />
       </div>
-      <div className="prose prose-invert prose-a:text-slate-300 prose-a:no-underline hover:prose-a:underline mx-auto mt-10 text-slate-400">
+      <div className="prose prose-invert mx-auto mt-10 text-slate-400 prose-a:text-slate-300 prose-a:no-underline hover:prose-a:underline">
         <h4 id="Details" className="text-slate-300">Details</h4>
         <ol className="list-disc">
           <li>Choose "Up" if you want to predict that the BTC price at the following 100 Bitcoin blocks will be more than the BTC price at the Bitcoin block that stores your prediction via the Stacks blockchain.</li>

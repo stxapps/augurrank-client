@@ -10,7 +10,7 @@ export function PredList(props) {
 
   const renderEmpty = () => {
     return (
-      <div className="pt-6 flex flex-col justify-center items-center text-center">
+      <div className="flex flex-col items-center justify-center pt-6 text-center">
         <ArrowTrendingUpIcon className="size-12 text-slate-400" />
         <h3 className="mt-3 text-base font-semibold text-slate-100">There are no predictions yet.</h3>
         <p className="mt-1 text-sm text-slate-400">Get started by predicting the BTC price.</p>
@@ -49,13 +49,13 @@ export function PredList(props) {
   } else if (hasMore === true) { // show more button
     moreContent = (
       <div className="my-6 text-center">
-        <button onClick={onMoreBtnClick} className="w-full max-w-xs sm:w-auto rounded-full border border-slate-500 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-400 hover:border-slate-400 hover:text-slate-300">More</button>
+        <button onClick={onMoreBtnClick} className="w-full max-w-xs rounded-full border border-slate-500 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-400 hover:border-slate-400 hover:text-slate-300 sm:w-auto">More</button>
       </div>
     );
   }
 
   return (
-    <div className="mt-10 mx-auto max-w-sm">
+    <div className="mx-auto mt-10 max-w-sm">
       {predsWthSts.length === 0 && renderEmpty()}
       {predsWthSts.length > 0 && renderItems()}
       {moreContent}

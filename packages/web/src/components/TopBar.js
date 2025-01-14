@@ -26,7 +26,7 @@ export function TopBar() {
     leftItem = null;
   } else if (pathname === '/game-btc') {
     leftItem = (
-      <Link className="flex items-center justify-center text-slate-100 hover:text-orange-200 p-1 focus:outline-none group" href="/">
+      <Link className="group flex items-center justify-center p-1 text-slate-100 hover:text-orange-200 focus:outline-none" href="/">
         <div className="flex items-center justify-center rounded-full group-focus-visible:outline group-focus-visible:outline-1">
           <ChevronLeftIcon className="size-8" />
         </div>
@@ -34,26 +34,26 @@ export function TopBar() {
     );
   } else {
     leftItem = (
-      <Link className="flex items-center justify-center p-0.5 text-slate-100 focus:outline-none group hover:brightness-110" href="/">
-        <div className="flex items-center justify-center rounded-full group-focus-visible:outline group-focus-visible:outline-1 p-0.5">
+      <Link className="group flex items-center justify-center p-0.5 text-slate-100 hover:brightness-110 focus:outline-none" href="/">
+        <div className="flex items-center justify-center rounded-full p-0.5 group-focus-visible:outline group-focus-visible:outline-1">
           <Image className="h-8 w-auto" src={Logo} alt="" placeholder="empty" priority={true} />
         </div>
       </Link>
     );
   }
   const leftPane = (
-    <div className="relative flex grow shrink-0 items-center">
+    <div className="relative flex shrink-0 grow items-center">
       {leftItem}
     </div>
   );
 
   const rightPane = (
-    <div className="relative flex grow shrink-0 justify-end items-center space-x-5">
-      {pathname !== '/game-btc' && <Link className="group text-lg font-medium text-slate-100 hover:text-orange-200 px-0.5 py-1.5 focus:outline-none" href="/game-btc" prefetch={true}>
+    <div className="relative flex shrink-0 grow items-center justify-end space-x-5">
+      {pathname !== '/game-btc' && <Link className="group px-0.5 py-1.5 text-lg font-medium text-slate-100 hover:text-orange-200 focus:outline-none" href="/game-btc" prefetch={true}>
         <div className="rounded-full px-2 py-0.5 group-focus-visible:outline group-focus-visible:outline-1">Game</div>
       </Link>}
-      {(isUserSignedIn && pathname !== '/me') && <Link className="text-lg font-medium text-slate-100 hover:text-orange-200 px-0.5 py-1.5 focus:outline-none group" href="/me" prefetch={false}>
-        <div className="px-2 py-0.5 group-focus-visible:outline group-focus-visible:outline-1 rounded-full">Me</div>
+      {(isUserSignedIn && pathname !== '/me') && <Link className="group px-0.5 py-1.5 text-lg font-medium text-slate-100 hover:text-orange-200 focus:outline-none" href="/me" prefetch={false}>
+        <div className="rounded-full px-2 py-0.5 group-focus-visible:outline group-focus-visible:outline-1">Me</div>
       </Link>}
       {!isUserSignedIn && <button onClick={onSignInBtnClick} className="rounded-full bg-orange-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110">
         Connect Wallet

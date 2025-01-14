@@ -22,7 +22,7 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={clsx('h-full antialiased', inter.variable)} suppressHydrationWarning>
-      <body className="min-h-full bg-slate-900 safe-area">
+      <body className="safe-area min-h-full bg-slate-900">
         <Providers>
           <div className="absolute inset-0 overflow-hidden">
             <div className="relative mx-auto max-w-2xl">

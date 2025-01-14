@@ -26,7 +26,7 @@ export function MePreds() {
     return (
       <PredList predsWthSts={predsWthSts} hasMore={hasMore} fetchingMore={fetchingMore} onMoreBtnClick={onMoreBtnClick} onRetryMoreBtnClick={onRetryMoreBtnClick} />
     );
-  }
+  };
 
   if (isUserSignedIn === null) { // loading
     return null;
