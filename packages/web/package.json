@@ -6,7 +6,7 @@
   "scripts": {
     "patch-js": "node bin/patch.js",
     "dev": "next dev --experimental-https --hostname 0.0.0.0",
-    "build": "next build && next-image-export-optimizer",
+    "build": "npm run patch-js && next build && next-image-export-optimizer",
     "start": "next start",
     "lint": "next lint --fix",
     "deploy-test": "bash bin/deploy-test.sh",
