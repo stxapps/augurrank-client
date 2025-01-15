@@ -136,7 +136,7 @@ export function GameBtcPred() {
           </Link>
         </div>
         <div className="mt-2 flex items-baseline justify-between space-x-2">
-          <p className="text-sm text-slate-400">{localeDate(pred.createDate)} ∙ <Link className="hover:underline" href={`https://explorer.hiro.so/txid/${CONTRACT_ADDR}.${pred.game}?chain=mainnet`}>{pred.game}</Link></p>
+          <p className="text-sm text-slate-400">{localeDate(pred.createDate)} ∙ <Link className="hover:underline" href={`https://explorer.hiro.so/txid/${CONTRACT_ADDR}.${pred.contract}?chain=mainnet`} target="_blank" rel="noreferrer">{pred.game}</Link></p>
           <p className="text-right text-sm text-slate-400">
             <PredTimer targetBurnHeight={pred.targetBurnHeight} />
           </p>
@@ -159,7 +159,7 @@ export function GameBtcPred() {
           </Link>
         </div>
         <div className="mt-2 flex items-baseline justify-between space-x-2">
-          <p className="text-sm text-slate-400">{localeDate(pred.createDate)} ∙ <Link className="hover:underline" href={`https://explorer.hiro.so/txid/${CONTRACT_ADDR}.${pred.game}?chain=mainnet`}>{pred.game}</Link></p>
+          <p className="text-sm text-slate-400">{localeDate(pred.createDate)} ∙ <Link className="hover:underline" href={`https://explorer.hiro.so/txid/${CONTRACT_ADDR}.${pred.contract}?chain=mainnet`} target="_blank" rel="noreferrer">{pred.game}</Link></p>
           <p className="text-right text-sm text-slate-400">Storing on the chain</p>
         </div>
       </>

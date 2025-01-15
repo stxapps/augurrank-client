@@ -26,7 +26,7 @@ const gameBtcReducer = (state = initialState, action) => {
   }
 
   if (action.type === RESET_STATE) {
-    return { ...state, didFetch: null };
+    return { ...initialState, price: state.price, burnHeight: state.burnHeight };
   }
 
   return state;

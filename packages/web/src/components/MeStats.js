@@ -48,11 +48,13 @@ export function MeStats() {
         );
       }
       usernamePane = (
-        <h1 className="text-center text-4xl font-medium text-slate-100 sm:text-left sm:text-5xl">{isFldStr(username) ? username : 'Username'}</h1>
+        <h1 className="truncate text-center text-4xl font-medium text-slate-100 sm:text-left sm:text-5xl sm:leading-tight">{isFldStr(username) ? username : 'Username'}</h1>
       );
       if (isFldStr(stxAddr)) {
         stxAddrPane = (
-          <Link className="mt-3 text-center text-xl text-slate-400 sm:text-left" href={`https://explorer.hiro.so/address/${stxAddr}`}>{stxAddr}</Link>
+          <div className="mt-3 flex sm:mt-0.5">
+            <Link className="w-0 grow truncate text-center text-xl text-slate-400 sm:text-left" href={`https://explorer.hiro.so/address/${stxAddr}`} target="_blank" rel="noreferrer">{stxAddr}</Link>
+          </div>
         );
       } else {
         stxAddrPane = (
@@ -78,7 +80,7 @@ export function MeStats() {
     return (
       <div className="flex flex-col items-center justify-start sm:flex-row sm:justify-center">
         <div className="rounded-full border-2 border-slate-800 p-2">{userImagePane}</div>
-        <div className="mt-6 sm:ml-6 sm:mt-0">
+        <div className="mt-6 w-full max-w-md sm:ml-6 sm:mt-0 sm:w-auto">
           {usernamePane}
           {stxAddrPane}
         </div>

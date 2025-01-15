@@ -1,5 +1,5 @@
 import lsgApi from '@/apis/localSg';
-import { DID_AGREE_TERMS, BTC_PRICE_OBJ, BURN_HEIGHT_OBJ } from '@/types/const';
+import { DID_AGREE_TERMS, UNSAVED_PREDS } from '@/types/const';
 
 const getExtraUserData = () => {
   const str = lsgApi.getItemSync(DID_AGREE_TERMS);
@@ -20,9 +20,11 @@ const deleteExtraUserData = () => {
 };
 
 const deleteAllLocalFiles = () => {
+  deleteExtraUserData();
+
   const keys = lsgApi.listKeysSync();
   for (const key of keys) {
-    if ([BTC_PRICE_OBJ, BURN_HEIGHT_OBJ].includes(key)) continue;
+    if (!key.startsWith(`${UNSAVED_PREDS}/`)) continue;
     lsgApi.removeItemSync(key);
   }
 

@@ -152,7 +152,9 @@ export const localeDate = (dt) => {
   );
 };
 
-export const validateEmail = email => {
+export const validateEmail = (email) => {
+  if (!isString(email)) return false;
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
@@ -226,18 +228,18 @@ export const unionPreds = (data, unsavedPreds) => {
 };
 
 export const sepPreds = (data) => {
-  const btcGamePreds = [];
+  const gameBtcPreds = [];
   if (Array.isArray(data.preds)) {
     for (const pred of data.preds) {
       if (pred.game === GAME_BTC) {
-        btcGamePreds.push(pred);
+        gameBtcPreds.push(pred);
       } else {
-        console.log('Invalid game:', pred);
+        console.log('Invalid pred.game:', pred);
       }
     }
   }
 
-  return { btcGamePreds };
+  return { gameBtcPreds };
 };
 
 export const mergePreds = (...preds) => {
@@ -357,7 +359,11 @@ export const deriveTxInfo = (txInfo) => {
   if (Array.isArray(txInfo.events)) {
     obj.vls = [];
     for (const evt of txInfo.events) {
-      obj.vls.push(evt.contract_log.value.repr);
+      try {
+        obj.vls.push(evt.contract_log.value.repr);
+      } catch (error) {
+        // might be other event types.
+      }
     }
   }
   return obj;

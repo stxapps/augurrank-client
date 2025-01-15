@@ -20,7 +20,7 @@ export function PredListItem(props) {
     PRED_STATUS_VERIFIED_ERROR, PRED_STATUS_VERIFIED_OK, PRED_STATUS_VERIFYING,
   ].includes(status)) {
     tlPane = (
-      <p className="text-lg text-slate-200">{upperCaseFirstChar(pred.value)} <Link className="text-sm text-slate-400 hover:underline" href={`https://explorer.hiro.so/txid/${pred.cTxId}?chain=mainnet`}>at #{localeNumber(pred.targetBurnHeight)}</Link></p>
+      <p className="text-lg text-slate-200">{upperCaseFirstChar(pred.value)} <Link className="text-sm text-slate-400 hover:underline" href={`https://explorer.hiro.so/txid/${pred.cTxId}?chain=mainnet`} target="_blank" rel="noreferrer">at #{localeNumber(pred.targetBurnHeight)}</Link></p>
     );
   } else if ([PRED_STATUS_VERIFIABLE, PRED_STATUS_CONFIRMED_OK].includes(status)) {
     tlPane = (
@@ -32,7 +32,7 @@ export function PredListItem(props) {
     );
   }
   const blPane = (
-    <p className="text-sm text-slate-400">{localeDate(pred.createDate)} ∙ <Link className="hover:underline" href={`https://explorer.hiro.so/txid/${CONTRACT_ADDR}.${pred.game}?chain=mainnet`}>{pred.game}</Link></p>
+    <p className="text-sm text-slate-400">{localeDate(pred.createDate)} ∙ <Link className="hover:underline" href={`https://explorer.hiro.so/txid/${CONTRACT_ADDR}.${pred.contract}?chain=mainnet`} target="_blank" rel="noreferrer">{pred.game}</Link></p>
   );
   if (status === PRED_STATUS_VERIFIED_ERROR) {
     [trValue, trCls, trTxId] = ['Error', 'text-red-600', pred.vTxId];

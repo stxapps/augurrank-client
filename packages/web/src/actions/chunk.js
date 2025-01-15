@@ -127,7 +127,7 @@ export const fetchGameBtc = (doForce = false, doLoad = false) => async (
     const newPred = newPredPerId[pred.id];
     const status = getPredStatus(newPred, burnHeight);
     if (status === PRED_STATUS_IN_MEMPOOL) {
-      newPredPerId[pred.id] = { ...newPred, pStatus: ABT_BY_RES };
+      newPred.pStatus = ABT_BY_RES;
       dataApi.putUnsavedPred(newPred);
     } else if (status === PRED_STATUS_PUT_ERROR) {
       // still the same, retry in refreshPreds
@@ -181,8 +181,8 @@ export const fetchMe = (doForce = false, doLoad = false) => async (
 
   // should getUnsavedPreds for all games if not yet done?
 
-  const { btcGamePreds } = sepPreds(data);
-  data.btcGamePreds = btcGamePreds;
+  const sepRst = sepPreds(data);
+  data.gameBtcPreds = sepRst.gameBtcPreds;
 
   dispatch(updateMe({ ...data, didFetch: true }));
 
@@ -216,8 +216,8 @@ export const fetchMeMore = (doForce) => async (dispatch, getState) => {
     return;
   }
 
-  const { btcGamePreds } = sepPreds(data);
-  data.btcGamePreds = btcGamePreds;
+  const sepRst = sepPreds(data);
+  data.gameBtcPreds = sepRst.gameBtcPreds;
 
   dispatch(updateMe({ ...data, fetchingMore: null }));
 
@@ -357,6 +357,8 @@ const refreshUnconfirmedPreds = async (preds, dispatch) => {
 
 const refreshVerifiablePreds = async (preds, dispatch) => {
   const ids = preds.slice(0, 30).map(pred => pred.id);
+  if (ids.length === 0) return;
+
   let sPreds;
   try {
     sPreds = await dataApi.fetchPreds(ids);
