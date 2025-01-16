@@ -43,18 +43,24 @@ export function PredListItem(props) {
     trValue = `Verified: ${pred.correct}`;
     trCls = pred.correct === 'TRUE' ? 'text-green-500' : 'text-slate-200';
     trTxId = pred.vTxId;
-    brPane = (
-      <p className="text-right text-sm text-slate-400">${localeNumber(pred.anchorPrice)} / ${localeNumber(pred.targetPrice)}</p>
-    );
+    if (['TRUE', 'FALSE'].includes(pred.correct)) {
+      brPane = (
+        <p className="text-right text-sm text-slate-400">${localeNumber(pred.anchorPrice)} / ${localeNumber(pred.targetPrice)}</p>
+      );
+    } else {
+      brPane = (
+        <p className="text-right text-sm text-slate-400">No Stacks block</p>
+      )
+    }
   } else if (status === PRED_STATUS_VERIFYING) {
     [trValue, trCls, trTxId] = ['Verifying', 'text-sky-500', pred.vTxId];
     brPane = (
-      <p className="text-right text-sm text-slate-400">Verifying on the chain.</p>
+      <p className="text-right text-sm text-slate-400">Verifying on the chain</p>
     );
   } else if (status === PRED_STATUS_VERIFIABLE) {
     [trValue, trCls, trTxId] = ['Verifiable', 'text-sky-500', pred.cTxId];
     brPane = (
-      <p className="text-right text-sm text-slate-400">Waiting to verify.</p>
+      <p className="text-right text-sm text-slate-400">Waiting to verify</p>
     );
   } else if (status === PRED_STATUS_CONFIRMED_ERROR) {
     [trValue, trCls, trTxId] = ['Error', 'text-red-600', pred.cTxId];

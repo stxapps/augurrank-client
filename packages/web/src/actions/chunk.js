@@ -295,7 +295,11 @@ const refreshPreds = (doForce = false) => async (dispatch, getState) => {
       dispatch(refreshPreds(true));
     }, ms);
     vars.refreshPreds.seq += 1;
+    return;
   }
+
+  vars.refreshPreds.isRunning = false;
+  vars.refreshPreds.seq = 0;
 };
 
 const retryPutErrorPreds = async (preds, dispatch) => {
