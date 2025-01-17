@@ -4,7 +4,7 @@ import userSession from '@/userSession';
 import lsgApi from '@/apis/localSg';
 import {
   BTC_PRICE_OBJ, BURN_HEIGHT_OBJ, GAME_URL, ME_URL, PREDS_URL, PRED_URL, VALID,
-  TEST_STRING, UNSAVED_PREDS, NOT_FOUND_ERROR,
+  TEST_STRING, UNSAVED_PREDS, NOT_FOUND_ERROR, N_PREDS,
 } from '@/types/const';
 import { isObject, isString, isNumber, getUserStxAddr } from '@/utils';
 
@@ -159,22 +159,23 @@ const fetchMe = async () => {
   return obj;
 };
 
-const fetchPreds = async (ids, game, createDate, operator, excludingIds) => {
+const fetchPreds = async (
+  ids, game, createDate, operator, excludingIds, fthMeStsIfVrfd = false
+) => {
   // 1. fetch per ids for an update i.e. verifiable to verified.
   // 2. fetch previous items.
   const authData = getAuthData();
 
   let reqData;
-  if (Array.isArray(ids)) {
-    reqData = { ids };
+  if (Array.isArray(ids) && ids.length > 0 && ids.length <= N_PREDS) {
+    reqData = { ids, fthMeStsIfVrfd };
   } else if (
     isString(game) && isNumber(createDate) &&
     isString(operator) && Array.isArray(excludingIds)
   ) {
-    reqData = { game, createDate, operator, excludingIds };
+    reqData = { game, createDate, operator, excludingIds, fthMeStsIfVrfd };
   } else {
-    const msg = `Invalid args: ${ids}, ${game}, ${createDate}, ${operator}`;
-    throw new Error(msg);
+    throw new Error(`Invalid args: ${ids}, ${game}, ${createDate}, ${operator}, ${excludingIds}`);
   }
 
   const res = await fetch(PREDS_URL, {

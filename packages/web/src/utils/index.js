@@ -234,7 +234,7 @@ export const sepPreds = (data) => {
       if (pred.game === GAME_BTC) {
         gameBtcPreds.push(pred);
       } else {
-        console.log('Invalid pred.game:', pred);
+        console.log('In sepPreds, invalid game:', pred);
       }
     }
   }

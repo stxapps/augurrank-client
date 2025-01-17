@@ -10,7 +10,7 @@ import {
   AGREE_POPUP, CONTRACT_ADDR, GAME_BTC, GAME_BTC_CONTRACT_NAME, GAME_BTC_FUNCTION_NAME,
   GAME_BTC_FEE, GAME_BTC_LEAD_BURN_HEIGHT, PRED_STATUS_IN_MEMPOOL, PRED_STATUS_PUT_OK,
   PRED_STATUS_PUT_ERROR, PRED_STATUS_VERIFIABLE, PDG, SCS, ABT_BY_RES, ABT_BY_NF,
-  NOT_FOUND_ERROR,
+  NOT_FOUND_ERROR, N_PREDS,
 } from '@/types/const';
 import {
   getUserStxAddr, getAppBtcAddr, isObject, randomString, unionPreds, sepPreds,
@@ -239,7 +239,7 @@ export const agreeTerms = () => async (dispatch, getState) => {
   if (pred.game === GAME_BTC) {
     dispatch(callGameBtcContract(pred));
   } else {
-    console.log('Invalid pred.game:', pred);
+    console.log('In agreeTerms, invalid game:', pred);
   }
 };
 
@@ -250,7 +250,7 @@ export const cancelAgreeTerms = () => async (dispatch, getState) => {
   if (pred.game === GAME_BTC) {
     dispatch(removeGameBtcPreds([pred.id]));
   } else {
-    console.log('Invalid pred.game:', pred);
+    console.log('In cancelAgreeTerms, invalid game:', pred);
   }
 };
 
@@ -312,7 +312,11 @@ const retryPutErrorPreds = async (preds, dispatch) => {
       continue; // Do it later
     }
 
-    dispatch(updateGameBtc({ pred: newPred }));
+    if (newPred.game === GAME_BTC) {
+      dispatch(updateGameBtc({ pred: newPred }));
+    } else {
+      console.log('In retryPutErrorPreds, invalid game:', newPred);
+    }
     dataApi.deleteUnsavedPred(newPred.id);
   }
 };
@@ -349,28 +353,36 @@ const refreshUnconfirmedPreds = async (preds, dispatch) => {
       }
     }
 
-    dispatch(updateGameBtc({ pred: newPred }));
     try {
       await dataApi.putPred(newPred);
     } catch (error) {
       console.log('refreshUnconfirmedPreds error:', error);
       continue; // Do it later or by server.
     }
+
+    if (newPred.game === GAME_BTC) {
+      dispatch(updateGameBtc({ pred: newPred }));
+    } else {
+      console.log('In refreshUnconfirmedPreds, invalid game:', newPred);
+    }
   }
 };
 
 const refreshVerifiablePreds = async (preds, dispatch) => {
-  const ids = preds.slice(0, 30).map(pred => pred.id);
+  const ids = preds.slice(0, N_PREDS).map(pred => pred.id);
   if (ids.length === 0) return;
 
-  let sPreds;
+  let data;
   try {
-    sPreds = await dataApi.fetchPreds(ids);
+    data = await dataApi.fetchPreds(ids, null, null, null, null, true);
   } catch (error) {
     console.log('refreshVerifiablePreds error:', error);
     return; // Do it later or by server.
   }
-  dispatch(updateGameBtc({ preds: sPreds }));
+
+  const sepRst = sepPreds(data);
+  dispatch(updateGameBtc({ preds: sepRst.gameBtcPreds }));
+  dispatch(updateMe({ stats: data.meStats }));
 };
 
 export const predictGameBtc = (value) => async (dispatch, getState) => {
