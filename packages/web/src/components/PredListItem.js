@@ -50,7 +50,7 @@ export function PredListItem(props) {
     } else {
       brPane = (
         <p className="text-right text-sm text-slate-400">No Stacks block</p>
-      )
+      );
     }
   } else if (status === PRED_STATUS_VERIFYING) {
     [trValue, trCls, trTxId] = ['Verifying', 'text-sky-500', pred.vTxId];
