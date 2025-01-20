@@ -1,6 +1,5 @@
-import { showConnect } from '@stacks/connect';
-
 import userSession from '@/userSession';
+import { showConnect } from '@/connectWrapper';
 import idxApi from '@/apis';
 import {
   INIT, UPDATE_WINDOW, UPDATE_USER, UPDATE_POPUP, UPDATE_JOIN_NEWSLETTER, RESET_STATE,
@@ -78,14 +77,13 @@ export const signOut = () => async (dispatch, getState) => {
 
 export const signIn = () => async (dispatch, getState) => {
   const appIconUrl = extractUrl(window.location.href).origin + '/' + APP_ICON_NAME;
-  const authOptions = {
+  showConnect({
     appDetails: { name: APP_NAME, icon: appIconUrl },
     redirectTo: '/' + getUrlPathQueryHash(window.location.href),
     onFinish: () => dispatch(updateUserSignedIn()),
     userSession: userSession._userSession,
     sendToSignIn: false,
-  };
-  showConnect(authOptions);
+  });
 };
 
 const updateUserSignedIn = () => async (dispatch, getState) => {

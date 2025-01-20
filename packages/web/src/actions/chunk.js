@@ -1,7 +1,7 @@
-import { showContractCall } from '@stacks/connect';
 import { PostConditionMode, Cl, Pc } from '@stacks/transactions/dist/esm';
 
 import userSession from '@/userSession';
+import { showContractCall } from '@/connectWrapper';
 import idxApi from '@/apis';
 import dataApi from '@/apis/data';
 import { updateUser, updatePopup } from '@/actions';
