@@ -1,20 +1,40 @@
 import { authenticate, openContractCall, DEFAULT_PROVIDERS } from '@stacks/connect';
-import { getProviderFromId } from '@stacks/connect-ui';
+import { getSelectedProviderId, getProviderFromId } from '@stacks/connect-ui';
 import { defineCustomElements } from '@stacks/connect-ui/loader';
 
 const LEATHER_PROVIDER = 'LeatherProvider';
+const XVERSE_PROVIDER = 'XverseProviders.StacksProvider';
 
-const wrapConnectCall = (action) => (options) => {
-  // Support only Leather for now;
-  const provider = getProviderFromId(LEATHER_PROVIDER);
-  if (provider) return action(options, provider);
+const wrapConnectCall = (action, doSelected) => (options) => {
+  if (doSelected) {
+    const pvdId = getSelectedProviderId();
+    if (pvdId) {
+      const pvd = getProviderFromId(pvdId);
+      if (pvd) return action(options, pvd);
+    }
+  }
+
+  const ltPvd = getProviderFromId(LEATHER_PROVIDER);
+  const xvPvd = getProviderFromId(XVERSE_PROVIDER);
+
+  if (ltPvd && !xvPvd) return action(options, ltPvd);
+  if (!ltPvd && xvPvd) return action(options, xvPvd);
+
+  const defaultProviders = DEFAULT_PROVIDERS.filter(p => {
+    return [LEATHER_PROVIDER, XVERSE_PROVIDER].includes(p.id);
+  });
+  const installedProviders = defaultProviders.filter(p => {
+    if (p.id === LEATHER_PROVIDER && ltPvd) return true;
+    if (p.id === XVERSE_PROVIDER && xvPvd) return true;
+    return false;
+  });
 
   if (typeof window === 'undefined') return;
   defineCustomElements(window);
 
   const element = document.createElement('connect-modal');
-  element.defaultProviders = DEFAULT_PROVIDERS.filter(p => p.id === LEATHER_PROVIDER);
-  element.installedProviders = [];
+  element.defaultProviders = defaultProviders;
+  element.installedProviders = installedProviders;
   element.persistSelection = true;
 
   const closeModal = () => {
@@ -42,5 +62,5 @@ const wrapConnectCall = (action) => (options) => {
   document.addEventListener('keydown', handleEsc);
 };
 
-export const showConnect = wrapConnectCall(authenticate);
-export const showContractCall = wrapConnectCall(openContractCall);
+export const showConnect = wrapConnectCall(authenticate, false);
+export const showContractCall = wrapConnectCall(openContractCall, true);

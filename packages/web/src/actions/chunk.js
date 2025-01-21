@@ -443,6 +443,8 @@ const callGameBtcContract = (pred) => async (dispatch, getState) => {
 
   showContractCall({
     network: 'mainnet',
+    stxAddress: stxAddr,
+    sponsored: false,
     contractAddress: CONTRACT_ADDR,
     contractName: GAME_BTC_CONTRACT_NAME,
     functionName: GAME_BTC_FUNCTION_NAME,
