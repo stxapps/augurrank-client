@@ -4,9 +4,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchMeMore } from '@/actions/chunk';
 import { PredList } from '@/components/PredList';
 import { getMePredsWthSts } from '@/selectors';
+import { getSignInStatus } from '@/utils';
 
 export function MePreds() {
-  const isUserSignedIn = useSelector(state => state.user.isUserSignedIn);
+  const signInStatus = useSelector(state => getSignInStatus(state.user));
   const burnHeight = useSelector(state => state.gameBtc.burnHeight);
   const didFetch = useSelector(state => state.me.didFetch);
   const hasMore = useSelector(state => state.me.hasMore);
@@ -28,9 +29,11 @@ export function MePreds() {
     );
   };
 
-  if (isUserSignedIn === null) { // loading
+  if (signInStatus === 0) { // loading
     return null;
-  } else if (isUserSignedIn === false) { // connect wallet
+  } else if (signInStatus === 1) { // connect wallet
+    return null;
+  } else if (signInStatus === 2) { // sign test string
     return null;
   } else if (burnHeight === null || didFetch === null) { // loading
     return null;

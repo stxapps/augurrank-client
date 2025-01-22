@@ -4,9 +4,12 @@ export const APP_NAME = 'AugurRank';
 export const APP_ICON_NAME = 'logo-for-stacks-access.png';
 export const APP_SCOPES = ['store_write'];
 
-export const DID_AGREE_TERMS = 'didAgreeTerms';
 export const BTC_PRICE_OBJ = 'btcPriceObj';
 export const BURN_HEIGHT_OBJ = 'burnHeightObj';
+export const USER_OBJ = 'userObj';
+export const UNSAVED_PREDS = 'unsaved-preds';
+
+export const STX_TST_STR = 'Please sign this message to prove you own your STX address so we can give you access to our server.';
 
 export const HTTP = 'http://';
 
@@ -31,8 +34,6 @@ export const JOIN_NEWSLETTER_STATUS_JOINING = 'JOIN_NEWSLETTER_STATUS_JOINING';
 export const JOIN_NEWSLETTER_STATUS_INVALID = 'JOIN_NEWSLETTER_STATUS_INVALID';
 export const JOIN_NEWSLETTER_STATUS_COMMIT = 'JOIN_NEWSLETTER_STATUS_COMMIT';
 export const JOIN_NEWSLETTER_STATUS_ROLLBACK = 'JOIN_NEWSLETTER_STATUS_ROLLBACK';
-
-export const TEST_STRING = 'Vision on Chain';
 
 export const CONTRACT_ADDR = 'SPGW94RBCYZNTV42XX57YZSHWZNKY9HYZJNYV8NR';
 
@@ -60,7 +61,5 @@ export const ABT_BY_PC = 'abort_by_post_condition';
 export const ABT_BY_NF = 'abort_by_not_found';
 
 export const NOT_FOUND_ERROR = 'NOT_FOUND_ERROR';
-
-export const UNSAVED_PREDS = 'unsaved-preds';
 
 export const N_PREDS = 30;

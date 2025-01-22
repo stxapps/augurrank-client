@@ -6,7 +6,7 @@ import {
   ArrowTrendingUpIcon, ArrowTrendingDownIcon, ArrowTopRightOnSquareIcon,
 } from '@heroicons/react/24/solid';
 
-import { signIn } from '@/actions';
+import { connectWallet, signStxTstStr } from '@/actions';
 import { fetchGameBtc, predictGameBtc } from '@/actions/chunk';
 import {
   CONTRACT_ADDR, PRED_STATUS_INIT, PRED_STATUS_CONFIRMED_OK,
@@ -15,11 +15,11 @@ import { PredTimer } from '@/components/PredTimer';
 import { LoadingIcon } from '@/components/Icons';
 import { getPndgGameBtcPredWthSts } from '@/selectors';
 import {
-  isObject, isZrOrPst, upperCaseFirstChar, localeNumber, localeDate,
+  getSignInStatus, isObject, isZrOrPst, upperCaseFirstChar, localeNumber, localeDate,
 } from '@/utils';
 
 export function GameBtcPred() {
-  const isUserSignedIn = useSelector(state => state.user.isUserSignedIn);
+  const signInStatus = useSelector(state => getSignInStatus(state.user));
   const price = useSelector(state => state.gameBtc.price);
   const burnHeight = useSelector(state => state.gameBtc.burnHeight);
   const didFetch = useSelector(state => state.gameBtc.didFetch);
@@ -27,8 +27,12 @@ export function GameBtcPred() {
   const dispatch = useDispatch();
   const didClick = useRef(false);
 
-  const onSignInBtnClick = () => {
-    dispatch(signIn());
+  const onCwBtnClick = () => {
+    dispatch(connectWallet());
+  };
+
+  const onStsBtnClick = () => {
+    dispatch(signStxTstStr());
   };
 
   const onRetryBtnClick = () => {
@@ -49,7 +53,7 @@ export function GameBtcPred() {
 
   useEffect(() => {
     dispatch(fetchGameBtc());
-  }, [isUserSignedIn, dispatch]);
+  }, [signInStatus, dispatch]);
 
   useEffect(() => {
     didClick.current = false;
@@ -57,7 +61,7 @@ export function GameBtcPred() {
 
   const renderUdbsPane = () => {
     const disabled = (
-      isUserSignedIn !== true || !isZrOrPst(price) ||
+      signInStatus !== 3 || !isZrOrPst(price) ||
       !isZrOrPst(burnHeight) || didFetch !== true
     );
     return (
@@ -101,7 +105,22 @@ export function GameBtcPred() {
         <div className="absolute inset-0 flex items-center justify-center p-4">
           <div className="relative text-center">
             <p className="text-lg text-slate-200">Connect your wallet to get started.</p>
-            <button onClick={onSignInBtnClick} className="mt-4 rounded-full bg-orange-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110">Connect Wallet</button>
+            <button onClick={onCwBtnClick} className="mt-4 rounded-full bg-orange-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110">Connect Wallet</button>
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  const renderStsPane = () => {
+    return (
+      <>
+        {renderUdbsPane()}
+        <div className="absolute inset-0 bg-slate-800/85 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 flex items-center justify-center p-4">
+          <div className="relative text-center">
+            <p className="text-lg text-slate-200">Sign a message to prove you own your STX address so we can give you access to our server.</p>
+            <button onClick={onStsBtnClick} className="mt-4 rounded-full bg-orange-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110">Sign Message</button>
           </div>
         </div>
       </>
@@ -167,10 +186,12 @@ export function GameBtcPred() {
   };
 
   let content;
-  if (isUserSignedIn === null) { // loading
+  if (signInStatus === 0) { // loading
     content = renderLdgPane();
-  } else if (isUserSignedIn === false) { // connect wallet
+  } else if (signInStatus === 1) { // connect wallet
     content = renderCwPane();
+  } else if (signInStatus === 2) { // sign test string
+    content = renderStsPane();
   } else if (price === null || burnHeight === null || didFetch === null) { // loading
     content = renderLdgPane();
   } else if (price === -1 || burnHeight === -1) { // disable up and down buttons

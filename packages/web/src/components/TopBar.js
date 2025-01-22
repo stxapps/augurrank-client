@@ -5,16 +5,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import Image from 'next-image-export-optimizer';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 
-import { signIn, signOut } from '@/actions';
+import { connectWallet, signOut } from '@/actions';
 import Logo from '@/images/logo.svg';
+import { getSignInStatus } from '@/utils';
 
 export function TopBar() {
-  const isUserSignedIn = useSelector(state => state.user.isUserSignedIn);
+  const signInStatus = useSelector(state => getSignInStatus(state.user));
   const pathname = usePathname();
   const dispatch = useDispatch();
 
-  const onSignInBtnClick = () => {
-    dispatch(signIn());
+  const onCwBtnClick = () => {
+    dispatch(connectWallet());
   };
 
   const onSignOutBtnClick = () => {
@@ -52,20 +53,20 @@ export function TopBar() {
       {pathname !== '/game-btc' && <Link className="group px-0.5 py-1.5 text-lg font-medium text-slate-100 hover:text-orange-200 focus:outline-none" href="/game-btc" prefetch={true}>
         <div className="rounded-full px-2 py-0.5 group-focus-visible:outline group-focus-visible:outline-1">Game</div>
       </Link>}
-      {(isUserSignedIn && pathname !== '/me') && <Link className="group px-0.5 py-1.5 text-lg font-medium text-slate-100 hover:text-orange-200 focus:outline-none" href="/me" prefetch={false}>
+      {([2, 3].includes(signInStatus) && pathname !== '/me') && <Link className="group px-0.5 py-1.5 text-lg font-medium text-slate-100 hover:text-orange-200 focus:outline-none" href="/me" prefetch={false}>
         <div className="rounded-full px-2 py-0.5 group-focus-visible:outline group-focus-visible:outline-1">Me</div>
       </Link>}
-      {!isUserSignedIn && <button onClick={onSignInBtnClick} className="rounded-full bg-orange-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110">
+      {signInStatus === 1 && <button onClick={onCwBtnClick} className="rounded-full bg-orange-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110">
         Connect Wallet
       </button>}
-      {isUserSignedIn && <button onClick={onSignOutBtnClick} className="rounded-full border border-slate-400 px-2.5 py-1.5 text-sm font-medium text-slate-100 hover:border-orange-300 hover:text-orange-200">
+      {[2, 3].includes(signInStatus) && <button onClick={onSignOutBtnClick} className="rounded-full border border-slate-400 px-2.5 py-1.5 text-sm font-medium text-slate-100 hover:border-orange-300 hover:text-orange-200">
         Sign Out
       </button>}
     </div>
   );
 
   const doShowLeftPane = pathname !== '/';
-  const doShowRightPane = [true, false].includes(isUserSignedIn);
+  const doShowRightPane = signInStatus !== 0;
 
   return (
     <div className="relative mx-auto w-full max-w-6xl flex-none px-4 sm:px-6 lg:px-8 xl:px-12">

@@ -1,12 +1,10 @@
-import { signECDSA } from '@stacks/encryption/dist/esm';
-
-import userSession from '@/userSession';
+import idxApi from '@/apis';
 import lsgApi from '@/apis/localSg';
 import {
   BTC_PRICE_OBJ, BURN_HEIGHT_OBJ, GAME_URL, ME_URL, PREDS_URL, PRED_URL, VALID,
-  TEST_STRING, UNSAVED_PREDS, NOT_FOUND_ERROR, N_PREDS,
+  UNSAVED_PREDS, NOT_FOUND_ERROR, N_PREDS,
 } from '@/types/const';
-import { isObject, isString, isNumber, getUserStxAddr } from '@/utils';
+import { isObject, isString, isNumber } from '@/utils';
 
 const _fetchBtcPrice = async () => {
   try {
@@ -107,10 +105,8 @@ const fetchTxInfo = async (txId) => {
 };
 
 const getAuthData = () => {
-  const userData = userSession.loadUserData();
-  const sigObj = signECDSA(userData.appPrivateKey, TEST_STRING);
-  const stxAddr = getUserStxAddr(userData);
-  return { appPubKey: sigObj.publicKey, appSigStr: sigObj.signature, stxAddr };
+  const { stxAddr, stxTstStr, stxPubKey, stxSigStr } = idxApi.getLocalUser();
+  return { stxAddr, stxTstStr, stxPubKey, stxSigStr };
 };
 
 const fetchGame = async (game) => {

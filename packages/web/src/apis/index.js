@@ -1,27 +1,37 @@
 import lsgApi from '@/apis/localSg';
-import { DID_AGREE_TERMS, UNSAVED_PREDS } from '@/types/const';
+import { USER_OBJ, UNSAVED_PREDS, STX_TST_STR } from '@/types/const';
+import { isString } from '@/utils';
 
-const getExtraUserData = () => {
-  const str = lsgApi.getItemSync(DID_AGREE_TERMS);
+const getLocalUser = () => {
+  const data = {
+    stxAddr: '', stxTstStr: STX_TST_STR, stxPubKey: '', stxSigStr: '',
+    username: '', avatar: '', bio: '', didAgreeTerms: null,
+  };
 
-  let didAgreeTerms = null;
-  if (str === 'true') didAgreeTerms = true;
-  else if (str === 'false') didAgreeTerms = false;
+  const str = lsgApi.getItemSync(USER_OBJ);
+  if (isString(str)) {
+    try {
+      const obj = JSON.parse(str);
+      if (isString(obj.stxAddr)) data.stxAddr = obj.stxAddr;
+      if (isString(obj.stxPubKey)) data.stxPubKey = obj.stxPubKey;
+      if (isString(obj.stxSigStr)) data.stxSigStr = obj.stxSigStr;
+      if (isString(obj.username)) data.username = obj.username;
+      if (isString(obj.avatar)) data.avatar = obj.avatar;
+      if (isString(obj.bio)) data.bio = obj.bio;
+      if (obj.didAgreeTerms === true) data.didAgreeTerms = obj.didAgreeTerms;
+    } catch (error) {
+      // Ignore if cache value invalid
+    }
+  }
 
-  return { didAgreeTerms };
+  return data;
 };
 
-const putExtraUserData = (didAgreeTerms) => {
-  lsgApi.setItemSync(DID_AGREE_TERMS, didAgreeTerms ? 'true' : 'false');
+const putLocalUser = (user) => {
+  lsgApi.setItemSync(USER_OBJ, JSON.stringify(user));
 };
 
-const deleteExtraUserData = () => {
-  lsgApi.removeItemSync(DID_AGREE_TERMS);
-};
-
-const deleteAllLocalFiles = () => {
-  deleteExtraUserData();
-
+const deleteLocalFiles = () => {
   const keys = lsgApi.listKeysSync();
   for (const key of keys) {
     if (!key.startsWith(`${UNSAVED_PREDS}/`)) continue;
@@ -31,8 +41,6 @@ const deleteAllLocalFiles = () => {
   // Delete files in IndexedDB here if needed
 };
 
-const index = {
-  getExtraUserData, putExtraUserData, deleteExtraUserData, deleteAllLocalFiles,
-};
+const index = { getLocalUser, putLocalUser, deleteLocalFiles };
 
 export default index;

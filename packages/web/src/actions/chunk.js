@@ -2,18 +2,18 @@ import { PostConditionMode, Cl, Pc } from '@stacks/transactions/dist/esm';
 
 import userSession from '@/userSession';
 import { showContractCall } from '@/connectWrapper';
-import idxApi from '@/apis';
 import dataApi from '@/apis/data';
 import { updateUser, updatePopup } from '@/actions';
 import { UPDATE_GAME_BTC, REMOVE_GAME_BTC_PREDS, UPDATE_ME } from '@/types/actionTypes';
 import {
-  AGREE_POPUP, CONTRACT_ADDR, GAME_BTC, GAME_BTC_CONTRACT_NAME, GAME_BTC_FUNCTION_NAME,
-  GAME_BTC_FEE, GAME_BTC_LEAD_BURN_HEIGHT, PRED_STATUS_IN_MEMPOOL, PRED_STATUS_PUT_OK,
-  PRED_STATUS_PUT_ERROR, PRED_STATUS_VERIFIABLE, PRED_STATUS_VERIFYING, PDG, SCS,
-  ABT_BY_RES, ABT_BY_NF, NOT_FOUND_ERROR, N_PREDS,
+  APP_NAME, APP_ICON_NAME, AGREE_POPUP, CONTRACT_ADDR, GAME_BTC, GAME_BTC_CONTRACT_NAME,
+  GAME_BTC_FUNCTION_NAME, GAME_BTC_FEE, GAME_BTC_LEAD_BURN_HEIGHT,
+  PRED_STATUS_IN_MEMPOOL, PRED_STATUS_PUT_OK, PRED_STATUS_PUT_ERROR,
+  PRED_STATUS_VERIFIABLE, PRED_STATUS_VERIFYING, PDG, SCS, ABT_BY_RES, ABT_BY_NF,
+  NOT_FOUND_ERROR, N_PREDS,
 } from '@/types/const';
 import {
-  getUserStxAddr, getAppBtcAddr, isObject, randomString, unionPreds, sepPreds,
+  extractUrl, getSignInStatus, isObject, randomString, unionPreds, sepPreds,
   getPredStatus, getPendingPred, deriveTxInfo, getPredSeq, getFetchMeMoreParams,
 } from '@/utils';
 import vars from '@/vars';
@@ -102,8 +102,8 @@ const getBurnHeightTime = (pendingPred) => {
 export const fetchGameBtc = (doForce = false, doLoad = false) => async (
   dispatch, getState
 ) => {
-  const isUserSignedIn = getState().user.isUserSignedIn;
-  if (!isUserSignedIn) return;
+  const signInStatus = getSignInStatus(getState().user);
+  if (signInStatus !== 3) return;
 
   if (!doForce && vars.gameBtc.didFetch) return;
   vars.gameBtc.didFetch = true;
@@ -145,8 +145,6 @@ export const fetchGameBtc = (doForce = false, doLoad = false) => async (
 
   dispatch(updateGameBtc({ ...newData, didFetch: true }));
 
-  if (data.didAgreeTerms === true) idxApi.putExtraUserData(true);
-
   setTimeout(() => {
     dispatch(refreshPreds());
   }, 1000); // Call refreshPreds after state updated.
@@ -163,8 +161,8 @@ export const removeGameBtcPreds = (ids) => {
 export const fetchMe = (doForce = false, doLoad = false) => async (
   dispatch, getState
 ) => {
-  const isUserSignedIn = getState().user.isUserSignedIn;
-  if (!isUserSignedIn) return;
+  const signInStatus = getSignInStatus(getState().user);
+  if (signInStatus !== 3) return;
 
   if (!doForce && vars.me.didFetch) return;
   vars.me.didFetch = true;
@@ -192,8 +190,8 @@ export const fetchMe = (doForce = false, doLoad = false) => async (
 };
 
 export const fetchMeMore = (doForce) => async (dispatch, getState) => {
-  const isUserSignedIn = getState().user.isUserSignedIn;
-  if (!isUserSignedIn) return;
+  const signInStatus = getSignInStatus(getState().user);
+  if (signInStatus !== 3) return;
 
   const fetchingMore = getState().me.fetchingMore;
   if (fetchingMore === true) return;
@@ -233,7 +231,6 @@ export const updateMe = (payload) => {
 export const agreeTerms = () => async (dispatch, getState) => {
   dispatch(updatePopup(AGREE_POPUP, false));
   dispatch(updateUser({ didAgreeTerms: true }));
-  idxApi.putExtraUserData(true);
 
   const pred = vars.agreeTerms.pred;
   if (pred.game === GAME_BTC) {
@@ -388,15 +385,13 @@ const refreshVerifiablePreds = async (preds, dispatch) => {
 };
 
 export const predictGameBtc = (value) => async (dispatch, getState) => {
-  const userData = userSession.loadUserData();
-  const appBtcAddr = getAppBtcAddr(userData);
+  const { stxAddr } = getState().user;
   const now = Date.now();
 
-  const id = `${appBtcAddr}-${now}${randomString(7)}`;
+  const id = `${stxAddr}-${now}${randomString(7)}`;
   const [game, contract] = [GAME_BTC, GAME_BTC_CONTRACT_NAME];
   const [createDate, updateDate] = [now, now];
-  const stxAddr = getUserStxAddr(userData);
-  const pred = { id, game, contract, value, createDate, updateDate, stxAddr };
+  const pred = { id, stxAddr, game, contract, value, createDate, updateDate };
 
   dispatch(updateGameBtc({ pred }));
 
@@ -411,8 +406,8 @@ export const predictGameBtc = (value) => async (dispatch, getState) => {
 };
 
 const callGameBtcContract = (pred) => async (dispatch, getState) => {
-  const userData = userSession.loadUserData();
-  const stxAddr = getUserStxAddr(userData);
+  const { stxAddr } = getState().user;
+  const appIconUrl = extractUrl(window.location.href).origin + '/' + APP_ICON_NAME;
   const condition = Pc.principal(stxAddr).willSendEq(GAME_BTC_FEE).ustx();
 
   const onFinish = async (res) => {
@@ -442,6 +437,8 @@ const callGameBtcContract = (pred) => async (dispatch, getState) => {
   };
 
   showContractCall({
+    userSession: userSession._userSession,
+    appDetails: { name: APP_NAME, icon: appIconUrl },
     network: 'mainnet',
     stxAddress: stxAddr,
     sponsored: false,

@@ -1,17 +1,16 @@
 import userSession from '@/userSession';
-import { showConnect } from '@/connectWrapper';
+import { showConnect, showSignMessage, deleteSelectedWallet } from '@/connectWrapper';
 import idxApi from '@/apis';
 import {
   INIT, UPDATE_WINDOW, UPDATE_USER, UPDATE_POPUP, UPDATE_JOIN_NEWSLETTER, RESET_STATE,
 } from '@/types/actionTypes';
 import {
-  APP_NAME, APP_ICON_NAME, ADD_NEWSLETTER_EMAIL_URL, VALID,
+  APP_NAME, APP_ICON_NAME, STX_TST_STR, ADD_NEWSLETTER_EMAIL_URL, VALID,
   JOIN_NEWSLETTER_STATUS_JOINING, JOIN_NEWSLETTER_STATUS_INVALID,
   JOIN_NEWSLETTER_STATUS_COMMIT, JOIN_NEWSLETTER_STATUS_ROLLBACK,
 } from '@/types/const';
 import {
-  extractUrl, getUrlPathQueryHash, getUserUsername, getUserImageUrl, getUserStxAddr,
-  throttle, isObject, validateEmail, getWindowInsets,
+  extractUrl, getUrlPathQueryHash, throttle, isObject, validateEmail, getWindowInsets,
 } from '@/utils';
 import vars from '@/vars';
 
@@ -20,22 +19,12 @@ export const init = () => async (dispatch, getState) => {
   if (_didInit) return;
   _didInit = true;
 
-  const isUserSignedIn = userSession.isUserSignedIn();
-
-  let username = null, userImage = null, userStxAddr = null, didAgreeTerms = null;
-  if (isUserSignedIn) {
-    const userData = userSession.loadUserData();
-    username = getUserUsername(userData);
-    userImage = getUserImageUrl(userData);
-    userStxAddr = getUserStxAddr(userData);
-
-    const extraUserData = idxApi.getExtraUserData();
-    didAgreeTerms = extraUserData.didAgreeTerms;
-  }
-
+  const {
+    stxAddr, stxPubKey, stxSigStr, username, avatar, bio, didAgreeTerms,
+  } = idxApi.getLocalUser();
   dispatch({
     type: INIT,
-    payload: { isUserSignedIn, username, userImage, userStxAddr, didAgreeTerms },
+    payload: { stxAddr, stxPubKey, stxSigStr, username, avatar, bio, didAgreeTerms },
   });
 
   window.addEventListener('resize', throttle(() => {
@@ -71,44 +60,69 @@ export const init = () => async (dispatch, getState) => {
 };
 
 export const signOut = () => async (dispatch, getState) => {
+  const payload = { stxAddr: '', stxPubKey: '', stxSigStr: '' };
+  await resetState(payload, dispatch);
+
   userSession.signUserOut();
-  await resetState(dispatch);
+  deleteSelectedWallet();
 };
 
-export const signIn = () => async (dispatch, getState) => {
+export const connectWallet = () => async (dispatch, getState) => {
   const appIconUrl = extractUrl(window.location.href).origin + '/' + APP_ICON_NAME;
   showConnect({
-    appDetails: { name: APP_NAME, icon: appIconUrl },
-    redirectTo: '/' + getUrlPathQueryHash(window.location.href),
-    onFinish: () => dispatch(updateUserSignedIn()),
     userSession: userSession._userSession,
+    appDetails: { name: APP_NAME, icon: appIconUrl },
     sendToSignIn: false,
+    redirectTo: '/' + getUrlPathQueryHash(window.location.href),
+    onFinish: () => {
+      const userSessionData = userSession.loadUserData();
+      const stxAddr = userSessionData.profile.stxAddress.mainnet;
+
+      const user = { stxAddr, stxPubKey: '', stxSigStr: '' };
+      dispatch(updateUser(user));
+
+      dispatch(signStxTstStr());
+    },
   });
 };
 
-const updateUserSignedIn = () => async (dispatch, getState) => {
-  await resetState(dispatch);
+export const signStxTstStr = () => async (dispatch, getState) => {
+  const { stxAddr } = getState().user;
+  const appIconUrl = extractUrl(window.location.href).origin + '/' + APP_ICON_NAME;
+  showSignMessage({
+    userSession: userSession._userSession,
+    appDetails: { name: APP_NAME, icon: appIconUrl },
+    network: 'mainnet',
+    stxAddress: stxAddr,
+    message: STX_TST_STR,
+    onFinish: async (sigObj) => {
+      const { stxAddr } = getState().user;
+      const payload = { stxAddr, stxPubKey: '', stxSigStr: '' };
+      await resetState(payload, dispatch);
 
-  const userData = userSession.loadUserData();
-  dispatch(updateUser({
-    isUserSignedIn: true,
-    username: getUserUsername(userData),
-    image: getUserImageUrl(userData),
-    stxAddr: getUserStxAddr(userData),
-  }));
+      const [stxPubKey, stxSigStr] = [sigObj.publicKey, sigObj.signature];
+      const user = { stxAddr, stxPubKey, stxSigStr };
+      dispatch(updateUser(user));
+    },
+  });
 };
 
-const resetState = async (dispatch) => {
-  idxApi.deleteAllLocalFiles();
+const resetState = async (payload, dispatch) => {
+  idxApi.deleteLocalFiles();
 
   vars.gameBtc.didFetch = false;
   vars.me.didFetch = false;
 
-  dispatch({ type: RESET_STATE });
+  dispatch({ type: RESET_STATE, payload });
 };
 
 export const updateUser = (payload) => {
   return { type: UPDATE_USER, payload };
+};
+
+export const updateLocalUser = () => async (dispatch, getState) => {
+  const user = getState().user;
+  idxApi.putLocalUser(user);
 };
 
 export const updatePopup = (id, isShown, anchorPosition) => {

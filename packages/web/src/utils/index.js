@@ -1,6 +1,3 @@
-import {
-  getPublicKeyFromPrivate, publicKeyToBtcAddress,
-} from '@stacks/encryption/dist/esm';
 import Url from 'url-parse';
 import {
   HTTP, GAME_BTC, PRED_STATUS_INIT, PRED_STATUS_IN_MEMPOOL, PRED_STATUS_PUT_OK,
@@ -42,43 +39,16 @@ export const getUrlPathQueryHash = (url) => {
   return url.split('/').slice(i).join('/');
 };
 
-export const getUserUsername = (userData) => {
-  if (!isObject(userData) || !isString(userData.username)) return '';
-  return userData.username;
-};
+export const getSignInStatus = (user) => {
+  const { stxAddr, stxPubKey, stxSigStr } = user;
+  if (stxAddr === null && stxPubKey === null && stxSigStr === null) return 0; // loading
 
-export const getUserImageUrl = (userData) => {
-
-  let userImage = null;
-  if (userData && userData.profile) {
-    if (userData.profile.image) userImage = userData.profile.image;
-    else if (
-      userData.profile.decodedToken &&
-      userData.profile.decodedToken.payload &&
-      userData.profile.decodedToken.payload.claim &&
-      userData.profile.decodedToken.payload.claim.image
-    ) userImage = userData.profile.decodedToken.payload.claim.image;
+  if (isFldStr(stxAddr)) {
+    if (isFldStr(stxPubKey) && isFldStr(stxSigStr)) return 3; // signed in
+    return 2; // connected
   }
 
-  let userImageUrl = null;
-  if (userImage) {
-    if (Array.isArray(userImage) && userImage.length > 0) {
-      userImageUrl = userImage[0].contentUrl || null;
-    }
-  }
-
-  return userImageUrl;
-};
-
-export const getUserStxAddr = (userData) => {
-  const stxAddr = userData.profile.stxAddress.mainnet;
-  return stxAddr;
-};
-
-export const getAppBtcAddr = (userData) => {
-  const appPubKey = getPublicKeyFromPrivate(userData.appPrivateKey);
-  const appBtcAddr = publicKeyToBtcAddress(appPubKey);
-  return appBtcAddr;
+  return 1; // not signed in
 };
 
 export const throttle = (func, limit) => {

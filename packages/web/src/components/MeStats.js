@@ -6,23 +6,27 @@ import Image from 'next/image';
 import { UserIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 
-import { signIn } from '@/actions';
+import { connectWallet, signStxTstStr } from '@/actions';
 import { fetchBurnHeight, fetchMe } from '@/actions/chunk';
 import { getMeStats } from '@/selectors';
-import { isFldStr, localeNumber } from '@/utils';
+import { getSignInStatus, isFldStr, localeNumber } from '@/utils';
 
 export function MeStats() {
-  const isUserSignedIn = useSelector(state => state.user.isUserSignedIn);
+  const signInStatus = useSelector(state => getSignInStatus(state.user));
   const username = useSelector(state => state.user.username);
-  const userImage = useSelector(state => state.user.image);
+  const avatar = useSelector(state => state.user.avatar);
   const stxAddr = useSelector(state => state.user.stxAddr);
   const burnHeight = useSelector(state => state.gameBtc.burnHeight);
   const didFetch = useSelector(state => state.me.didFetch);
   const stats = useSelector(state => getMeStats(state));
   const dispatch = useDispatch();
 
-  const onSignInBtnClick = () => {
-    dispatch(signIn());
+  const onCwBtnClick = () => {
+    dispatch(connectWallet());
+  };
+
+  const onStsBtnClick = () => {
+    dispatch(signStxTstStr());
   };
 
   const onRetryBtnClick = () => {
@@ -32,15 +36,18 @@ export function MeStats() {
 
   useEffect(() => {
     dispatch(fetchBurnHeight());
+  }, [dispatch]);
+
+  useEffect(() => {
     dispatch(fetchMe());
-  }, [isUserSignedIn, dispatch]);
+  }, [signInStatus, dispatch]);
 
   const renderUsrPane = () => {
     let userImagePane, usernamePane, stxAddrPane;
     if (renderCode === 2) {
-      if (isFldStr(userImage)) {
+      if (isFldStr(avatar)) {
         userImagePane = (
-          <Image className="size-32" src={userImage} alt="User image" />
+          <Image className="size-32" src={avatar} alt="User avatar" />
         );
       } else {
         userImagePane = (
@@ -93,7 +100,18 @@ export function MeStats() {
       <div className="border-2 border-transparent py-1 sm:py-2">
         <div className="flex h-60 flex-col items-center justify-center sm:h-32">
           <p className="text-center text-3xl font-medium text-slate-200">Connect your wallet to get started.</p>
-          <button onClick={onSignInBtnClick} className="mt-4 rounded-full bg-orange-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110">Connect Wallet</button>
+          <button onClick={onCwBtnClick} className="mt-4 rounded-full bg-orange-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110">Connect Wallet</button>
+        </div>
+      </div>
+    );
+  };
+
+  const renderStsPane = () => {
+    return (
+      <div className="border-2 border-transparent py-1 sm:py-2">
+        <div className="flex h-60 flex-col items-center justify-center sm:h-32">
+          <p className="text-center text-3xl font-medium text-slate-200">Sign a message to prove you own your STX address so we can give you access to our server.</p>
+          <button onClick={onStsBtnClick} className="mt-4 rounded-full bg-orange-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110">Sign Message</button>
         </div>
       </div>
     );
@@ -111,12 +129,15 @@ export function MeStats() {
   };
 
   let renderCode, content;
-  if (isUserSignedIn === null) { // loading
+  if (signInStatus === 0) { // loading
     renderCode = 0;
     content = renderUsrPane();
-  } else if (isUserSignedIn === false) { // connect wallet
+  } else if (signInStatus === 1) { // connect wallet
     renderCode = 1;
     content = renderCwPane();
+  } else if (signInStatus === 2) { // sign test string
+    renderCode = 1;
+    content = renderStsPane();
   } else if (burnHeight === null || didFetch === null) { // loading
     renderCode = 0;
     content = renderUsrPane();

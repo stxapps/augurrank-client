@@ -1,5 +1,10 @@
-import { authenticate, openContractCall, DEFAULT_PROVIDERS } from '@stacks/connect';
-import { getSelectedProviderId, getProviderFromId } from '@stacks/connect-ui';
+import {
+  authenticate, openSignatureRequestPopup, openContractCall, DEFAULT_PROVIDERS,
+} from '@stacks/connect';
+import {
+  getSelectedProviderId, setSelectedProviderId, clearSelectedProviderId,
+  getProviderFromId,
+} from '@stacks/connect-ui';
 import { defineCustomElements } from '@stacks/connect-ui/loader';
 
 const LEATHER_PROVIDER = 'LeatherProvider';
@@ -17,8 +22,14 @@ const wrapConnectCall = (action, doSelected) => (options) => {
   const ltPvd = getProviderFromId(LEATHER_PROVIDER);
   const xvPvd = getProviderFromId(XVERSE_PROVIDER);
 
-  if (ltPvd && !xvPvd) return action(options, ltPvd);
-  if (!ltPvd && xvPvd) return action(options, xvPvd);
+  if (ltPvd && !xvPvd) {
+    setSelectedProviderId(LEATHER_PROVIDER);
+    return action(options, ltPvd);
+  }
+  if (!ltPvd && xvPvd) {
+    setSelectedProviderId(XVERSE_PROVIDER);
+    return action(options, xvPvd);
+  }
 
   const defaultProviders = DEFAULT_PROVIDERS.filter(p => {
     return [LEATHER_PROVIDER, XVERSE_PROVIDER].includes(p.id);
@@ -63,4 +74,6 @@ const wrapConnectCall = (action, doSelected) => (options) => {
 };
 
 export const showConnect = wrapConnectCall(authenticate, false);
+export const showSignMessage = wrapConnectCall(openSignatureRequestPopup, true);
 export const showContractCall = wrapConnectCall(openContractCall, true);
+export const deleteSelectedWallet = clearSelectedProviderId;
