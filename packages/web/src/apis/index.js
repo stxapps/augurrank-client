@@ -5,7 +5,7 @@ import { isString } from '@/utils';
 const getLocalUser = () => {
   const data = {
     stxAddr: '', stxTstStr: STX_TST_STR, stxPubKey: '', stxSigStr: '',
-    username: '', avatar: '', bio: '', didAgreeTerms: null,
+    username: null, avatar: null, bio: null, didAgreeTerms: null,
   };
 
   const str = lsgApi.getItemSync(USER_OBJ);
