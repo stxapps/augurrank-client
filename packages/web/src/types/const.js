@@ -4,13 +4,6 @@ export const APP_NAME = 'AugurRank';
 export const APP_ICON_NAME = 'logo-for-stacks-access.png';
 export const APP_SCOPES = ['store_write'];
 
-export const BTC_PRICE_OBJ = 'btcPriceObj';
-export const BURN_HEIGHT_OBJ = 'burnHeightObj';
-export const USER_OBJ = 'userObj';
-export const UNSAVED_PREDS = 'unsaved-preds';
-
-export const STX_TST_STR = 'Please sign this message to prove you own your STX address so we can give you access to our server.';
-
 export const HTTP = 'http://';
 
 export const VALID = 'VALID';
@@ -19,6 +12,17 @@ export const SM_WIDTH = 640;
 export const MD_WIDTH = 768;
 export const LG_WIDTH = 1024;
 export const XL_WIDTH = 1280;
+
+export const BTC_PRICE_OBJ = 'btcPriceObj';
+export const BURN_HEIGHT_OBJ = 'burnHeightObj';
+export const WALLET_ID = 'walletId';
+export const USER_OBJ = 'userObj';
+export const UNSAVED_PREDS = 'unsaved-preds';
+
+export const ID_LEATHER = 'LeatherProvider';
+export const ID_XVERSE = 'XverseProviders.StacksProvider';
+
+export const STX_TST_STR = 'Please sign this message to prove you own your STX address so we can give you access to our server.';
 
 export const AGREE_POPUP = 'AGREE_POPUP';
 
@@ -60,6 +64,9 @@ export const ABT_BY_RES = 'abort_by_response';
 export const ABT_BY_PC = 'abort_by_post_condition';
 export const ABT_BY_NF = 'abort_by_not_found';
 
-export const NOT_FOUND_ERROR = 'NOT_FOUND_ERROR';
+export const ERR_INVALID_ARGS = 'ERR_INVALID_ARGS';
+export const ERR_NOT_FOUND = 'ERR_NOT_FOUND';
+export const ERR_INVALID_RES = 'ERR_INVALID_RES';
+export const ERR_VRF_SIG = 'ERR_VRF_SIG';
 
 export const N_PREDS = 30;

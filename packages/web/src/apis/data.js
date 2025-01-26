@@ -2,15 +2,15 @@ import idxApi from '@/apis';
 import lsgApi from '@/apis/localSg';
 import {
   BTC_PRICE_OBJ, BURN_HEIGHT_OBJ, GAME_URL, ME_URL, PREDS_URL, PRED_URL, VALID,
-  UNSAVED_PREDS, NOT_FOUND_ERROR, N_PREDS,
+  UNSAVED_PREDS, ERR_INVALID_ARGS, ERR_NOT_FOUND, ERR_INVALID_RES, N_PREDS,
 } from '@/types/const';
-import { isObject, isString, isNumber } from '@/utils';
+import { isObject, isString, isNumber, getStatusText } from '@/utils';
 
 const _fetchBtcPrice = async () => {
   try {
     const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
     if (!res.ok) {
-      throw new Error(res.statusText);
+      throw new Error(getStatusText(res));
     }
     const obj = await res.json();
     const price = obj.bitcoin.usd;
@@ -21,7 +21,7 @@ const _fetchBtcPrice = async () => {
 
   const res = await fetch('https://api.blockchain.info/ticker');
   if (!res.ok) {
-    throw new Error(res.statusText);
+    throw new Error(getStatusText(res));
   }
   const obj = await res.json();
   const price = obj.USD.last;
@@ -53,7 +53,7 @@ const _fetchBurnHeight = async () => {
   try {
     const res = await fetch('https://api.hiro.so/extended');
     if (!res.ok) {
-      throw new Error(res.statusText);
+      throw new Error(getStatusText(res));
     }
     const obj = await res.json();
     const height = obj.chain_tip.burn_block_height;
@@ -64,7 +64,7 @@ const _fetchBurnHeight = async () => {
 
   const res = await fetch('https://blockstream.info/api/blocks/tip/height');
   if (!res.ok) {
-    throw new Error(res.statusText);
+    throw new Error(getStatusText(res));
   }
   const text = await res.text();
   const height = parseInt(text, 10);
@@ -95,10 +95,10 @@ const fetchBurnHeight = async () => {
 const fetchTxInfo = async (txId) => {
   const res = await fetch(`https://api.hiro.so/extended/v1/tx/${txId}`);
   if (res.status === 404) {
-    throw new Error(NOT_FOUND_ERROR);
+    throw new Error(ERR_NOT_FOUND);
   }
   if (!res.ok) {
-    throw new Error(res.statusText);
+    throw new Error(getStatusText(res));
   }
   const obj = await res.json();
   return obj;
@@ -121,12 +121,12 @@ const fetchGame = async (game) => {
     body: JSON.stringify({ ...authData, game }),
   });
   if (!res.ok) {
-    throw new Error(res.statusText);
+    throw new Error(getStatusText(res));
   }
 
   const obj = await res.json();
   if (obj.status !== VALID) {
-    throw new Error('Invalid reqBody');
+    throw new Error(ERR_INVALID_RES);
   }
 
   return obj;
@@ -144,12 +144,12 @@ const fetchMe = async () => {
     body: JSON.stringify({ ...authData }),
   });
   if (!res.ok) {
-    throw new Error(res.statusText);
+    throw new Error(getStatusText(res));
   }
 
   const obj = await res.json();
   if (obj.status !== VALID) {
-    throw new Error('Invalid reqBody');
+    throw new Error(ERR_INVALID_RES);
   }
 
   return obj;
@@ -171,7 +171,8 @@ const fetchPreds = async (
   ) {
     reqData = { game, createDate, operator, excludingIds, fthMeStsIfVrfd };
   } else {
-    throw new Error(`Invalid args: ${ids}, ${game}, ${createDate}, ${operator}, ${excludingIds}`);
+    console.log(`In fetchPreds, invalid args: ${ids}, ${game}, ${createDate}, ${operator}, ${excludingIds}`);
+    throw new Error(ERR_INVALID_ARGS);
   }
 
   const res = await fetch(PREDS_URL, {
@@ -183,12 +184,12 @@ const fetchPreds = async (
     body: JSON.stringify({ ...authData, ...reqData }),
   });
   if (!res.ok) {
-    throw new Error(res.statusText);
+    throw new Error(getStatusText(res));
   }
 
   const obj = await res.json();
   if (obj.status !== VALID) {
-    throw new Error('Invalid reqBody');
+    throw new Error(ERR_INVALID_RES);
   }
 
   return obj;
@@ -206,12 +207,12 @@ const putPred = async (pred) => {
     body: JSON.stringify({ ...authData, pred }),
   });
   if (!res.ok) {
-    throw new Error(res.statusText);
+    throw new Error(getStatusText(res));
   }
 
   const obj = await res.json();
   if (obj.status !== VALID) {
-    throw new Error('Invalid reqBody');
+    throw new Error(ERR_INVALID_RES);
   }
 
   return obj;

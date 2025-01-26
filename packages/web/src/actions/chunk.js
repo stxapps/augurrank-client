@@ -1,20 +1,18 @@
 import { PostConditionMode, Cl, Pc } from '@stacks/transactions/dist/esm';
 
-import userSession from '@/userSession';
-import { showContractCall } from '@/connectWrapper';
+import walletApi from '@/apis/wallet';
 import dataApi from '@/apis/data';
-import { updateUser, updatePopup } from '@/actions';
+import { updatePopup, updateUser, updateErrorPopup } from '@/actions';
 import { UPDATE_GAME_BTC, REMOVE_GAME_BTC_PREDS, UPDATE_ME } from '@/types/actionTypes';
 import {
-  APP_NAME, APP_ICON_NAME, AGREE_POPUP, CONTRACT_ADDR, GAME_BTC, GAME_BTC_CONTRACT_NAME,
-  GAME_BTC_FUNCTION_NAME, GAME_BTC_FEE, GAME_BTC_LEAD_BURN_HEIGHT,
-  PRED_STATUS_IN_MEMPOOL, PRED_STATUS_PUT_OK, PRED_STATUS_PUT_ERROR,
-  PRED_STATUS_VERIFIABLE, PRED_STATUS_VERIFYING, PDG, SCS, ABT_BY_RES, ABT_BY_NF,
-  NOT_FOUND_ERROR, N_PREDS,
+  AGREE_POPUP, CONTRACT_ADDR, GAME_BTC, GAME_BTC_CONTRACT_NAME, GAME_BTC_FUNCTION_NAME,
+  GAME_BTC_FEE, GAME_BTC_LEAD_BURN_HEIGHT, PRED_STATUS_IN_MEMPOOL, PRED_STATUS_PUT_OK,
+  PRED_STATUS_PUT_ERROR, PRED_STATUS_VERIFIABLE, PRED_STATUS_VERIFYING, PDG, SCS,
+  ABT_BY_RES, ABT_BY_NF, ERR_NOT_FOUND, N_PREDS,
 } from '@/types/const';
 import {
-  extractUrl, getSignInStatus, isObject, randomString, unionPreds, sepPreds,
-  getPredStatus, getPendingPred, deriveTxInfo, getPredSeq, getFetchMeMoreParams,
+  getSignInStatus, isObject, randomString, unionPreds, sepPreds, getPredStatus,
+  getPendingPred, deriveTxInfo, getPredSeq, getFetchMeMoreParams, getWalletErrorText,
 } from '@/utils';
 import vars from '@/vars';
 
@@ -326,7 +324,7 @@ const refreshUnconfirmedPreds = async (preds, dispatch) => {
     try {
       txInfo = await dataApi.fetchTxInfo(pred.cTxId);
     } catch (error) {
-      if (error.message !== NOT_FOUND_ERROR) {
+      if (error.message !== ERR_NOT_FOUND) {
         continue; // server error, network error, do it later or by server.
       }
       if (Date.now() - pred.createDate < 60 * 60 * 1000) {
@@ -406,49 +404,55 @@ export const predictGameBtc = (value) => async (dispatch, getState) => {
 };
 
 const callGameBtcContract = (pred) => async (dispatch, getState) => {
-  const { stxAddr } = getState().user;
-  const appIconUrl = extractUrl(window.location.href).origin + '/' + APP_ICON_NAME;
+  const { stxAddr, stxPubKey } = getState().user;
   const condition = Pc.principal(stxAddr).willSendEq(GAME_BTC_FEE).ustx();
 
-  const onFinish = async (res) => {
-    const newPred = { ...pred, cTxId: res.txId };
-    dispatch(updateGameBtc({ pred: newPred }));
-    dataApi.putUnsavedPred(newPred);
-
-    newPred.pStatus = SCS;
-    try {
-      await dataApi.putPred(newPred);
-    } catch (error) {
-      newPred.pStatus = ABT_BY_RES;
-      dispatch(updateGameBtc({ pred: newPred }));
-      dataApi.putUnsavedPred(newPred);
+  let data;
+  try {
+    data = await walletApi.contractCall({
+      stxAddress: stxAddr,
+      publicKey: stxPubKey,
+      sponsored: false,
+      network: 'mainnet',
+      contractAddress: CONTRACT_ADDR,
+      contractName: GAME_BTC_CONTRACT_NAME,
+      functionName: GAME_BTC_FUNCTION_NAME,
+      functionArgs: [Cl.stringAscii(pred.value)],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [condition],
+    });
+  } catch (error) {
+    console.log('In callGameBtcContract, error:', error);
+    dispatch(removeGameBtcPreds([pred.id]));
+    if (
+      (isObject(error.error) && [4001, -32000].includes(error.error.code)) ||
+      error === 'cancel'
+    ) {
       return;
     }
 
+    dispatch(updateErrorPopup(getWalletErrorText(error.message)));
+    return;
+  }
+
+  const newPred = { ...pred, cTxId: data.txId };
+  dispatch(updateGameBtc({ pred: newPred }));
+  dataApi.putUnsavedPred(newPred);
+
+  newPred.pStatus = SCS;
+  try {
+    await dataApi.putPred(newPred);
+  } catch (error) {
+    newPred.pStatus = ABT_BY_RES;
     dispatch(updateGameBtc({ pred: newPred }));
-    dataApi.deleteUnsavedPred(newPred.id);
+    dataApi.putUnsavedPred(newPred);
+    return;
+  }
 
-    setTimeout(() => {
-      dispatch(refreshPreds());
-    }, 5 * 1000); // Wait a while before calling refreshPreds.
-  };
-  const onCancel = () => {
-    dispatch(removeGameBtcPreds([pred.id]));
-  };
+  dispatch(updateGameBtc({ pred: newPred }));
+  dataApi.deleteUnsavedPred(newPred.id);
 
-  showContractCall({
-    userSession: userSession._userSession,
-    appDetails: { name: APP_NAME, icon: appIconUrl },
-    network: 'mainnet',
-    stxAddress: stxAddr,
-    sponsored: false,
-    contractAddress: CONTRACT_ADDR,
-    contractName: GAME_BTC_CONTRACT_NAME,
-    functionName: GAME_BTC_FUNCTION_NAME,
-    functionArgs: [Cl.stringAscii(pred.value)],
-    postConditionMode: PostConditionMode.Deny,
-    postConditions: [condition],
-    onFinish: onFinish,
-    onCancel: onCancel,
-  });
+  setTimeout(() => {
+    dispatch(refreshPreds());
+  }, 5 * 1000); // Wait a while before calling refreshPreds.
 };

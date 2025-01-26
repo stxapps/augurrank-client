@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Image from 'next-image-export-optimizer';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 
-import { connectWallet, signOut } from '@/actions';
+import { chooseWallet, signOut } from '@/actions';
 import Logo from '@/images/logo.svg';
 import { getSignInStatus } from '@/utils';
 
@@ -15,7 +15,7 @@ export function TopBar() {
   const dispatch = useDispatch();
 
   const onCwBtnClick = () => {
-    dispatch(connectWallet());
+    dispatch(chooseWallet());
   };
 
   const onSignOutBtnClick = () => {

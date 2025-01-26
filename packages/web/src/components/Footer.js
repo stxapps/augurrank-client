@@ -12,7 +12,7 @@ export function Footer() {
             <Link className="block rounded-sm px-2 py-1 text-sm text-slate-400 hover:text-slate-300" href="/privacy" prefetch={false}>Privacy</Link>
           </div>
         </div>
-        <p className="mt-5 text-left text-sm text-gray-400 md:mt-0">© {(new Date()).getFullYear()} <Link className="rounded-sm text-slate-400 hover:text-slate-300" href="https://www.stxapps.com" target="_blank" rel="noreferrer">STX Apps Co., Ltd.</Link></p>
+        <p className="mt-5 text-left text-sm text-slate-400 md:mt-0">© {(new Date()).getFullYear()} <Link className="rounded-sm text-slate-400 hover:text-slate-300" href="https://www.stxapps.com" target="_blank" rel="noreferrer">STX Apps Co., Ltd.</Link></p>
       </div>
     </div>
   );

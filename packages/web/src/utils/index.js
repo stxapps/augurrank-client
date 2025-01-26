@@ -3,7 +3,8 @@ import {
   HTTP, GAME_BTC, PRED_STATUS_INIT, PRED_STATUS_IN_MEMPOOL, PRED_STATUS_PUT_OK,
   PRED_STATUS_PUT_ERROR, PRED_STATUS_CONFIRMED_OK, PRED_STATUS_CONFIRMED_ERROR,
   PRED_STATUS_VERIFIABLE, PRED_STATUS_VERIFYING, PRED_STATUS_VERIFIED_OK,
-  PRED_STATUS_VERIFIED_ERROR, PDG, SCS,
+  PRED_STATUS_VERIFIED_ERROR, PDG, SCS, ERR_INVALID_ARGS, ERR_NOT_FOUND,
+  ERR_VRF_SIG,
 } from '@/types/const';
 
 export const containUrlProtocol = (url) => {
@@ -120,6 +121,10 @@ export const localeDate = (dt) => {
   return d.toLocaleDateString(
     undefined, { day: 'numeric', month: 'numeric', year: '2-digit' }
   );
+};
+
+export const getStatusText = (res) => {
+  return `${res.status} ${res.statusText}`;
 };
 
 export const validateEmail = (email) => {
@@ -374,4 +379,20 @@ export const getFetchMeMoreParams = (gameBtcPreds) => {
   }
 
   return { game, createDate, operator, excludingIds };
+};
+
+export const getWalletErrorText = (code) => {
+  let title = '', body = '';
+  if (code === ERR_INVALID_ARGS) {
+    title = 'Unknown Wallet';
+    body = 'Please sign out and connect with a supported wallet.';
+  } else if (code === ERR_NOT_FOUND) {
+    title = 'Wallet Not Found';
+    body = 'Please make sure the wallet is installed and enabled.';
+  } else if (code === ERR_VRF_SIG) {
+    title = 'Incorrect Signature';
+    body = 'Please check if you signed a message using the same account connected to the wallet.';
+  }
+
+  return { title, body };
 };

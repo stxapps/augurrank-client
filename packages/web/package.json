@@ -13,12 +13,12 @@
     "deploy-prod": "bash bin/deploy-prod.sh"
   },
   "dependencies": {
-    "@stacks/auth": "^7.0.2",
-    "@stacks/connect": "^7.9.0",
+    "@stacks/encryption": "^7.0.2",
     "@stacks/network": "^7.0.2",
     "@stacks/transactions": "^7.0.2",
     "clsx": "^2.1.1",
     "idb-keyval": "^6.2.1",
+    "jsontokens": "^4.0.1",
     "motion": "^11.15.0",
     "next": "^14.2.16",
     "next-image-export-optimizer": "^1.15.1",
@@ -29,6 +29,7 @@
     "redux": "^4.2.1",
     "redux-loop": "^6.2.0",
     "reselect": "^4.1.8",
+    "sats-connect": "^3.0.1",
     "url-parse": "^1.5.10"
   },
   "devDependencies": {

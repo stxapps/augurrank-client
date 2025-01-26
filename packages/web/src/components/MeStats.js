@@ -1,12 +1,12 @@
 'use client';
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { UserIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 
-import { connectWallet, signStxTstStr } from '@/actions';
+import { chooseWallet, signStxTstStr } from '@/actions';
 import { fetchBurnHeight, fetchMe } from '@/actions/chunk';
 import { getMeStats } from '@/selectors';
 import { getSignInStatus, isFldStr, localeNumber } from '@/utils';
@@ -22,7 +22,7 @@ export function MeStats() {
   const dispatch = useDispatch();
 
   const onCwBtnClick = () => {
-    dispatch(connectWallet());
+    dispatch(chooseWallet());
   };
 
   const onStsBtnClick = () => {
@@ -110,7 +110,7 @@ export function MeStats() {
     return (
       <div className="border-2 border-transparent py-1 sm:py-2">
         <div className="flex h-60 flex-col items-center justify-center sm:h-32">
-          <p className="text-center text-3xl font-medium text-slate-200">Sign a message to prove you own your STX address so we can give you access to our server.</p>
+          <p className="text-center text-2xl font-medium text-slate-200">Sign a message to prove you own your STX address so we can give you access to our server.</p>
           <button onClick={onStsBtnClick} className="mt-4 rounded-full bg-orange-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110">Sign Message</button>
         </div>
       </div>

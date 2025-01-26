@@ -1,9 +1,12 @@
 import { Inter } from 'next/font/google';
 import clsx from 'clsx';
+
 import { StarField } from '@/components/StarField';
 import { TopBar } from '@/components/TopBar';
 import { Footer } from '@/components/Footer';
-import { AgreePopup } from '@/components/AgreePoup';
+import { WalletPopup } from '@/components/WalletPopup';
+import { AgreePopup } from '@/components/AgreePopup';
+import { ErrorPopup } from '@/components/ErrorPopup';
 
 import './globals.css';
 import { Providers } from './providers';
@@ -32,7 +35,9 @@ export default function RootLayout({ children }) {
           <TopBar />
           {children}
           <Footer />
+          <WalletPopup />
           <AgreePopup />
+          <ErrorPopup />
         </Providers>
       </body>
     </html>

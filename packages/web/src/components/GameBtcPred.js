@@ -1,12 +1,12 @@
 'use client';
+import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Link from 'next/link';
 import {
   ArrowTrendingUpIcon, ArrowTrendingDownIcon, ArrowTopRightOnSquareIcon,
 } from '@heroicons/react/24/solid';
 
-import { connectWallet, signStxTstStr } from '@/actions';
+import { chooseWallet, signStxTstStr } from '@/actions';
 import { fetchGameBtc, predictGameBtc } from '@/actions/chunk';
 import {
   CONTRACT_ADDR, PRED_STATUS_INIT, PRED_STATUS_CONFIRMED_OK,
@@ -28,7 +28,7 @@ export function GameBtcPred() {
   const didClick = useRef(false);
 
   const onCwBtnClick = () => {
-    dispatch(connectWallet());
+    dispatch(chooseWallet());
   };
 
   const onStsBtnClick = () => {
@@ -119,7 +119,7 @@ export function GameBtcPred() {
         <div className="absolute inset-0 bg-slate-800/85 backdrop-blur-sm"></div>
         <div className="absolute inset-0 flex items-center justify-center p-4">
           <div className="relative text-center">
-            <p className="text-lg text-slate-200">Sign a message to prove you own your STX address so we can give you access to our server.</p>
+            <p className="text-base text-slate-200">Sign a message to prove you own your STX address so we can give you access to our server.</p>
             <button onClick={onStsBtnClick} className="mt-4 rounded-full bg-orange-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110">Sign Message</button>
           </div>
         </div>
