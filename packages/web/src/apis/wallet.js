@@ -113,17 +113,24 @@ const signMessage = async (stxPubKey, msg) => {
     throw new Error(ERR_INVALID_ARGS);
   }
 
-  let vRes = verifyMessageSignatureRsv({
-    publicKey: stxPubKey, message: msg, signature: res.stxSigStr,
-  });
+  let vRes = false;
+  try {
+    vRes = verifyMessageSignatureRsv({
+      publicKey: stxPubKey, message: msg, signature: res.stxSigStr,
+    });
+  } catch (error) { }
   if (vRes === true) return res;
 
-  vRes = verifyMessageSignature({
-    publicKey: stxPubKey, message: msg, signature: res.stxSigStr,
-  });
+  try {
+    vRes = verifyMessageSignature({
+      publicKey: stxPubKey, message: msg, signature: res.stxSigStr,
+    });
+  } catch (error) { }
   if (vRes === true) return res;
 
-  vRes = verifyECDSA(msg, stxPubKey, res.stxSigStr);
+  try {
+    vRes = verifyECDSA(msg, stxPubKey, res.stxSigStr);
+  } catch (error) { }
   if (vRes === true) return res;
 
   throw new Error(ERR_VRF_SIG);
