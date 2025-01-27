@@ -68,8 +68,8 @@
   + scripts dev - add --experimental-https --hostname
 - npm install -D autoprefixer @headlessui/react @heroicons/react @tailwindcss/typography
 * servers
-** dev server (wit.btc)
-** test server (SP1ZVHJQAYXSK1ANTCQG49YNANBYVQWBD11QAHDNV)
+** dev server
+** test server
 - https://d1uzxgq8or64c4.cloudfront.net
-** prod (c22b.btc)
+** prod
 - https://augurrank.com

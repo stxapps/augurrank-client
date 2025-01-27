@@ -36,7 +36,7 @@ const displayReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_ERROR_POPUP) {
     const { title, body } = action.payload;
-    return { ...state, errorPopupTitle: title, ErrorPopupBody: body };
+    return { ...state, errorPopupTitle: title, errorPopupBody: body };
   }
 
   if (action.type === RESET_STATE) {

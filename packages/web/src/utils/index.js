@@ -382,7 +382,7 @@ export const getFetchMeMoreParams = (gameBtcPreds) => {
 };
 
 export const getWalletErrorText = (code) => {
-  let title = '', body = '';
+  let title = 'Error', body = code;
   if (code === ERR_INVALID_ARGS) {
     title = 'Unknown Wallet';
     body = 'Please sign out and connect with a supported wallet.';
