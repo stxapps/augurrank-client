@@ -45,7 +45,7 @@ export function PredListItem(props) {
     trTxId = pred.vTxId;
     if (['TRUE', 'FALSE'].includes(pred.correct)) {
       brPane = (
-        <p className="text-right text-sm text-slate-400">${localeNumber(pred.anchorPrice)} ⟶ ${localeNumber(pred.targetPrice)}</p>
+        <p className="text-right text-sm text-slate-400">${localeNumber(pred.anchorPrice)} {'->'} ${localeNumber(pred.targetPrice)}</p>
       );
     } else {
       brPane = (
