@@ -43,14 +43,14 @@ export function MeStats() {
   }, [signInStatus, dispatch]);
 
   const renderUsrPane = () => {
-    let userImagePane, usernamePane, stxAddrPane;
+    let avatarPane, usernamePane, stxAddrPane;
     if (renderCode === 2) {
       if (isFldStr(avatar)) {
-        userImagePane = (
+        avatarPane = (
           <Image className="size-32" src={avatar} alt="User avatar" />
         );
       } else {
-        userImagePane = (
+        avatarPane = (
           <UserIcon className="size-32 text-slate-700" />
         );
       }
@@ -69,7 +69,7 @@ export function MeStats() {
         );
       }
     } else {
-      userImagePane = (
+      avatarPane = (
         <div className={clsx('size-32 rounded-full bg-slate-800', renderCode === 0 && 'animate-pulse')} />
       );
       usernamePane = (
@@ -86,7 +86,7 @@ export function MeStats() {
 
     return (
       <div className="flex flex-col items-center justify-start sm:flex-row sm:justify-center">
-        <div className="rounded-full border-2 border-slate-800 p-2">{userImagePane}</div>
+        <div className="rounded-full border-2 border-slate-800 p-2">{avatarPane}</div>
         <div className="mt-6 w-full max-w-md sm:ml-6 sm:mt-0 sm:w-auto">
           {usernamePane}
           {stxAddrPane}
