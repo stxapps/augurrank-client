@@ -18,6 +18,7 @@ export const BURN_HEIGHT_OBJ = 'burnHeightObj';
 export const WALLET_ID = 'walletId';
 export const USER_OBJ = 'userObj';
 export const UNSAVED_PREDS = 'unsaved-preds';
+export const NFT_METAS = 'nft-metas';
 
 export const ID_LEATHER = 'LeatherProvider';
 export const ID_XVERSE = 'XverseProviders.StacksProvider';
@@ -31,6 +32,7 @@ export const ADD_NEWSLETTER_EMAIL_URL = AUGUR_RANK_SERVER_URL + '/add-newsletter
 export const GAME_URL = AUGUR_RANK_SERVER_URL + '/game';
 export const ME_URL = AUGUR_RANK_SERVER_URL + '/me';
 export const PREDS_URL = AUGUR_RANK_SERVER_URL + '/preds';
+export const USER_URL = AUGUR_RANK_SERVER_URL + '/user';
 export const PRED_URL = AUGUR_RANK_SERVER_URL + '/pred';
 
 export const JOIN_NEWSLETTER_STATUS_INIT = 'JOIN_NEWSLETTER_STATUS_INIT';

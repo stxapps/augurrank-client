@@ -5,6 +5,7 @@ import displayReducer from './displayReducer';
 import joinNewsletterReducer from './joinNewsletterReducer';
 import userReducer from './userReducer';
 import meReducer from './meReducer';
+import meEditorReducer from './meEditorReducer';
 import gameBtcReducer from './gameBtcReducer';
 import gameBtcPredsReducer from './gameBtcPredsReducer';
 import newsfeedReducer from './newsfeedReducer';
@@ -15,6 +16,7 @@ const reducers = combineReducers({
   joinNewsletter: joinNewsletterReducer,
   user: userReducer,
   me: meReducer,
+  meEditor: meEditorReducer,
   gameBtc: gameBtcReducer,
   gameBtcPreds: gameBtcPredsReducer,
   newsfeed: newsfeedReducer,

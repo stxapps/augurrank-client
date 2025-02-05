@@ -3,11 +3,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { UserIcon } from '@heroicons/react/24/solid';
+import { UserIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 
 import { chooseWallet, signStxTstStr } from '@/actions';
-import { fetchBurnHeight, fetchMe } from '@/actions/chunk';
+import { fetchBurnHeight, fetchMe, showMeEditorPopup } from '@/actions/chunk';
 import { getMeStats } from '@/selectors';
 import { getSignInStatus, isFldStr, localeNumber } from '@/utils';
 
@@ -16,10 +16,15 @@ export function MeStats() {
   const username = useSelector(state => state.user.username);
   const avatar = useSelector(state => state.user.avatar);
   const stxAddr = useSelector(state => state.user.stxAddr);
+  const bio = useSelector(state => state.user.bio);
   const burnHeight = useSelector(state => state.gameBtc.burnHeight);
   const didFetch = useSelector(state => state.me.didFetch);
   const stats = useSelector(state => getMeStats(state));
   const dispatch = useDispatch();
+
+  const onEdtBtnClick = () => {
+    dispatch(showMeEditorPopup());
+  };
 
   const onCwBtnClick = () => {
     dispatch(chooseWallet());
@@ -43,7 +48,7 @@ export function MeStats() {
   }, [signInStatus, dispatch]);
 
   const renderUsrPane = () => {
-    let avatarPane, usernamePane, stxAddrPane;
+    let avatarPane, usernamePane, stxAddrPane, bioPane, btnPane;
     if (renderCode === 2) {
       if (isFldStr(avatar)) {
         avatarPane = (
@@ -55,19 +60,27 @@ export function MeStats() {
         );
       }
       usernamePane = (
-        <h1 className="truncate text-center text-4xl font-medium text-slate-100 sm:text-left sm:text-5xl sm:leading-tight">{isFldStr(username) ? username : 'Username'}</h1>
+        <Link href={`https://explorer.hiro.so/address/${stxAddr}`} target="_blank" rel="noreferrer">
+          <h1 className="truncate text-center text-4xl font-medium text-slate-100 sm:text-left sm:text-5xl sm:leading-tight">{isFldStr(username) ? username : 'Username'}</h1>
+        </Link>
       );
-      if (isFldStr(stxAddr)) {
-        stxAddrPane = (
-          <div className="mt-3 flex sm:mt-0.5">
-            <Link className="w-0 grow truncate text-center text-xl text-slate-400 sm:text-left" href={`https://explorer.hiro.so/address/${stxAddr}`} target="_blank" rel="noreferrer">{stxAddr}</Link>
-          </div>
+      if (isFldStr(bio)) {
+        bioPane = (
+          <p className="mt-3 text-center text-base text-slate-400 sm:text-left sm:mt-1.5">{bio}</p>
         );
       } else {
         stxAddrPane = (
-          <p className="mt-3 text-center text-xl text-slate-400 sm:text-left">STX Address</p>
+          <div className="mt-3 flex sm:mt-0.5">
+            <p className="w-0 grow truncate text-center text-base text-slate-400 sm:text-left">{stxAddr}</p>
+          </div>
         );
       }
+      btnPane = (
+        <button className="group block w-full py-3 flex items-center justify-center sm:justify-start sm:w-auto" onClick={onEdtBtnClick}>
+          <PencilSquareIcon className="mb-0.5 size-4 text-slate-400 group-hover:text-orange-200" />
+          <span className="ml-1 text-sm font-medium text-slate-400 group-hover:text-orange-200">Edit</span>
+        </button>
+      );
     } else {
       avatarPane = (
         <div className={clsx('size-32 rounded-full bg-slate-800', renderCode === 0 && 'animate-pulse')} />
@@ -85,11 +98,13 @@ export function MeStats() {
     }
 
     return (
-      <div className="flex flex-col items-center justify-start sm:flex-row sm:justify-center">
+      <div className={clsx('flex flex-col items-center justify-start sm:flex-row sm:justify-center', isFldStr(bio) ? 'sm:items-start' : 'sm:items-center')}>
         <div className="rounded-full border-2 border-slate-800 p-2">{avatarPane}</div>
-        <div className="mt-6 w-full max-w-md sm:ml-6 sm:mt-0 sm:w-auto">
+        <div className="mt-6 w-full max-w-md sm:ml-6 sm:mt-0 sm:w-auto sm:min-w-52">
           {usernamePane}
           {stxAddrPane}
+          {bioPane}
+          {btnPane}
         </div>
       </div>
     );

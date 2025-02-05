@@ -4,7 +4,7 @@ import { isObject, isNumber } from '@/utils';
 const initialState = {
   price: null,
   burnHeight: null,
-  didFetch: null, // didFetch: null: not yet, true: fetched, false: error
+  didFetch: null, // null: not yet, true: fetched, false: error
   stats: null,
 };
 

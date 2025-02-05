@@ -1,5 +1,5 @@
 import lsgApi from '@/apis/localSg';
-import { USER_OBJ, UNSAVED_PREDS, STX_TST_STR } from '@/types/const';
+import { USER_OBJ, UNSAVED_PREDS, NFT_METAS, STX_TST_STR } from '@/types/const';
 import { isString } from '@/utils';
 
 const getLocalUser = () => {
@@ -34,8 +34,11 @@ const putLocalUser = (user) => {
 const deleteLocalFiles = () => {
   const keys = lsgApi.listKeysSync();
   for (const key of keys) {
-    if (!key.startsWith(`${UNSAVED_PREDS}/`)) continue;
-    lsgApi.removeItemSync(key);
+    if (
+      key.startsWith(`${UNSAVED_PREDS}/`) || key.startsWith(`${NFT_METAS}/`)
+    ) {
+      lsgApi.removeItemSync(key);
+    }
   }
 
   // Delete files in IndexedDB here if needed

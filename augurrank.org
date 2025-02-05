@@ -19,6 +19,8 @@
 - Give nfts but not transferable? can give just badges on an account?
 - Can store just a text, prediction in text, call a smart contract to predict
 - Predict and also comment,quote,give a reason?
+- Monitor bitcoin price daily and predict about tomorrow for fun
+  + clone CoinMarketCap + predict feature
 * Inspirations
 - Augur, Eigen, PolyMarket, Gnosis
 - HackerRank, Kaggle, Duolingo

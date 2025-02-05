@@ -1,8 +1,9 @@
 import idxApi from '@/apis';
 import lsgApi from '@/apis/localSg';
 import {
-  BTC_PRICE_OBJ, BURN_HEIGHT_OBJ, GAME_URL, ME_URL, PREDS_URL, PRED_URL, VALID,
-  UNSAVED_PREDS, ERR_INVALID_ARGS, ERR_NOT_FOUND, ERR_INVALID_RES, N_PREDS,
+  BTC_PRICE_OBJ, BURN_HEIGHT_OBJ, NFT_METAS, GAME_URL, ME_URL, PREDS_URL, USER_URL,
+  PRED_URL, VALID, UNSAVED_PREDS, ERR_INVALID_ARGS, ERR_NOT_FOUND, ERR_INVALID_RES,
+  N_PREDS,
 } from '@/types/const';
 import { isObject, isString, isNumber, getStatusText } from '@/utils';
 
@@ -104,6 +105,79 @@ const fetchTxInfo = async (txId) => {
   return obj;
 };
 
+const fetchBtcNames = async () => {
+  const { stxAddr } = idxApi.getLocalUser();
+
+  const res = await fetch(`https://api.hiro.so/v1/addresses/stacks/${stxAddr}`);
+  if (res.status === 404) {
+    throw new Error(ERR_NOT_FOUND);
+  }
+  if (!res.ok) {
+    throw new Error(getStatusText(res));
+  }
+  const obj = await res.json();
+  return Array.isArray(obj.names) ? obj.names : [];
+};
+
+const fetchNftMeta = async (principal, id) => {
+  const lsgKey = `${NFT_METAS}/${principal}/${id}`;
+  const str = lsgApi.getItemSync(lsgKey);
+  if (isString(str)) {
+    try {
+      const obj = JSON.parse(str);
+      return obj;
+    } catch (error) {
+      // Ignore if cache value invalid
+    }
+  }
+
+  const res = await fetch(`https://api.hiro.so/metadata/v1/nft/${principal}/${id}`);
+  if (!res.ok) {
+    throw new Error(getStatusText(res));
+  }
+  const obj = await res.json();
+
+  lsgApi.setItemSync(lsgKey, JSON.stringify(obj));
+  return obj;
+};
+
+const fetchNfts = async (offset, limit) => {
+  const { stxAddr } = idxApi.getLocalUser();
+
+  const res = await fetch(`https://api.hiro.so/extended/v1/tokens/nft/holdings?principal=${stxAddr}&offset=${offset}&limit=${limit}&unanchored=false&tx_metadata=false`);
+  if (!res.ok) {
+    throw new Error(getStatusText(res));
+  }
+  const obj = await res.json();
+
+  const fRes = { offset: obj.offset, limit: obj.limit, total: obj.total, nfts: [] };
+  for (const nRes of obj.results) {
+    try {
+      if (!/^u\d+$/.test(nRes.value.repr)) continue;
+
+      const principal = nRes.asset_identifier.split('::')[0];
+      const id = nRes.value.repr.slice(1);
+      const mObj = await fetchNftMeta(principal, id);
+
+      const { category, collection } = mObj.metadata.properties;
+      if (category !== 'image') continue;
+
+      const nft = {
+        principal,
+        id,
+        collection,
+        image: mObj.metadata.cached_image,
+        thumbnail: mObj.metadata.cached_thumbnail_image,
+      };
+      fRes.nfts.push(JSON.stringify(nft));
+    } catch (error) {
+      console.log('Could not get nft:', nRes, 'with error:', error);
+    }
+  }
+
+  return fRes;
+};
+
 const getAuthData = () => {
   const { stxAddr, stxTstStr, stxPubKey, stxSigStr } = idxApi.getLocalUser();
   return { stxAddr, stxTstStr, stxPubKey, stxSigStr };
@@ -195,6 +269,29 @@ const fetchPreds = async (
   return obj;
 };
 
+const putUser = async (user) => {
+  const authData = getAuthData();
+
+  const res = await fetch(USER_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    referrerPolicy: 'strict-origin',
+    body: JSON.stringify({ ...authData, user }),
+  });
+  if (!res.ok) {
+    throw new Error(getStatusText(res));
+  }
+
+  const obj = await res.json();
+  if (obj.status !== VALID) {
+    throw new Error(ERR_INVALID_RES);
+  }
+
+  return obj;
+};
+
 const putPred = async (pred) => {
   const authData = getAuthData();
 
@@ -252,8 +349,9 @@ const deleteUnsavedPred = (id) => {
 };
 
 const data = {
-  fetchBtcPrice, fetchBurnHeight, fetchTxInfo, fetchGame, fetchMe, fetchPreds, putPred,
-  getUnsavedPreds, putUnsavedPred, deleteUnsavedPred,
+  fetchBtcPrice, fetchBurnHeight, fetchTxInfo, fetchBtcNames, fetchNfts, fetchGame,
+  fetchMe, fetchPreds, putUser, putPred, getUnsavedPreds, putUnsavedPred,
+  deleteUnsavedPred,
 };
 
 export default data;

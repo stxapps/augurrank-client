@@ -10,7 +10,7 @@ const initialState = {
   stxAddr: null, // null: n/a, '': no value, str: has value
   stxPubKey: null, // same as above
   stxSigStr: null, // same as above
-  username: null, // same as above
+  username: null, // null or '': n/a or no value, str: has value
   avatar: null, // same as above
   bio: null, // same as above
   didAgreeTerms: null, // null or false: n/a or did not agree, true: agreed
@@ -39,9 +39,11 @@ const userReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_GAME_BTC) {
-    const { didAgreeTerms } = action.payload;
+    const { username, avatar, didAgreeTerms } = action.payload;
 
     const newState = { ...state };
+    if (isString(username)) newState.username = username;
+    if (isString(avatar)) newState.avatar = avatar;
     if (didAgreeTerms === true) newState.didAgreeTerms = didAgreeTerms;
 
     return loop(

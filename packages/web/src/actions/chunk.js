@@ -3,7 +3,9 @@ import { PostConditionMode, Cl, Pc } from '@stacks/transactions/dist/esm';
 import walletApi from '@/apis/wallet';
 import dataApi from '@/apis/data';
 import { updatePopup, updateUser, updateErrorPopup } from '@/actions';
-import { UPDATE_GAME_BTC, REMOVE_GAME_BTC_PREDS, UPDATE_ME } from '@/types/actionTypes';
+import {
+  UPDATE_GAME_BTC, REMOVE_GAME_BTC_PREDS, UPDATE_ME, UPDATE_ME_EDITOR,
+} from '@/types/actionTypes';
 import {
   AGREE_POPUP, CONTRACT_ADDR, GAME_BTC, GAME_BTC_CONTRACT_NAME, GAME_BTC_FUNCTION_NAME,
   GAME_BTC_FEE, GAME_BTC_LEAD_BURN_HEIGHT, PRED_STATUS_IN_MEMPOOL, PRED_STATUS_PUT_OK,
@@ -11,8 +13,9 @@ import {
   ABT_BY_RES, ABT_BY_NF, ERR_NOT_FOUND, N_PREDS,
 } from '@/types/const';
 import {
-  getSignInStatus, isObject, randomString, unionPreds, sepPreds, getPredStatus,
-  getPendingPred, deriveTxInfo, getPredSeq, getFetchMeMoreParams, getWalletErrorText,
+  getSignInStatus, isObject, isNumber, isFldStr, randomString, unionPreds, sepPreds,
+  getPredStatus, getPendingPred, deriveTxInfo, getPredSeq, getFetchMeMoreParams,
+  getWalletErrorText,
 } from '@/utils';
 import vars from '@/vars';
 
@@ -224,6 +227,84 @@ export const fetchMeMore = (doForce) => async (dispatch, getState) => {
 
 export const updateMe = (payload) => {
   return { type: UPDATE_ME, payload };
+};
+
+export const showMeEditorPopup = () => async (dispatch, getState) => {
+  const didFetch = getState().me.didFetch;
+  if (didFetch !== true) {
+    console.log('In showMeEditorPopup, invalid didFetch');
+    return;
+  }
+
+  let { username, avatar, bio } = getState().user;
+  if (!isFldStr(username)) username = '';
+  if (!isFldStr(avatar)) avatar = '';
+  if (!isFldStr(bio)) bio = '';
+
+  dispatch(updateMeEditor({ username, avatar, bio }));
+};
+
+export const fetchMeEditor = (doForce = false, doLoad = false) => async (
+  dispatch, getState
+) => {
+  const signInStatus = getSignInStatus(getState().user);
+  if (signInStatus !== 3) return;
+
+  if (!doForce && vars.meEditor.didFetch) return;
+  vars.meEditor.didFetch = true;
+
+  let data = null;
+  if (doLoad) dispatch(updateMeEditor({ didFetch: null }));
+  try {
+    const bRes = await dataApi.fetchBtcNames();
+    const nRes = await dataApi.fetchNfts(0, 10);
+    data = {
+      avlbUsns: bRes, avlbAvts: nRes.nfts,
+      nftOffset: nRes.offset, nftLimit: nRes.limit, nftTotal: nRes.total,
+    };
+  } catch (error) {
+    console.log('fetchMeEditor error:', error);
+    dispatch(updateMeEditor({ didFetch: false }));
+    return;
+  }
+
+  dispatch(updateMeEditor({ ...data, didFetch: true }));
+};
+
+export const fetchMeEditorMore = (doForce) => async (dispatch, getState) => {
+  const signInStatus = getSignInStatus(getState().user);
+  if (signInStatus !== 3) return;
+
+  const fetchingMore = getState().meEditor.fetchingMore;
+  if (fetchingMore === true) return;
+  if (!doForce && fetchingMore !== null) return;
+  dispatch(updateMeEditor({ fetchingMore: true }));
+
+  let { nftOffset, nftLimit, nftTotal } = getState().meEditor;
+  if (nftOffset + nftLimit >= nftTotal) return;
+
+  let data;
+  try {
+    const nRes = await dataApi.fetchNfts(nftOffset + nftLimit, nftLimit);
+    data = {
+      moreAvlbAvts: nRes.nfts,
+      nftOffset: nRes.offset, nftLimit: nRes.limit, nftTotal: nRes.total,
+    };
+  } catch (error) {
+    console.log('fetchMeEditorMore error:', error);
+    dispatch(updateMeEditor({ didFetch: false }));
+    return;
+  }
+
+  dispatch(updateMeEditor({ ...data, fetchingMore: null }));
+};
+
+export const updateMeEditor = (payload) => {
+  return { type: UPDATE_ME_EDITOR, payload };
+};
+
+export const updateMeData = () => async (dispatch, getState) => {
+
 };
 
 export const agreeTerms = () => async (dispatch, getState) => {
