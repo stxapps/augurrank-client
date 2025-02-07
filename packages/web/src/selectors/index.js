@@ -3,7 +3,9 @@ import { createSelector } from 'reselect';
 import {
   PRED_STATUS_CONFIRMED_ERROR, PRED_STATUS_VERIFIED_OK, PRED_STATUS_VERIFIED_ERROR,
 } from '@/types/const';
-import { isObject, isNumber, getPndgPredWthSts, getPredStatus } from '@/utils';
+import {
+  isObject, isNumber, isFldStr, getPndgPredWthSts, getPredStatus, parseAvatar,
+} from '@/utils';
 
 const _getInsets = (insetTop, insetRight, insetBottom, insetLeft) => {
   let [top, right, bottom, left] = [0, 0, 0, 0];
@@ -135,5 +137,51 @@ export const getMePredsWthSts = createSelector(
 
     predsWthSts.sort((a, b) => b.pred.createDate - a.pred.createDate);
     return predsWthSts;
+  }
+);
+
+export const getAvtWthObj = createSelector(
+  state => state.user.avatar,
+  (str) => {
+    const obj = parseAvatar(str);
+    return { str, obj };
+  }
+);
+
+export const getMeEdtrAvtWthObj = createSelector(
+  state => state.meEditor.avatar,
+  (str) => {
+    const obj = parseAvatar(str);
+    return { str, obj };
+  }
+);
+
+export const getAvlbAvtsWthObj = createSelector(
+  state => state.meEditor.avlbAvts,
+  (strs) => {
+    if (!Array.isArray(strs)) return null;
+
+    const avlbAvts = [], keys = [];
+    for (const str of strs) {
+      const obj = parseAvatar(str);
+      if (!isFldStr(obj.principal) || !isFldStr(obj.id)) continue;
+
+      const key = obj.principal + obj.id;
+      if (keys.includes(key)) continue;
+
+      avlbAvts.push({ str, obj });
+      keys.push(key);
+    }
+    return avlbAvts;
+  }
+);
+
+export const getAvlbAvtsHasMore = createSelector(
+  state => state.meEditor.nftOffset,
+  state => state.meEditor.nftLimit,
+  state => state.meEditor.nftTotal,
+  (nftOffset, nftLimit, nftTotal) => {
+    if (!isNumber(nftOffset) || !isNumber(nftLimit) || !isNumber(nftTotal)) return null;
+    return nftOffset + nftLimit < nftTotal;
   }
 );

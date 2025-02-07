@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import Image from 'next/image';
+import Image from 'next-image-export-optimizer';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { UserIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
@@ -52,7 +52,7 @@ export function MeStats() {
     if (renderCode === 2) {
       if (isFldStr(avatar)) {
         avatarPane = (
-          <Image className="size-32" src={avatar} alt="User avatar" />
+          <Image className="size-32" width={128} height={128} src={avatar} alt="User avatar" unoptimized={true} placeholder="empty" />
         );
       } else {
         avatarPane = (
@@ -78,7 +78,7 @@ export function MeStats() {
       btnPane = (
         <button className="group block w-full py-3 flex items-center justify-center sm:justify-start sm:w-auto" onClick={onEdtBtnClick}>
           <PencilSquareIcon className="mb-0.5 size-4 text-slate-400 group-hover:text-orange-200" />
-          <span className="ml-1 text-sm font-medium text-slate-400 group-hover:text-orange-200">Edit</span>
+          <span className="ml-0.5 text-sm font-medium text-slate-400 group-hover:text-orange-200">Edit</span>
         </button>
       );
     } else {

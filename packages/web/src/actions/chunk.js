@@ -17,6 +17,7 @@ import {
   getPredStatus, getPendingPred, deriveTxInfo, getPredSeq, getFetchMeMoreParams,
   getWalletErrorText,
 } from '@/utils';
+import { initialMeEditorState } from '@/types/initialStates'
 import vars from '@/vars';
 
 export const fetchBtcPrice = (doForce = false, doLoad = false) => async (
@@ -232,7 +233,7 @@ export const updateMe = (payload) => {
 export const showMeEditorPopup = () => async (dispatch, getState) => {
   const didFetch = getState().me.didFetch;
   if (didFetch !== true) {
-    console.log('In showMeEditorPopup, invalid didFetch');
+    console.log('In showMeEditorPopup, invalid me.didFetch');
     return;
   }
 
@@ -241,62 +242,85 @@ export const showMeEditorPopup = () => async (dispatch, getState) => {
   if (!isFldStr(avatar)) avatar = '';
   if (!isFldStr(bio)) bio = '';
 
-  dispatch(updateMeEditor({ username, avatar, bio }));
+  dispatch(updateMeEditor({ ...initialMeEditorState, username, avatar, bio }));
 };
 
-export const fetchMeEditor = (doForce = false, doLoad = false) => async (
+export const fetchAvlbUsns = (doForce = false, doLoad = false) => async (
   dispatch, getState
 ) => {
   const signInStatus = getSignInStatus(getState().user);
   if (signInStatus !== 3) return;
 
-  if (!doForce && vars.meEditor.didFetch) return;
-  vars.meEditor.didFetch = true;
+  if (!doForce && vars.meEditor.didFthAvlbUsns) return;
+  vars.meEditor.didFthAvlbUsns = true;
 
   let data = null;
-  if (doLoad) dispatch(updateMeEditor({ didFetch: null }));
+  if (doLoad) dispatch(updateMeEditor({ didFthAvlbUsns: null }));
   try {
-    const bRes = await dataApi.fetchBtcNames();
-    const nRes = await dataApi.fetchNfts(0, 10);
-    data = {
-      avlbUsns: bRes, avlbAvts: nRes.nfts,
-      nftOffset: nRes.offset, nftLimit: nRes.limit, nftTotal: nRes.total,
-    };
+    const res = await dataApi.fetchBtcNames();
+    data = { avlbUsns: res };
   } catch (error) {
-    console.log('fetchMeEditor error:', error);
-    dispatch(updateMeEditor({ didFetch: false }));
+    console.log('fetchAvlbUsns error:', error);
+    dispatch(updateMeEditor({ didFthAvlbUsns: false }));
     return;
   }
 
-  dispatch(updateMeEditor({ ...data, didFetch: true }));
+  dispatch(updateMeEditor({ ...data, didFthAvlbUsns: true }));
 };
 
-export const fetchMeEditorMore = (doForce) => async (dispatch, getState) => {
+export const fetchAvlbAvts = (doForce = false, doLoad = false) => async (
+  dispatch, getState
+) => {
   const signInStatus = getSignInStatus(getState().user);
   if (signInStatus !== 3) return;
 
-  const fetchingMore = getState().meEditor.fetchingMore;
-  if (fetchingMore === true) return;
-  if (!doForce && fetchingMore !== null) return;
-  dispatch(updateMeEditor({ fetchingMore: true }));
+  if (!doForce && vars.meEditor.didFthAvlbAvts) return;
+  vars.meEditor.didFthAvlbAvts = true;
 
-  let { nftOffset, nftLimit, nftTotal } = getState().meEditor;
+  let data = null;
+  if (doLoad) dispatch(updateMeEditor({ didFthAvlbAvts: null }));
+  try {
+    const res = await dataApi.fetchNfts(0, 10);
+    data = {
+      avlbAvts: res.nfts,
+      nftOffset: res.offset, nftLimit: res.limit, nftTotal: res.total,
+    };
+  } catch (error) {
+    console.log('fetchAvlbAvts error:', error);
+    dispatch(updateMeEditor({ didFthAvlbAvts: false }));
+    return;
+  }
+
+  dispatch(updateMeEditor({ ...data, didFthAvlbAvts: true }));
+};
+
+export const fetchAvlbAvtsMore = (doForce) => async (dispatch, getState) => {
+  const signInStatus = getSignInStatus(getState().user);
+  if (signInStatus !== 3) return;
+
+  const fthgAvlbAvtsMore = getState().meEditor.fthgAvlbAvtsMore;
+  if (fthgAvlbAvtsMore === true) return;
+  if (!doForce && fthgAvlbAvtsMore !== null) return;
+  dispatch(updateMeEditor({ fthgAvlbAvtsMore: true }));
+
+  const { nftOffset, nftLimit, nftTotal } = getState().meEditor;
+  if (!isNumber(nftOffset) || !isNumber(nftLimit) || !isNumber(nftTotal)) return;
   if (nftOffset + nftLimit >= nftTotal) return;
 
   let data;
   try {
-    const nRes = await dataApi.fetchNfts(nftOffset + nftLimit, nftLimit);
+    const res = await dataApi.fetchNfts(nftOffset + nftLimit, nftLimit);
     data = {
-      moreAvlbAvts: nRes.nfts,
-      nftOffset: nRes.offset, nftLimit: nRes.limit, nftTotal: nRes.total,
+      avlbAvtsMore: res.nfts,
+      nftOffset: res.offset, nftLimit: res.limit, nftTotal: res.total,
     };
   } catch (error) {
-    console.log('fetchMeEditorMore error:', error);
-    dispatch(updateMeEditor({ didFetch: false }));
+    console.log('fetchAvlbAvtsMore error:', error);
+    dispatch(updateMeEditor({ fthgAvlbAvtsMore: false }));
     return;
   }
 
-  dispatch(updateMeEditor({ ...data, fetchingMore: null }));
+  dispatch(updateMeEditor({ ...data, fthgAvlbAvtsMore: null }));
 };
 
 export const updateMeEditor = (payload) => {

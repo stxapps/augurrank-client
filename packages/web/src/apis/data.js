@@ -5,7 +5,9 @@ import {
   PRED_URL, VALID, UNSAVED_PREDS, ERR_INVALID_ARGS, ERR_NOT_FOUND, ERR_INVALID_RES,
   N_PREDS,
 } from '@/types/const';
-import { isObject, isString, isNumber, getStatusText } from '@/utils';
+import {
+  isObject, isString, isNumber, isFldStr, splitOnFirst, getStatusText,
+} from '@/utils';
 
 const _fetchBtcPrice = async () => {
   try {
@@ -155,20 +157,33 @@ const fetchNfts = async (offset, limit) => {
     try {
       if (!/^u\d+$/.test(nRes.value.repr)) continue;
 
-      const principal = nRes.asset_identifier.split('::')[0];
+      const [principal, rest] = splitOnFirst(nRes.asset_identifier, '::');
       const id = nRes.value.repr.slice(1);
       const mObj = await fetchNftMeta(principal, id);
 
-      const { category, collection } = mObj.metadata.properties;
-      if (category !== 'image') continue;
+      let collection;
+      if (isObject(mObj.metadata.properties)) {
+        collection = mObj.metadata.properties.collection;
+      }
+      if (!isFldStr(collection)) collection = rest;
 
-      const nft = {
-        principal,
-        id,
-        collection,
-        image: mObj.metadata.cached_image,
-        thumbnail: mObj.metadata.cached_thumbnail_image,
-      };
+      let image = mObj.metadata.cached_image;
+      if (!isFldStr(image)) image = mObj.metadata.image;
+      if (!isFldStr(image)) image = mObj.metadata.cached_thumbnail_image;
+
+      let thumbnail = mObj.metadata.cached_thumbnail_image;
+      if (!isFldStr(thumbnail)) thumbnail = mObj.metadata.cached_image;
+      if (!isFldStr(thumbnail)) thumbnail = mObj.metadata.image;
+
+      if (!isFldStr(image) || !isFldStr(thumbnail)) continue;
+
+      //if (image.startWith())
+      // if ipfs, prepend ipfs.io/
+      // https://ipfs.io/
+
+      // exclude BNS?
+
+      const nft = { principal, id, collection, image, thumbnail };
       fRes.nfts.push(JSON.stringify(nft));
     } catch (error) {
       console.log('Could not get nft:', nRes, 'with error:', error);

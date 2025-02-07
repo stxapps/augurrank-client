@@ -112,6 +112,13 @@ export const upperCaseFirstChar = (str) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
+export const splitOnFirst = (str, sep) => {
+  const i = str.indexOf(sep);
+  if (i < 0) return [str, ''];
+
+  return [str.slice(0, i), str.slice(i + sep.length)];
+};
+
 export const localeNumber = (num) => {
   return num.toLocaleString();
 };
@@ -395,4 +402,18 @@ export const getWalletErrorText = (code) => {
   }
 
   return { title, body };
+};
+
+export const parseAvatar = (str) => {
+  // str can be undefined, null, empty string, filled string
+  let avatar = {};
+  if (isFldStr(str)) {
+    try {
+      const obj = JSON.parse(str);
+      if (isObject(obj)) avatar = obj;
+    } catch (error) {
+      console.log('In utils/parseAvatar, invalid str:', error);
+    }
+  }
+  return avatar;
 };

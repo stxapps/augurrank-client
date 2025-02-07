@@ -17,7 +17,8 @@ const me = {
 };
 
 const meEditor = {
-  didFetch: false,
+  didFthAvlbUsns: false,
+  didFthAvlbAvts: false,
 };
 
 const agreeTerms = {

@@ -124,6 +124,7 @@ const resetState = async (payload, dispatch) => {
 
   vars.gameBtc.didFetch = false;
   vars.me.didFetch = false;
+  [vars.meEditor.didFthAvlbUsns, vars.meEditor.didFthAvlbAvts] = [false, false];
 
   dispatch({ type: RESET_STATE, payload });
 };
