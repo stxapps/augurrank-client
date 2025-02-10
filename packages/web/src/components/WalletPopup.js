@@ -97,7 +97,7 @@ export function WalletPopup() {
 
   return (
     <AnimatePresence key="AP_WP">
-      <div className="fixed inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div className="fixed inset-0 overflow-y-auto z-20" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div style={{ minHeight: safeAreaHeight }} className="px-4 text-center">
           <div className="fixed inset-0">
             <motion.button onClick={onCancelBtnClick} className="absolute inset-0 size-full cursor-default bg-black/25 focus:outline-none" variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />

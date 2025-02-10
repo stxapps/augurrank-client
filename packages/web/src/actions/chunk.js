@@ -17,7 +17,6 @@ import {
   getPredStatus, getPendingPred, deriveTxInfo, getPredSeq, getFetchMeMoreParams,
   getWalletErrorText,
 } from '@/utils';
-import { initialMeEditorState } from '@/types/initialStates'
 import vars from '@/vars';
 
 export const fetchBtcPrice = (doForce = false, doLoad = false) => async (
@@ -242,7 +241,7 @@ export const showMeEditorPopup = () => async (dispatch, getState) => {
   if (!isFldStr(avatar)) avatar = '';
   if (!isFldStr(bio)) bio = '';
 
-  dispatch(updateMeEditor({ ...initialMeEditorState, username, avatar, bio }));
+  dispatch(updateMeEditor({ username, avatar, bio, renderCode: null }));
 };
 
 export const fetchAvlbUsns = (doForce = false, doLoad = false) => async (
@@ -251,13 +250,15 @@ export const fetchAvlbUsns = (doForce = false, doLoad = false) => async (
   const signInStatus = getSignInStatus(getState().user);
   if (signInStatus !== 3) return;
 
+  if (getState().meEditor.renderCode !== 1) return;
+
   if (!doForce && vars.meEditor.didFthAvlbUsns) return;
   vars.meEditor.didFthAvlbUsns = true;
 
   let data = null;
   if (doLoad) dispatch(updateMeEditor({ didFthAvlbUsns: null }));
   try {
-    const res = await dataApi.fetchBtcNames();
+    const res = await dataApi.fetchBnsNames();
     data = { avlbUsns: res };
   } catch (error) {
     console.log('fetchAvlbUsns error:', error);
@@ -273,6 +274,8 @@ export const fetchAvlbAvts = (doForce = false, doLoad = false) => async (
 ) => {
   const signInStatus = getSignInStatus(getState().user);
   if (signInStatus !== 3) return;
+
+  if (getState().meEditor.renderCode !== 2) return;
 
   if (!doForce && vars.meEditor.didFthAvlbAvts) return;
   vars.meEditor.didFthAvlbAvts = true;

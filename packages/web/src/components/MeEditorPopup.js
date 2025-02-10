@@ -4,7 +4,7 @@ import Image from 'next-image-export-optimizer';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  UserIcon, ChevronRightIcon, ChevronLeftIcon, XCircleIcon,
+  UserIcon, ChevronRightIcon, ChevronLeftIcon, XCircleIcon, PhotoIcon,
 } from '@heroicons/react/24/solid';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -19,6 +19,7 @@ import {
 import { isString, isFldStr } from '@/utils';
 
 import { useSafeAreaFrame } from '.';
+import LogoBns from '../images/logo-bns.png';
 
 const mdlFMV = {
   hidden: {
@@ -74,10 +75,6 @@ export function MeEditorPopup() {
     dispatch(updateMeEditor({ username: null, avatar: null, bio: null }));
   };
 
-  const onFthAvlbUsnsRtBtnClick = () => {
-    dispatch(fetchAvlbUsns(true, true));
-  };
-
   const onFthAvlbAvtsRtBtnClick = () => {
     dispatch(fetchAvlbAvts(true, true));
   };
@@ -86,36 +83,52 @@ export function MeEditorPopup() {
     dispatch(fetchAvlbAvtsMore(true));
   };
 
+  const onFthAvlbUsnsRtBtnClick = () => {
+    dispatch(fetchAvlbUsns(true, true));
+  };
+
   const onSvRtBtnClick = () => {
 
   };
 
-  const onUsnRmBtnClick = () => {
-    dispatch(updateMeEditor({ username: '' }));
-  };
-
-  const onUsnSltBtnClick = () => {
-
-  };
-
-  const onToAvlbUsnsBtnClick = () => {
-    dispatch(updateMeEditor({ renderCode: 1 }));
-  };
-
-  const onAvtRmBtnClick = () => {
-    dispatch(updateMeEditor({ avatar: '' }));
+  const onFthgAvlbAvtsMoreBtnClick = () => {
+    dispatch(fetchAvlbAvtsMore());
   };
 
   const onAvtSltBtnClick = (str) => {
     dispatch(updateMeEditor({ renderCode: null, avatar: str }));
   };
 
+  const onAvlbAvtsAnimCmpt = () => {
+    dispatch(fetchAvlbAvts());
+  }
+
+  const onUsnSltBtnClick = (str) => {
+    dispatch(updateMeEditor({ renderCode: null, username: str }));
+  };
+
+  const onAvlbUsnsAnimCmpt = () => {
+    dispatch(fetchAvlbUsns());
+  }
+
+  const onToEdtrBtnClick = () => {
+    dispatch(updateMeEditor({ renderCode: null }));
+  };
+
+  const onAvtRmBtnClick = () => {
+    dispatch(updateMeEditor({ avatar: '' }));
+  };
+
   const onToAvlbAvtsBtnClick = () => {
     dispatch(updateMeEditor({ renderCode: 2 }));
   };
 
-  const onToEdtrBtnClick = () => {
-    dispatch(updateMeEditor({ renderCode: null }));
+  const onUsnRmBtnClick = () => {
+    dispatch(updateMeEditor({ username: '' }));
+  };
+
+  const onToAvlbUsnsBtnClick = () => {
+    dispatch(updateMeEditor({ renderCode: 1 }));
   };
 
   const onBioChange = (evt) => {
@@ -127,11 +140,6 @@ export function MeEditorPopup() {
     dispatch(updateMeData());
     didClick.current = true;
   };
-
-  useEffect(() => {
-    if (renderCode === 1) dispatch(fetchAvlbUsns());
-    if (renderCode === 2) dispatch(fetchAvlbAvts());
-  }, [renderCode, dispatch]);
 
   useEffect(() => {
     if (isShown) didClick.current = false;
@@ -173,21 +181,22 @@ export function MeEditorPopup() {
     } else if (avlbAvtsWthObj.length === 0) {
       content = (
         <>
-          <h3 className="mt-3 text-base font-semibold text-slate-100">There are no predictions yet.</h3>
-          <p className="mt-1 text-sm text-slate-400">Get started by predicting the BTC price.</p>
-          <Link className="mt-4 rounded-full bg-orange-400 px-4 py-2 text-sm font-medium text-white hover:brightness-110" href="/game-btc" prefetch={false}>Game</Link>
+          <div className="h-1/4" />
+          <PhotoIcon className="mx-auto size-24 text-slate-500" />
+          <p className="text-center text-base text-slate-200">No NFTs</p>
+          <p className="mt-2 text-center text-base text-slate-400">You can grab one by sending it to this address or buying it from a marketplace like <Link className="hover:underline" href="https://gamma.io">Gamma.io</Link>.</p>
         </>
       );
     } else {
       content = (
         <>
-          <p className="mt-6 text-left text-sm text-slate-400">Select your NFT to use as your avatar.</p>
-          <div className="mt-6 grid grid-cols-2 gap-4">
+          <p className="mt-6 text-left text-sm text-slate-400">Select one of your NFTs to use as your avatar.</p>
+          <div className="mt-6 grid grid-cols-2 gap-6">
             {avlbAvtsWthObj.map(({ str, obj }) => {
               return (
-                <button key={str} className="flex flex-col items-center justify-center group" onClick={() => onAvtSltBtnClick(str)}>
-                  <Image className="size-28 rounded-full" width={112} height={112} src={obj.thumbnail} alt="" unoptimized={true} placeholder="empty" />
-                  <p className="mt-2 text-sm text-slate-400 group-hover:text-slate-300">{obj.collection}</p>
+                <button key={str} className="flex flex-col items-center justify-start group" onClick={() => onAvtSltBtnClick(str)}>
+                  <Image className="size-24 rounded-full" width={96} height={96} src={obj.thumbnail} alt="" unoptimized={true} placeholder="empty" />
+                  <p className="mt-2 text-sm text-slate-400 group-hover:text-slate-300 line-clamp-3 w-full">{obj.collection}</p>
                 </button>
               );
             })}
@@ -198,19 +207,37 @@ export function MeEditorPopup() {
 
     let moreContent = null;
     if (fthgAvlbAvtsMore === false) {
-
+      moreContent = (
+        <div className="my-6 text-center">
+          <p className="text-center text-base text-red-600">Something went wrong! Please wait and try again.</p>
+          <button onClick={onFthgAvlbAvtsMoreRtBtnClick} className="mt-3 rounded-full bg-slate-600 px-4 py-2 text-sm font-medium text-slate-300 hover:brightness-110">Retry</button>
+        </div>
+      );
     } else if (fthgAvlbAvtsMore === true) {
-
+      moreContent = (
+        <div className="my-3 flex items-center justify-center">
+          <div className="lds-ellipsis">
+            <div className="bg-slate-400"></div>
+            <div className="bg-slate-400"></div>
+            <div className="bg-slate-400"></div>
+            <div className="bg-slate-400"></div>
+          </div>
+        </div>
+      );
     } else if (avlbAvtsHasMore === true) {
-
+      moreContent = (
+        <div className="my-6 text-center">
+          <button onClick={onFthgAvlbAvtsMoreBtnClick} className="w-full max-w-xs rounded-full border border-slate-500 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-400 hover:border-slate-400 hover:text-slate-300 sm:w-auto">More</button>
+        </div>
+      );
     }
 
     return (
-      <motion.div className="absolute inset-0 overflow-hidden" variants={rgtOtrFMV} initial={false} animate={renderCode === 2 ? 'visible' : 'hidden'}>
+      <motion.div className="absolute inset-0 overflow-hidden" variants={rgtOtrFMV} initial={false} animate={renderCode === 2 ? 'visible' : 'hidden'} onAnimationComplete={onAvlbAvtsAnimCmpt}>
         <motion.div className="h-full w-full bg-slate-800 flex flex-col" variants={rgtInrFMV}>
           <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
             <div className="relative">
-              <h3 className="text-center text-2xl font-medium leading-6 text-slate-100">NFT List</h3>
+              <h3 className="text-center text-2xl font-medium leading-6 text-slate-100">NFTs</h3>
               <button className="absolute left-0 top-0 group -translate-x-3 -translate-y-2" onClick={onToEdtrBtnClick}>
                 <ChevronLeftIcon className="size-10 text-slate-400 group-hover:text-slate-300" />
               </button>
@@ -226,24 +253,62 @@ export function MeEditorPopup() {
   const renderUsnsPane = () => {
     let content;
     if (didFthAvlbUsns === null) {
-
+      content = (
+        <>
+          <div className="h-1/3" />
+          <div className="mx-auto ball-clip-rotate-blk">
+            <div />
+          </div>
+          <p className="mt-6 text-center text-base text-slate-400">Retrieving BNS names associated with your STX address.</p>
+        </>
+      );
     } else if (didFthAvlbUsns === false) {
       content = (
         <>
-          <p className="text-red-600">Something went wrong! Please wait and try again.</p>
-          <button onClick={onFthAvlbUsnsRtBtnClick} className="rounded-full bg-slate-600 px-4 py-2 text-sm font-medium text-slate-300 hover:brightness-110">Retry</button>
+          <div className="h-1/3" />
+          <p className="text-red-600 text-center">Something went wrong! Please wait and try again.</p>
+          <button onClick={onFthAvlbUsnsRtBtnClick} className="block mt-3 mx-auto rounded-full bg-slate-600 px-4 py-2 text-sm font-medium text-slate-300 hover:brightness-110">Retry</button>
         </>
       );
     } else if (avlbUsns.length === 0) {
-
+      content = (
+        <>
+          <div className="h-1/5" />
+          <Image className="mx-auto size-24 rounded-full" width={96} height={96} src={LogoBns} alt="" />
+          <p className="text-center text-base text-slate-200">No BNS names</p>
+          <p className="mt-2 text-center text-base text-slate-400">You can grab one by sending it to this address or buying it from a marketplace like <Link className="hover:underline" href="https://bns.one">bns.one</Link>.</p>
+        </>
+      );
     } else {
-
+      content = (
+        <>
+          <p className="mt-6 text-left text-sm text-slate-400">Select one of your BNS names to use as your username.</p>
+          <div className="mt-4">
+            {avlbUsns.map((str, i) => {
+              return (
+                <div key={str} className="flex flex-col items-stretch">
+                  {i !== 0 && <div className="h-px bg-slate-700 my-2" />}
+                  <button className="-mx-2 px-2 rounded-md block py-2 group hover:bg-slate-700" onClick={() => onUsnSltBtnClick(str)}>
+                    <p className="text-left text-xl text-slate-300 group-hover:text-slate-200 truncate">{str}</p>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      );
     }
 
     return (
-      <motion.div className="absolute inset-0 overflow-hidden" variants={rgtOtrFMV} initial={false} animate={renderCode === 1 ? 'visible' : 'hidden'}>
-        <motion.div className="h-full w-full" variants={rgtInrFMV}>
-          <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pt-8 pb-4 sm:px-6 sm:pb-6">
+      <motion.div className="absolute inset-0 overflow-hidden" variants={rgtOtrFMV} initial={false} animate={renderCode === 1 ? 'visible' : 'hidden'} onAnimationComplete={onAvlbUsnsAnimCmpt}>
+        <motion.div className="h-full w-full bg-slate-800 flex flex-col" variants={rgtInrFMV}>
+          <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
+            <div className="relative">
+              <h3 className="text-center text-2xl font-medium leading-6 text-slate-100">BNS names</h3>
+              <button className="absolute left-0 top-0 group -translate-x-3 -translate-y-2" onClick={onToEdtrBtnClick}>
+                <ChevronLeftIcon className="size-10 text-slate-400 group-hover:text-slate-300" />
+              </button>
+            </div>
             {content}
           </div>
         </motion.div>
@@ -276,7 +341,7 @@ export function MeEditorPopup() {
         <div className="mt-1 flex">
           <div className="relative min-w-0">
             <p className="text-3xl text-slate-200 truncate mr-7">{username}</p>
-            <button className="absolute top-0 right-0 group p-2 -translate-y-3" onClick={onUsnRmBtnClick}>
+            <button className="absolute top-0 right-0 group p-2 translate-x-0.5 -translate-y-3.5" onClick={onUsnRmBtnClick}>
               <div className="bg-slate-800 rounded-full">
                 <XCircleIcon className="size-6 text-slate-400/85 group-hover:text-slate-300/85" />
               </div>
@@ -331,7 +396,7 @@ export function MeEditorPopup() {
 
   return (
     <AnimatePresence key="AP_MEP">
-      <div className="fixed inset-0 overflow-hidden">
+      <div className="fixed inset-0 overflow-hidden z-20">
         <div className="flex items-center justify-center p-4" style={{ minHeight: safeAreaHeight }}>
           <div className="fixed inset-0">
             {/* No cancel on background of MeEditorPopup */}

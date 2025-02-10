@@ -28,7 +28,7 @@ export function ErrorPopup() {
   if (!isShown) return null;
 
   return (
-    <div className="fixed inset-x-0 top-3 flex items-start justify-center">
+    <div className="fixed inset-x-0 top-3 flex items-start justify-center z-40">
       <div className="relative m-4 max-w-md rounded-md bg-red-50 p-4 shadow-lg">
         <div className="flex">
           <div className="shrink-0">

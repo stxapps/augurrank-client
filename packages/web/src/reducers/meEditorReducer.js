@@ -1,6 +1,22 @@
 import { UPDATE_ME_EDITOR, RESET_STATE } from '@/types/actionTypes';
 import { isString, isNumber } from '@/utils';
-import { initialMeEditorState as initialState } from '../types/initialStates';
+
+const initialState = {
+  username: null,
+  avatar: null,
+  bio: null,
+  renderCode: null,
+  didFthAvlbUsns: null, // null: not yet, true: fetched, false: error
+  avlbUsns: null,
+  didFthAvlbAvts: null, // null: not yet, true: fetched, false: error
+  avlbAvts: null,
+  nftOffset: null,
+  nftLimit: null,
+  nftTotal: null,
+  fthgAvlbAvtsMore: null, // null: not fetching, true: fetching, false: error
+  saving: null, // null: not saving, true: saving, false: error
+};
+
 
 const meEditorReducer = (state = initialState, action) => {
 
@@ -13,7 +29,9 @@ const meEditorReducer = (state = initialState, action) => {
     const newState = { ...state };
     if (username === null || isString(username)) newState.username = username;
     if (avatar === null || isString(avatar)) newState.avatar = avatar;
-    if (bio === null || isString(bio)) newState.bio = bio;
+
+    if (bio === null) newState.bio = bio;
+    else if (isString(bio)) newState.bio = bio.slice(0, 160);
 
     if (renderCode === null || isNumber(renderCode)) newState.renderCode = renderCode;
 

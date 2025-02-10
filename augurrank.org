@@ -18,7 +18,8 @@
 - Riddle?
 - Give nfts but not transferable? can give just badges on an account?
 - Can store just a text, prediction in text, call a smart contract to predict
-- Predict and also comment,quote,give a reason?
+- Predict and also comment, quote, give a reason like a tweet
+  + have a posts page for list of prediction+post, can comment and like
 - Monitor bitcoin price daily and predict about tomorrow for fun
   + clone CoinMarketCap + predict feature
 * Inspirations

@@ -107,7 +107,7 @@ const fetchTxInfo = async (txId) => {
   return obj;
 };
 
-const fetchBtcNames = async () => {
+const fetchBnsNames = async () => {
   const { stxAddr } = idxApi.getLocalUser();
 
   const res = await fetch(`https://api.hiro.so/v1/addresses/stacks/${stxAddr}`);
@@ -161,27 +161,41 @@ const fetchNfts = async (offset, limit) => {
       const id = nRes.value.repr.slice(1);
       const mObj = await fetchNftMeta(principal, id);
 
-      let collection;
-      if (isObject(mObj.metadata.properties)) {
-        collection = mObj.metadata.properties.collection;
+      let collection = '', image = '', thumbnail = '';
+      if (isObject(mObj.metadata)) {
+        const { properties, name } = mObj.metadata;
+        const {
+          image: oImg, cached_image: cImg, cached_thumbnail_image: tImg,
+        } = mObj.metadata;
+
+        if (name === 'BNS - Archive') continue;
+
+        if (isObject(properties)) {
+          if (properties.namespace === 'btc') continue;
+
+          if (isFldStr(properties.collection)) collection = properties.collection;
+        }
+        if (!isFldStr(collection) && isFldStr(name)) collection = name;
+
+        if (isFldStr(cImg)) image = cImg;
+        if (!isFldStr(image) && isFldStr(oImg)) image = oImg;
+        if (!isFldStr(image) && isFldStr(tImg)) image = tImg;
+
+        if (isFldStr(tImg)) thumbnail = tImg;
+        if (!isFldStr(thumbnail) && isFldStr(cImg)) thumbnail = cImg;
+        if (!isFldStr(thumbnail) && isFldStr(oImg)) thumbnail = oImg;
       }
-      if (!isFldStr(collection)) collection = rest;
-
-      let image = mObj.metadata.cached_image;
-      if (!isFldStr(image)) image = mObj.metadata.image;
-      if (!isFldStr(image)) image = mObj.metadata.cached_thumbnail_image;
-
-      let thumbnail = mObj.metadata.cached_thumbnail_image;
-      if (!isFldStr(thumbnail)) thumbnail = mObj.metadata.cached_image;
-      if (!isFldStr(thumbnail)) thumbnail = mObj.metadata.image;
 
       if (!isFldStr(image) || !isFldStr(thumbnail)) continue;
+      if (!isFldStr(collection) && isFldStr(rest)) collection = rest;
 
-      //if (image.startWith())
-      // if ipfs, prepend ipfs.io/
-      // https://ipfs.io/
-
-      // exclude BNS?
+      const ipfs = 'ipfs://', ipfsIo = 'https://ipfs.io/ipfs/';
+      if (image.startsWith(ipfs)) {
+        image = ipfsIo + image.slice(ipfs.length);
+      }
+      if (thumbnail.startsWith(ipfs)) {
+        thumbnail = ipfsIo + thumbnail.slice(ipfs.length);
+      }
 
       const nft = { principal, id, collection, image, thumbnail };
       fRes.nfts.push(JSON.stringify(nft));
@@ -364,7 +378,7 @@ const deleteUnsavedPred = (id) => {
 };
 
 const data = {
-  fetchBtcPrice, fetchBurnHeight, fetchTxInfo, fetchBtcNames, fetchNfts, fetchGame,
+  fetchBtcPrice, fetchBurnHeight, fetchTxInfo, fetchBnsNames, fetchNfts, fetchGame,
   fetchMe, fetchPreds, putUser, putPred, getUnsavedPreds, putUnsavedPred,
   deleteUnsavedPred,
 };
