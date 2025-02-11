@@ -69,7 +69,7 @@ export function WalletPopup() {
           </div>
         </Link>
         <div className="shrink grow"></div>
-        {installedWalletIds.includes(info.id) && <button className="group flex shrink-0 grow-0 items-center justify-center" onClick={() => onCwBtnClick(info.id)}>
+        {installedWalletIds.includes(info.id) && <button onClick={() => onCwBtnClick(info.id)} className="group flex shrink-0 grow-0 items-center justify-center">
           <div className="rounded-full bg-slate-600 px-3.5 py-1 group-hover:brightness-110">
             <span className="text-sm font-medium text-slate-300">Connect</span>
           </div>

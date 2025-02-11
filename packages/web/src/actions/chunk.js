@@ -15,7 +15,7 @@ import {
 import {
   getSignInStatus, isObject, isNumber, isFldStr, randomString, unionPreds, sepPreds,
   getPredStatus, getPendingPred, deriveTxInfo, getPredSeq, getFetchMeMoreParams,
-  getWalletErrorText,
+  getWalletErrorText, isAvatarEqual,
 } from '@/utils';
 import vars from '@/vars';
 
@@ -190,7 +190,7 @@ export const fetchMe = (doForce = false, doLoad = false) => async (
   }, 1000); // Call refreshPreds after state updated.
 };
 
-export const fetchMeMore = (doForce) => async (dispatch, getState) => {
+export const fetchMeMore = (doForce = false) => async (dispatch, getState) => {
   const signInStatus = getSignInStatus(getState().user);
   if (signInStatus !== 3) return;
 
@@ -297,7 +297,7 @@ export const fetchAvlbAvts = (doForce = false, doLoad = false) => async (
   dispatch(updateMeEditor({ ...data, didFthAvlbAvts: true }));
 };
 
-export const fetchAvlbAvtsMore = (doForce) => async (dispatch, getState) => {
+export const fetchAvlbAvtsMore = (doForce = false) => async (dispatch, getState) => {
   const signInStatus = getSignInStatus(getState().user);
   if (signInStatus !== 3) return;
 
@@ -330,8 +330,50 @@ export const updateMeEditor = (payload) => {
   return { type: UPDATE_ME_EDITOR, payload };
 };
 
-export const updateMeData = () => async (dispatch, getState) => {
+export const updateMeData = (doForce = false) => async (
+  dispatch, getState
+) => {
+  const { user, meEditor } = getState();
 
+  if (meEditor.saving === true) return;
+  if (!doForce && meEditor.saving !== null) return;
+
+  let newUser = {}, isDiff = false;
+  if (isFldStr(meEditor.username)) {
+    if (!isFldStr(user.username) || user.username !== meEditor.username) {
+      [newUser.username, isDiff] = [meEditor.username, true];
+    }
+  } else if (isFldStr(user.username)) {
+    [newUser.username, isDiff] = ['', true];
+  }
+  if (isFldStr(meEditor.avatar)) {
+    if (!isFldStr(user.avatar) || !isAvatarEqual(user.avatar, meEditor.avatar)) {
+      [newUser.avatar, isDiff] = [meEditor.avatar, true];
+    }
+  } else if (isFldStr(user.avatar)) {
+    [newUser.avatar, isDiff] = ['', true];
+  }
+  if (isFldStr(meEditor.bio)) {
+    if (!isFldStr(user.bio) || user.bio !== meEditor.bio) {
+      [newUser.bio, isDiff] = [meEditor.bio, true];
+    }
+  } else if (isFldStr(user.bio)) {
+    [newUser.bio, isDiff] = ['', true];
+  }
+  if (!isDiff) {
+    dispatch(updateMeEditor({ username: null, avatar: null, bio: null }));
+  }
+
+  dispatch(updateMeEditor({ saving: true }));
+  try {
+    await dataApi.putUser(newUser);
+  } catch (error) {
+    dispatch(updateMeEditor({ saving: false }));
+    return;
+  }
+
+  dispatch(updateUser(newUser));
+  dispatch(updateMeEditor({ username: null, avatar: null, bio: null, saving: null }));
 };
 
 export const agreeTerms = () => async (dispatch, getState) => {

@@ -7,6 +7,7 @@ import {
   UserIcon, ChevronRightIcon, ChevronLeftIcon, XCircleIcon, PhotoIcon,
 } from '@heroicons/react/24/solid';
 import { motion, AnimatePresence } from 'motion/react';
+import clsx from 'clsx';
 
 import {
   fetchAvlbUsns, fetchAvlbAvts, fetchAvlbAvtsMore, updateMeEditor, updateMeData,
@@ -16,7 +17,7 @@ import { dialogBgFMV, dialogFMV } from '@/types/animConfigs';
 import {
   getMeEdtrAvtWthObj, getAvlbAvtsWthObj, getAvlbAvtsHasMore,
 } from '@/selectors';
-import { isString, isFldStr } from '@/utils';
+import { isString, isFldStr, getAvtThbnl } from '@/utils';
 
 import { useSafeAreaFrame } from '.';
 import LogoBns from '../images/logo-bns.png';
@@ -70,6 +71,7 @@ export function MeEditorPopup() {
   const dispatch = useDispatch();
 
   const isShown = isString(username) && isString(avtWthObj.str) && isString(bio);
+  const avtThbnl = getAvtThbnl(avtWthObj.obj);
 
   const onCancelBtnClick = () => {
     dispatch(updateMeEditor({ username: null, avatar: null, bio: null }));
@@ -88,7 +90,9 @@ export function MeEditorPopup() {
   };
 
   const onSvRtBtnClick = () => {
-
+    if (didClick.current) return;
+    didClick.current = true;
+    dispatch(updateMeData(true));
   };
 
   const onFthgAvlbAvtsMoreBtnClick = () => {
@@ -137,8 +141,8 @@ export function MeEditorPopup() {
 
   const onSaveBtnClick = () => {
     if (didClick.current) return;
-    dispatch(updateMeData());
     didClick.current = true;
+    dispatch(updateMeData());
   };
 
   useEffect(() => {
@@ -194,8 +198,8 @@ export function MeEditorPopup() {
           <div className="mt-6 grid grid-cols-2 gap-6">
             {avlbAvtsWthObj.map(({ str, obj }) => {
               return (
-                <button key={str} className="flex flex-col items-center justify-start group" onClick={() => onAvtSltBtnClick(str)}>
-                  <Image className="size-24 rounded-full" width={96} height={96} src={obj.thumbnail} alt="" unoptimized={true} placeholder="empty" />
+                <button key={str} onClick={() => onAvtSltBtnClick(str)} className="flex flex-col items-center justify-start group">
+                  <Image className="size-24 rounded-full" width={96} height={96} src={getAvtThbnl(obj)} alt="" unoptimized={true} placeholder="empty" />
                   <p className="mt-2 text-sm text-slate-400 group-hover:text-slate-300 line-clamp-3 w-full">{obj.collection}</p>
                 </button>
               );
@@ -238,7 +242,7 @@ export function MeEditorPopup() {
           <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
             <div className="relative">
               <h3 className="text-center text-2xl font-medium leading-6 text-slate-100">NFTs</h3>
-              <button className="absolute left-0 top-0 group -translate-x-3 -translate-y-2" onClick={onToEdtrBtnClick}>
+              <button onClick={onToEdtrBtnClick} className="absolute left-0 top-0 group -translate-x-3 -translate-y-2">
                 <ChevronLeftIcon className="size-10 text-slate-400 group-hover:text-slate-300" />
               </button>
             </div>
@@ -288,7 +292,7 @@ export function MeEditorPopup() {
               return (
                 <div key={str} className="flex flex-col items-stretch">
                   {i !== 0 && <div className="h-px bg-slate-700 my-2" />}
-                  <button className="-mx-2 px-2 rounded-md block py-2 group hover:bg-slate-700" onClick={() => onUsnSltBtnClick(str)}>
+                  <button onClick={() => onUsnSltBtnClick(str)} className="-mx-2 px-2 rounded-md block py-2 group hover:bg-slate-700">
                     <p className="text-left text-xl text-slate-300 group-hover:text-slate-200 truncate">{str}</p>
                   </button>
                 </div>
@@ -305,7 +309,7 @@ export function MeEditorPopup() {
           <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
             <div className="relative">
               <h3 className="text-center text-2xl font-medium leading-6 text-slate-100">BNS names</h3>
-              <button className="absolute left-0 top-0 group -translate-x-3 -translate-y-2" onClick={onToEdtrBtnClick}>
+              <button onClick={onToEdtrBtnClick} className="absolute left-0 top-0 group -translate-x-3 -translate-y-2">
                 <ChevronLeftIcon className="size-10 text-slate-400 group-hover:text-slate-300" />
               </button>
             </div>
@@ -318,11 +322,11 @@ export function MeEditorPopup() {
 
   const renderEdtrPane = () => {
     let avatarPane, usernamePane;
-    if (isFldStr(avtWthObj.obj.thumbnail)) {
+    if (isFldStr(avtThbnl)) {
       avatarPane = (
         <div className="relative rounded-full border-2 border-slate-800">
-          <Image className="size-28 rounded-full" width={112} height={112} src={avtWthObj.obj.thumbnail} alt="User avatar" unoptimized={true} placeholder="empty" />
-          <button className="absolute top-0 right-0 group p-2 translate-x-1 -translate-y-1" onClick={onAvtRmBtnClick}>
+          <Image className="size-28 rounded-full" width={112} height={112} src={avtThbnl} alt="User avatar" unoptimized={true} placeholder="empty" />
+          <button onClick={onAvtRmBtnClick} className="absolute top-0 right-0 group p-2 translate-x-1 -translate-y-1">
             <div className="bg-slate-800 rounded-full">
               <XCircleIcon className="size-6 text-slate-400/85 group-hover:text-slate-300/85" />
             </div>
@@ -341,7 +345,7 @@ export function MeEditorPopup() {
         <div className="mt-1 flex">
           <div className="relative min-w-0">
             <p className="text-3xl text-slate-200 truncate mr-7">{username}</p>
-            <button className="absolute top-0 right-0 group p-2 translate-x-0.5 -translate-y-3.5" onClick={onUsnRmBtnClick}>
+            <button onClick={onUsnRmBtnClick} className="absolute top-0 right-0 group p-2 translate-x-0.5 -translate-y-3.5">
               <div className="bg-slate-800 rounded-full">
                 <XCircleIcon className="size-6 text-slate-400/85 group-hover:text-slate-300/85" />
               </div>
@@ -363,7 +367,7 @@ export function MeEditorPopup() {
           <div className="mt-2 flex items-center justify-center">
             {avatarPane}
           </div>
-          <button className="absolute right-0 inset-y-0 px-2 group -mr-4 pt-5" onClick={onToAvlbAvtsBtnClick}>
+          <button onClick={onToAvlbAvtsBtnClick} className="absolute right-0 inset-y-0 px-2 group -mr-4 pt-5">
             <ChevronRightIcon className="size-10 text-slate-400 group-hover:text-slate-300" />
           </button>
         </div>
@@ -373,7 +377,7 @@ export function MeEditorPopup() {
             <p className="text-sm text-slate-400">Username</p>
             {usernamePane}
           </div>
-          <button className="grow-0 shrink-0 px-2 group -mr-4 pt-5" onClick={onToAvlbUsnsBtnClick}>
+          <button onClick={onToAvlbUsnsBtnClick} className="grow-0 shrink-0 px-2 group -mr-4 pt-5">
             <ChevronRightIcon className="size-10 text-slate-400 group-hover:text-slate-300" />
           </button>
         </div>
@@ -382,9 +386,11 @@ export function MeEditorPopup() {
           <p className="text-sm text-slate-400">Bio</p>
           <textarea className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-700 px-2.5 py-1.5 text-base text-slate-200 min-h-24 placeholder:text-slate-400 focus:outline-none" value={bio} onChange={onBioChange} />
         </div>
-        <div className="mt-6 flex justify-stretch space-x-2">
-          <button onClick={onSaveBtnClick} className="w-full rounded-full bg-orange-400 px-4 py-1.5 text-sm font-semibold text-white hover:brightness-110">Save</button>
-          <button onClick={onCancelBtnClick} className="w-full rounded-full bg-slate-600 px-4 py-1.5 text-sm font-semibold text-white hover:brightness-110">Cancel</button>
+        {saving === false && <p className="mt-2 text-red-600">Something went wrong! Please wait and try again.</p>}
+        <div className={clsx('flex justify-stretch space-x-2', saving !== false ? 'mt-6' : 'mt-3.5')}>
+          {saving !== false && <button onClick={onSaveBtnClick} className="w-full rounded-full bg-orange-400 px-4 py-2 text-sm font-semibold text-white hover:brightness-110">Save</button>}
+          {saving === false && <button onClick={onSvRtBtnClick} className="w-full rounded-full bg-slate-600 px-4 py-2 text-sm font-semibold text-slate-200 hover:brightness-110">Retry</button>}
+          <button onClick={onCancelBtnClick} className="w-full rounded-full bg-slate-600 px-4 py-2 text-sm font-semibold text-slate-200 hover:brightness-110">Cancel</button>
         </div>
       </motion.div>
     );
@@ -392,7 +398,7 @@ export function MeEditorPopup() {
 
   if (!isShown) return <AnimatePresence key="AP_MEP" />;
 
-  const panelHeight = Math.min(584, safeAreaHeight * 0.9);
+  const panelHeight = Math.min(588, safeAreaHeight * 0.9);
 
   return (
     <AnimatePresence key="AP_MEP">

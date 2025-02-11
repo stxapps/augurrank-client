@@ -8,19 +8,21 @@ import clsx from 'clsx';
 
 import { chooseWallet, signStxTstStr } from '@/actions';
 import { fetchBurnHeight, fetchMe, showMeEditorPopup } from '@/actions/chunk';
-import { getMeStats } from '@/selectors';
-import { getSignInStatus, isFldStr, localeNumber } from '@/utils';
+import { getMeStats, getAvtWthObj } from '@/selectors';
+import { getSignInStatus, isFldStr, localeNumber, getAvtThbnl } from '@/utils';
 
 export function MeStats() {
   const signInStatus = useSelector(state => getSignInStatus(state.user));
   const username = useSelector(state => state.user.username);
-  const avatar = useSelector(state => state.user.avatar);
+  const avtWthObj = useSelector(state => getAvtWthObj(state));
   const stxAddr = useSelector(state => state.user.stxAddr);
   const bio = useSelector(state => state.user.bio);
   const burnHeight = useSelector(state => state.gameBtc.burnHeight);
   const didFetch = useSelector(state => state.me.didFetch);
   const stats = useSelector(state => getMeStats(state));
   const dispatch = useDispatch();
+
+  const avtThbnl = getAvtThbnl(avtWthObj.obj);
 
   const onEdtBtnClick = () => {
     dispatch(showMeEditorPopup());
@@ -50,9 +52,9 @@ export function MeStats() {
   const renderUsrPane = () => {
     let avatarPane, usernamePane, stxAddrPane, bioPane, btnPane;
     if (renderCode === 2) {
-      if (isFldStr(avatar)) {
+      if (isFldStr(avtThbnl)) {
         avatarPane = (
-          <Image className="size-32" width={128} height={128} src={avatar} alt="User avatar" unoptimized={true} placeholder="empty" />
+          <Image className="size-32" width={128} height={128} src={avtThbnl} alt="User avatar" unoptimized={true} placeholder="empty" />
         );
       } else {
         avatarPane = (
@@ -66,7 +68,7 @@ export function MeStats() {
       );
       if (isFldStr(bio)) {
         bioPane = (
-          <p className="mt-3 text-center text-base text-slate-400 sm:text-left sm:mt-1.5">{bio}</p>
+          <p className="mt-3 text-center text-base text-slate-400 sm:text-left sm:mt-1.5 whitespace-pre-wrap">{bio}</p>
         );
       } else {
         stxAddrPane = (
@@ -76,7 +78,7 @@ export function MeStats() {
         );
       }
       btnPane = (
-        <button className="group block w-full py-3 flex items-center justify-center sm:justify-start sm:w-auto" onClick={onEdtBtnClick}>
+        <button onClick={onEdtBtnClick} className="group block w-full py-3 flex items-center justify-center sm:justify-start sm:w-auto">
           <PencilSquareIcon className="mb-0.5 size-4 text-slate-400 group-hover:text-orange-200" />
           <span className="ml-0.5 text-sm font-medium text-slate-400 group-hover:text-orange-200">Edit</span>
         </button>
