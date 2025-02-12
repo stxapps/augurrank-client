@@ -353,9 +353,14 @@ export const updateMeData = (doForce = false) => async (
   } else if (isFldStr(user.avatar)) {
     [newUser.avatar, isDiff] = ['', true];
   }
-  if (isFldStr(meEditor.bio)) {
-    if (!isFldStr(user.bio) || user.bio !== meEditor.bio) {
-      [newUser.bio, isDiff] = [meEditor.bio, true];
+
+  let bio = meEditor.bio;
+  if (isFldStr(bio)) {
+    bio = bio.trim().replace(/ {4,}/g, '   ').replace(/\n{4,}/g, '\n\n\n');
+  }
+  if (isFldStr(bio)) {
+    if (!isFldStr(user.bio) || user.bio !== bio) {
+      [newUser.bio, isDiff] = [bio, true];
     }
   } else if (isFldStr(user.bio)) {
     [newUser.bio, isDiff] = ['', true];

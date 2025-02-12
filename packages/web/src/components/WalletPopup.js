@@ -62,7 +62,7 @@ export function WalletPopup() {
     return (
       <div key={info.id} className="flex items-stretch justify-start rounded-lg border border-slate-700 p-2.5">
         <Link className="group flex shrink-0 grow-0 items-center justify-start space-x-3" href={info.webUrl} target="_blank" rel="noreferrer">
-          <Image className="size-10 rounded-lg" width={20} height={20} src={info.icon} alt="" placeholder="empty" />
+          <Image className="size-10 rounded-lg" width={40} height={40} src={info.icon} alt="" placeholder="empty" />
           <div>
             <p className="text-base text-slate-200">{info.name}</p>
             <p className="text-sm text-slate-400 group-hover:underline">{extractUrl(info.webUrl).host}</p>

@@ -54,7 +54,7 @@ export function MeStats() {
     if (renderCode === 2) {
       if (isFldStr(avtThbnl)) {
         avatarPane = (
-          <Image className="size-32 rounded-full" width={128} height={128} src={avtThbnl} alt="User avatar" unoptimized={true} placeholder="empty" />
+          <Image className="size-32 rounded-full" width={128} height={128} src={avtThbnl} alt="User avatar" unoptimized={true} placeholder="empty" priority={true} />
         );
       } else {
         avatarPane = (
@@ -68,7 +68,7 @@ export function MeStats() {
       );
       if (isFldStr(bio)) {
         bioPane = (
-          <p className="mt-3 whitespace-pre-wrap text-center text-base text-slate-400 sm:mt-1.5 sm:text-left">{bio}</p>
+          <p className="mt-3 max-h-72 overflow-hidden whitespace-pre-wrap text-center text-base text-slate-400 sm:mt-1.5 sm:text-left">{bio}</p>
         );
       } else {
         stxAddrPane = (
