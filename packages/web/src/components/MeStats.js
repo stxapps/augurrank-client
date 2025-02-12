@@ -54,7 +54,7 @@ export function MeStats() {
     if (renderCode === 2) {
       if (isFldStr(avtThbnl)) {
         avatarPane = (
-          <Image className="size-32" width={128} height={128} src={avtThbnl} alt="User avatar" unoptimized={true} placeholder="empty" />
+          <Image className="size-32 rounded-full" width={128} height={128} src={avtThbnl} alt="User avatar" unoptimized={true} placeholder="empty" />
         );
       } else {
         avatarPane = (

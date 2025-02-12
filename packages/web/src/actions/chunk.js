@@ -361,7 +361,8 @@ export const updateMeData = (doForce = false) => async (
     [newUser.bio, isDiff] = ['', true];
   }
   if (!isDiff) {
-    dispatch(updateMeEditor({ username: null, avatar: null, bio: null }));
+    dispatch(updateMeEditor({ username: null, avatar: null, bio: null, saving: null }));
+    return;
   }
 
   dispatch(updateMeEditor({ saving: true }));

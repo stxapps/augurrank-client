@@ -74,7 +74,7 @@ export function MeEditorPopup() {
   const avtThbnl = getAvtThbnl(avtWthObj.obj);
 
   const onCancelBtnClick = () => {
-    dispatch(updateMeEditor({ username: null, avatar: null, bio: null }));
+    dispatch(updateMeEditor({ username: null, avatar: null, bio: null, saving: null }));
   };
 
   const onFthAvlbAvtsRtBtnClick = () => {
