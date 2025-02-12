@@ -141,6 +141,10 @@ export const newObject = (object, ignoreAttrs) => {
   return nObject;
 };
 
+export const randBtw = (min, max) => {
+  return Math.random() * (max - min) + min;
+};
+
 export const randomString = (length) => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
   const charactersLength = characters.length;

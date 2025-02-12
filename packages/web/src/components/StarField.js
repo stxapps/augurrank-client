@@ -3,6 +3,8 @@ import { useEffect, useId, useRef } from 'react';
 import clsx from 'clsx';
 import { animate } from 'motion';
 
+import { randBtw } from '@/utils';
+
 /** @type any  */
 const stars = [
   [4, 4, true, true],
@@ -72,21 +74,15 @@ function Star({ blurId, point: [cx, cy, dim, blur] }) {
   useEffect(() => {
     if (!groupRef.current || !ref.current) return;
 
+    const toR = randBtw(1, 1.2)
+    const toOpacity = dim ? randBtw(0.2, 0.5) : randBtw(0.6, 1);
     const delay = Math.random() * 2;
     const animations = [
       animate(groupRef.current, { opacity: 1 }, { duration: 4, delay }),
       animate(
         ref.current,
-        {
-          r: dim ? [1, 1.2] : [1.2, 1],
-          opacity: dim ? [0.2, 0.5] : [1, 0.6],
-        },
-        {
-          delay,
-          duration: Math.random() * 2 + 2,
-          repeat: Infinity,
-          repeatType: 'reverse',
-        },
+        { r: toR, opacity: toOpacity },
+        { duration: Math.random() * 2 + 2, delay },
       ),
     ];
 
