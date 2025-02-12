@@ -68,7 +68,7 @@ export function MeStats() {
       );
       if (isFldStr(bio)) {
         bioPane = (
-          <p className="mt-3 text-center text-base text-slate-400 sm:text-left sm:mt-1.5 whitespace-pre-wrap">{bio}</p>
+          <p className="mt-3 whitespace-pre-wrap text-center text-base text-slate-400 sm:mt-1.5 sm:text-left">{bio}</p>
         );
       } else {
         stxAddrPane = (
@@ -78,7 +78,7 @@ export function MeStats() {
         );
       }
       btnPane = (
-        <button onClick={onEdtBtnClick} className="group block w-full py-3 flex items-center justify-center sm:justify-start sm:w-auto">
+        <button onClick={onEdtBtnClick} className="group flex w-full items-center justify-center py-3 sm:w-auto sm:justify-start">
           <PencilSquareIcon className="mb-0.5 size-4 text-slate-400 group-hover:text-orange-200" />
           <span className="ml-0.5 text-sm font-medium text-slate-400 group-hover:text-orange-200">Edit</span>
         </button>

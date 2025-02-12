@@ -74,7 +74,7 @@ function Star({ blurId, point: [cx, cy, dim, blur] }) {
   useEffect(() => {
     if (!groupRef.current || !ref.current) return;
 
-    const toR = randBtw(1, 1.2)
+    const toR = randBtw(1, 1.2);
     const toOpacity = dim ? randBtw(0.2, 0.5) : randBtw(0.6, 1);
     const delay = Math.random() * 2;
     const animations = [

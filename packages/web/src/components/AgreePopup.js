@@ -40,7 +40,7 @@ export function AgreePopup() {
 
   return (
     <AnimatePresence key="AP_AP">
-      <div className="fixed inset-0 overflow-y-auto z-20" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div className="fixed inset-0 z-20 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div style={{ minHeight: safeAreaHeight }} className="flex items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
           <div className="fixed inset-0">
             <motion.button onClick={onCancelBtnClick} className="absolute inset-0 size-full cursor-default bg-black/25 focus:outline-none" variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />

@@ -338,7 +338,7 @@ export const updateMeData = (doForce = false) => async (
   if (meEditor.saving === true) return;
   if (!doForce && meEditor.saving !== null) return;
 
-  let newUser = {}, isDiff = false;
+  const newUser = {}; let isDiff = false;
   if (isFldStr(meEditor.username)) {
     if (!isFldStr(user.username) || user.username !== meEditor.username) {
       [newUser.username, isDiff] = [meEditor.username, true];
