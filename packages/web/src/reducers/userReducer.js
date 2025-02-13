@@ -42,8 +42,8 @@ const userReducer = (state = initialState, action) => {
     const { username, avatar, didAgreeTerms } = action.payload;
 
     const newState = { ...state };
-    if (isString(username)) newState.username = username;
-    if (isString(avatar)) newState.avatar = avatar;
+    if (username === null || isString(username)) newState.username = username;
+    if (avatar === null || isString(avatar)) newState.avatar = avatar;
     if (didAgreeTerms === true) newState.didAgreeTerms = didAgreeTerms;
 
     return loop(
@@ -55,9 +55,9 @@ const userReducer = (state = initialState, action) => {
     const { username, avatar, bio } = action.payload;
 
     const newState = { ...state };
-    if (isString(username)) newState.username = username;
-    if (isString(avatar)) newState.avatar = avatar;
-    if (isString(bio)) newState.bio = bio;
+    if (username === null || isString(username)) newState.username = username;
+    if (avatar === null || isString(avatar)) newState.avatar = avatar;
+    if (bio === null || isString(bio)) newState.bio = bio;
 
     return loop(
       newState, Cmd.run(updateLocalUser(), { args: [Cmd.dispatch, Cmd.getState] })
