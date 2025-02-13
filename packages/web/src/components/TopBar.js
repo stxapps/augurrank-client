@@ -37,7 +37,7 @@ export function TopBar() {
     leftItem = (
       <Link className="group flex items-center justify-center p-0.5 text-slate-100 hover:brightness-110 focus:outline-none" href="/">
         <div className="flex items-center justify-center rounded-full p-0.5 group-focus-visible:outline group-focus-visible:outline-1">
-          <Image className="h-8 w-auto" src={Logo} alt="" placeholder="empty" priority={true} />
+          <Image className="h-8 w-auto" width={32} height={32} src={Logo} alt="" placeholder="empty" priority={true} />
         </div>
       </Link>
     );
