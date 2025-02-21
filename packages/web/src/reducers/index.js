@@ -8,6 +8,7 @@ import meReducer from './meReducer';
 import meEditorReducer from './meEditorReducer';
 import gameBtcReducer from './gameBtcReducer';
 import gameBtcPredsReducer from './gameBtcPredsReducer';
+import ldbBtcReducer from './ldbBtcReducer';
 import newsfeedReducer from './newsfeedReducer';
 
 const reducers = combineReducers({
@@ -19,6 +20,7 @@ const reducers = combineReducers({
   meEditor: meEditorReducer,
   gameBtc: gameBtcReducer,
   gameBtcPreds: gameBtcPredsReducer,
+  ldbBtc: ldbBtcReducer,
   newsfeed: newsfeedReducer,
 });
 

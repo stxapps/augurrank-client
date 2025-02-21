@@ -53,6 +53,9 @@ export function TopBar() {
       {pathname !== '/game-btc' && <Link className="group px-0.5 py-1.5 text-lg font-medium text-slate-100 hover:text-orange-200 focus:outline-none" href="/game-btc" prefetch={true}>
         <div className="rounded-full px-2 py-0.5 group-focus-visible:outline group-focus-visible:outline-1">Game</div>
       </Link>}
+      {pathname !== '/game-btc/leaderboard' && <Link className="group px-0.5 py-1.5 text-lg font-medium text-slate-100 hover:text-orange-200 focus:outline-none" href="/game-btc/leaderboard" prefetch={false}>
+        <div className="rounded-full px-2 py-0.5 group-focus-visible:outline group-focus-visible:outline-1">Leaderboard</div>
+      </Link>}
       {([2, 3].includes(signInStatus) && pathname !== '/me') && <Link className="group px-0.5 py-1.5 text-lg font-medium text-slate-100 hover:text-orange-200 focus:outline-none" href="/me" prefetch={false}>
         <div className="rounded-full px-2 py-0.5 group-focus-visible:outline group-focus-visible:outline-1">Me</div>
       </Link>}

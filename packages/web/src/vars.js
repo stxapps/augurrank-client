@@ -12,6 +12,10 @@ const gameBtc = {
   didFetch: false,
 };
 
+const ldbBtc = {
+  didFetch: false,
+};
+
 const me = {
   didFetch: false,
 };
@@ -31,6 +35,8 @@ const refreshPreds = {
   seq: 0,
 };
 
-const vars = { btcPrice, burnHeight, gameBtc, me, meEditor, agreeTerms, refreshPreds };
+const vars = {
+  btcPrice, burnHeight, gameBtc, ldbBtc, me, meEditor, agreeTerms, refreshPreds,
+};
 
 export default vars;

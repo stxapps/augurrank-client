@@ -35,6 +35,8 @@ export const PREDS_URL = AUGUR_RANK_SERVER_URL + '/preds';
 export const USER_URL = AUGUR_RANK_SERVER_URL + '/user';
 export const PRED_URL = AUGUR_RANK_SERVER_URL + '/pred';
 
+export const AUGUR_RANK_STORAGE_URL = 'https://storage.googleapis.com/augurrank-001.appspot.com';
+
 export const JOIN_NEWSLETTER_STATUS_INIT = 'JOIN_NEWSLETTER_STATUS_INIT';
 export const JOIN_NEWSLETTER_STATUS_JOINING = 'JOIN_NEWSLETTER_STATUS_JOINING';
 export const JOIN_NEWSLETTER_STATUS_INVALID = 'JOIN_NEWSLETTER_STATUS_INVALID';

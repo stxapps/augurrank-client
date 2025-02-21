@@ -2,8 +2,8 @@ import idxApi from '@/apis';
 import lsgApi from '@/apis/localSg';
 import {
   BTC_PRICE_OBJ, BURN_HEIGHT_OBJ, NFT_METAS, GAME_URL, ME_URL, PREDS_URL, USER_URL,
-  PRED_URL, VALID, UNSAVED_PREDS, ERR_INVALID_ARGS, ERR_NOT_FOUND, ERR_INVALID_RES,
-  N_PREDS,
+  PRED_URL, AUGUR_RANK_STORAGE_URL, VALID, UNSAVED_PREDS, ERR_INVALID_ARGS,
+  ERR_NOT_FOUND, ERR_INVALID_RES, N_PREDS,
 } from '@/types/const';
 import {
   isObject, isString, isNumber, isFldStr, splitOnFirst, getStatusText,
@@ -235,6 +235,17 @@ const fetchGame = async (game) => {
   return obj;
 };
 
+const fetchLdb = async (game) => {
+  const ldbUrl = `${AUGUR_RANK_STORAGE_URL}/leaderboard/${game}/index.json`;
+  const res = await fetch(ldbUrl);
+  if (!res.ok) {
+    throw new Error(getStatusText(res));
+  }
+
+  const obj = await res.json();
+  return obj;
+};
+
 const fetchMe = async () => {
   const authData = getAuthData();
 
@@ -379,7 +390,7 @@ const deleteUnsavedPred = (id) => {
 
 const data = {
   fetchBtcPrice, fetchBurnHeight, fetchTxInfo, fetchBnsNames, fetchNfts, fetchGame,
-  fetchMe, fetchPreds, putUser, putPred, getUnsavedPreds, putUnsavedPred,
+  fetchLdb, fetchMe, fetchPreds, putUser, putPred, getUnsavedPreds, putUnsavedPred,
   deleteUnsavedPred,
 };
 

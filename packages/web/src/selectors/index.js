@@ -185,3 +185,80 @@ export const getAvlbAvtsHasMore = createSelector(
     return nftOffset + nftLimit < nftTotal;
   }
 );
+
+export const getLdbBtcUsrs = createSelector(
+  state => state.ldbBtc.data,
+  (data) => {
+    if (!isObject(data)) return null;
+
+    const tss = Object.keys(data);
+    if (tss.length === 0) return null;
+
+    const stss = tss.map(ts => parseInt(ts, 10)).sort((a, b) => b - a);
+    const { totals: curTotals, users: curUsers } = data[stss[0]];
+    const prevTotals = stss.length > 1 ? data[stss[1]].totals : null;
+
+    const curSums = [], prevSums = [];
+    for (const stxAddr in curTotals) {
+      let nWins = 0, nLoses = 0, nNA = 0;
+      if (isObject(curTotals[stxAddr]['up-verified_ok-TRUE-count'])) {
+        nWins += curTotals[stxAddr]['up-verified_ok-TRUE-count'].outcome;
+      }
+      if (isObject(curTotals[stxAddr]['down-verified_ok-TRUE-count'])) {
+        nWins += curTotals[stxAddr]['down-verified_ok-TRUE-count'].outcome;
+      }
+      if (isObject(curTotals[stxAddr]['up-verified_ok-FALSE-count'])) {
+        nLoses += curTotals[stxAddr]['up-verified_ok-FALSE-count'].outcome;
+      }
+      if (isObject(curTotals[stxAddr]['down-verified_ok-FALSE-count'])) {
+        nLoses += curTotals[stxAddr]['down-verified_ok-FALSE-count'].outcome;
+      }
+      if (isObject(curTotals[stxAddr]['up-verified_ok-N/A-count'])) {
+        nNA += curTotals[stxAddr]['up-verified_ok-N/A-count'].outcome;
+      }
+      if (isObject(curTotals[stxAddr]['down-verified_ok-N/A-count'])) {
+        nNA += curTotals[stxAddr]['down-verified_ok-N/A-count'].outcome;
+      }
+      curSums.push({ stxAddr, nWins, nLoses, nNA });
+    }
+    curSums.sort((a, b) => b.nWins - a.nWins);
+
+    if (isObject(prevTotals)) {
+      for (const stxAddr in prevTotals) {
+        let nWins = 0;
+        if (isObject(prevTotals[stxAddr]['up-verified_ok-TRUE-count'])) {
+          nWins += prevTotals[stxAddr]['up-verified_ok-TRUE-count'].outcome;
+        }
+        if (isObject(prevTotals[stxAddr]['down-verified_ok-TRUE-count'])) {
+          nWins += prevTotals[stxAddr]['down-verified_ok-TRUE-count'].outcome;
+        }
+        prevSums.push({ stxAddr, nWins });
+      }
+      prevSums.sort((a, b) => b.nWins - a.nWins);
+    }
+
+    const usrs = [];
+    for (let i = 0; i < curSums.length; i++) {
+      const { stxAddr, nWins, nLoses, nNA } = curSums[i];
+
+      let username = null, avtWthObj = { str: null, obj: {} };
+      if (isObject(curUsers[stxAddr])) {
+        if (isFldStr(curUsers[stxAddr].username)) {
+          username = curUsers[stxAddr].username;
+        }
+        if (isFldStr(curUsers[stxAddr].avatar)) {
+          avtWthObj.str = curUsers[stxAddr].avatar;
+          avtWthObj.obj = parseAvatar(avtWthObj.str);
+        }
+      }
+
+      let rankChange = null;
+      const prevRank = prevSums.findIndex(sum => sum.stxAddr === stxAddr);
+      if (prevRank > -1) rankChange = i - prevRank;
+
+      usrs.push({ stxAddr, username, avtWthObj, rankChange, nWins, nLoses, nNA });
+    }
+
+    return usrs;
+  }
+);

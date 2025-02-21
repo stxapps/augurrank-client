@@ -4,7 +4,7 @@ import walletApi from '@/apis/wallet';
 import dataApi from '@/apis/data';
 import { updatePopup, updateUser, updateErrorPopup } from '@/actions';
 import {
-  UPDATE_GAME_BTC, REMOVE_GAME_BTC_PREDS, UPDATE_ME, UPDATE_ME_EDITOR,
+  UPDATE_GAME_BTC, REMOVE_GAME_BTC_PREDS, UPDATE_LDB_BTC, UPDATE_ME, UPDATE_ME_EDITOR,
 } from '@/types/actionTypes';
 import {
   AGREE_POPUP, CONTRACT_ADDR, GAME_BTC, GAME_BTC_CONTRACT_NAME, GAME_BTC_FUNCTION_NAME,
@@ -157,6 +157,29 @@ export const updateGameBtc = (payload) => {
 
 export const removeGameBtcPreds = (ids) => {
   return { type: REMOVE_GAME_BTC_PREDS, payload: { ids } };
+};
+
+export const fetchLdbBtc = (doForce = false, doLoad = false) => async (
+  dispatch, getState
+) => {
+  if (!doForce && vars.ldbBtc.didFetch) return;
+  vars.ldbBtc.didFetch = true;
+
+  let data = null;
+  if (doLoad) dispatch(updateLdbBtc({ didFetch: null }));
+  try {
+    data = await dataApi.fetchLdb(GAME_BTC);
+  } catch (error) {
+    console.log('fetchLdbBtc error:', error);
+    dispatch(updateLdbBtc({ didFetch: false }));
+    return;
+  }
+
+  dispatch(updateLdbBtc({ ...data, didFetch: true }));
+};
+
+export const updateLdbBtc = (payload) => {
+  return { type: UPDATE_LDB_BTC, payload };
 };
 
 export const fetchMe = (doForce = false, doLoad = false) => async (
