@@ -1,4 +1,4 @@
-import { UPDATE_LDB_BTC, RESET_STATE } from '@/types/actionTypes';
+import { UPDATE_LDB_BTC } from '@/types/actionTypes';
 import { isObject, isNumber } from '@/utils';
 
 const initialState = {
@@ -21,10 +21,6 @@ const ldbBtcReducer = (state = initialState, action) => {
     if (prevTs === null || isNumber(prevTs)) newState.prevTs = prevTs;
 
     return newState;
-  }
-
-  if (action.type === RESET_STATE) {
-    return state;
   }
 
   return state;
