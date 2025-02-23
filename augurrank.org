@@ -28,6 +28,7 @@
 - zeroauthority.xyz
 - mccrindle.com.au, predicthq.com, kalshi, predictit, UK-based Betfair, Intrade
 - FiveThirtyEight, Silver Bulletin
+- foreprotocol, myriad.markets, solcasino.io
 * Terms
 - event, question, competition
 - bet, vote, 

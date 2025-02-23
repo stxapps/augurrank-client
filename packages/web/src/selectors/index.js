@@ -4,7 +4,7 @@ import {
   PRED_STATUS_CONFIRMED_ERROR, PRED_STATUS_VERIFIED_OK, PRED_STATUS_VERIFIED_ERROR,
 } from '@/types/const';
 import {
-  isObject, isNumber, isFldStr, getPndgPredWthSts, getPredStatus, parseAvatar,
+  isObject, isNumber, isFldStr, getPndgPredWthSts, getPredStatus, parseAvatar, isString,
 } from '@/utils';
 
 const _getInsets = (insetTop, insetRight, insetBottom, insetLeft) => {
@@ -188,7 +188,10 @@ export const getAvlbAvtsHasMore = createSelector(
 
 export const getLdbBtcUsrs = createSelector(
   state => state.ldbBtc.data,
-  (data) => {
+  state => state.user.stxAddr,
+  state => state.user.username,
+  state => state.user.avatar,
+  (data, uStxAddr, uUsername, uAvatar) => {
     if (!isObject(data)) return null;
 
     const tss = Object.keys(data);
@@ -241,7 +244,7 @@ export const getLdbBtcUsrs = createSelector(
     for (let i = 0; i < curSums.length; i++) {
       const { stxAddr, nWins, nLoses, nNA } = curSums[i];
 
-      let username = null, avtWthObj = { str: null, obj: {} };
+      let username = null, avtWthObj = { str: null, obj: {} }, isUser = false;
       if (isObject(curUsers[stxAddr])) {
         if (isFldStr(curUsers[stxAddr].username)) {
           username = curUsers[stxAddr].username;
@@ -256,7 +259,18 @@ export const getLdbBtcUsrs = createSelector(
       const prevRank = prevSums.findIndex(sum => sum.stxAddr === stxAddr);
       if (prevRank > -1) rankChange = i - prevRank;
 
-      usrs.push({ stxAddr, username, avtWthObj, rankChange, nWins, nLoses, nNA });
+      if (stxAddr === uStxAddr) {
+        if (isString(uUsername)) username = uUsername;
+        if (isString(uAvatar)) {
+          avtWthObj.str = uAvatar;
+          avtWthObj.obj = parseAvatar(avtWthObj.str);
+        }
+        isUser = true;
+      }
+
+      usrs.push({
+        stxAddr, username, avtWthObj, rankChange, nWins, nLoses, nNA, isUser,
+      });
     }
 
     return usrs;

@@ -10,7 +10,7 @@ const initialState = {
   stxAddr: null, // null: n/a, '': no value, str: has value
   stxPubKey: null, // same as above
   stxSigStr: null, // same as above
-  username: null, // null or '': n/a or no value, str: has value
+  username: null, // null: n/a, ['': no value, str: has value](fetched at least once)
   avatar: null, // same as above
   bio: null, // same as above
   didAgreeTerms: null, // null or false: n/a or did not agree, true: agreed
@@ -42,8 +42,12 @@ const userReducer = (state = initialState, action) => {
     const { username, avatar, didAgreeTerms } = action.payload;
 
     const newState = { ...state };
-    if (username === null || isString(username)) newState.username = username;
-    if (avatar === null || isString(avatar)) newState.avatar = avatar;
+    if (isString(username)) newState.username = username;
+    else if (username === null) newState.username = '';
+
+    if (isString(avatar)) newState.avatar = avatar;
+    else if (avatar === null) newState.avatar = '';
+
     if (didAgreeTerms === true) newState.didAgreeTerms = didAgreeTerms;
 
     return loop(
@@ -55,9 +59,14 @@ const userReducer = (state = initialState, action) => {
     const { username, avatar, bio } = action.payload;
 
     const newState = { ...state };
-    if (username === null || isString(username)) newState.username = username;
-    if (avatar === null || isString(avatar)) newState.avatar = avatar;
-    if (bio === null || isString(bio)) newState.bio = bio;
+    if (isString(username)) newState.username = username;
+    else if (username === null) newState.username = '';
+
+    if (isString(avatar)) newState.avatar = avatar;
+    else if (avatar === null) newState.avatar = '';
+
+    if (isString(bio)) newState.bio = bio;
+    else if (bio === null) newState.bio = '';
 
     return loop(
       newState, Cmd.run(updateLocalUser(), { args: [Cmd.dispatch, Cmd.getState] })

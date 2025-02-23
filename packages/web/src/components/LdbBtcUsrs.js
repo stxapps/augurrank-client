@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next-image-export-optimizer';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
 
 import { fetchLdbBtc } from '@/actions/chunk';
 import { getLdbBtcUsrs } from '@/selectors';
@@ -71,7 +72,7 @@ export function LdbBtcUsrs() {
                     const avtThbnl = getAvtThbnl(usr.avtWthObj.obj);
 
                     return (
-                      <tr key={i}>
+                      <tr key={i} className={clsx(usr.isUser && 'bg-slate-800/75')}>
                         <td className="whitespace-nowrap py-4 pl-5 pr-4 text-sm text-slate-300 text-center">{i + 1}</td>
                         <td className="px-4 py-4">
                           <Link className="group flex items-center justify-start space-x-3 w-fit" href={`https://explorer.hiro.so/address/${usr.stxAddr}`} target="_blank" rel="noreferrer">

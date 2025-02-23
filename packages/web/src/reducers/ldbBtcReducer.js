@@ -24,7 +24,7 @@ const ldbBtcReducer = (state = initialState, action) => {
   }
 
   if (action.type === RESET_STATE) {
-    return { ...initialState };
+    return state;
   }
 
   return state;

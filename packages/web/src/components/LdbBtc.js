@@ -1,4 +1,5 @@
 import { LdbBtcUsrs } from '@/components/LdbBtcUsrs';
+import { LdbBtcCta } from '@/components/LdbBtcCta';
 import { TrophyIcon } from '@heroicons/react/24/solid';
 
 export function LdbBtc() {
@@ -17,6 +18,7 @@ export function LdbBtc() {
         </div>
       </div>
       <LdbBtcUsrs />
+      <LdbBtcCta />
     </main>
   );
 }
