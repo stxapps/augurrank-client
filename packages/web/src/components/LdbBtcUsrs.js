@@ -33,7 +33,7 @@ export function LdbBtcUsrs() {
 
   const renderLdgPane = () => {
     return (
-      <div className="mt-10 rounded-xl bg-slate-800/75 py-20 px-4">
+      <div className="mt-10 rounded-xl bg-slate-800/75 px-4 py-20">
         <div className="ball-clip-rotate-blk mx-auto">
           <div />
         </div>
@@ -44,7 +44,7 @@ export function LdbBtcUsrs() {
 
   const renderRtPane = () => {
     return (
-      <div className="mt-10 rounded-xl bg-slate-800/75 py-20 px-4">
+      <div className="mt-10 rounded-xl bg-slate-800/75 px-4 py-20">
         <p className="text-center text-red-600">Something went wrong! Please wait and try again.</p>
         <button onClick={onRetryBtnClick} className="mx-auto mt-5 block rounded-full bg-slate-600 px-4 py-2 text-sm font-medium text-slate-300 hover:brightness-110">Retry</button>
       </div>
@@ -73,17 +73,17 @@ export function LdbBtcUsrs() {
 
                     return (
                       <tr key={i} className={clsx(usr.isUser && 'bg-slate-800/75')}>
-                        <td className="whitespace-nowrap py-4 pl-5 pr-4 text-sm text-slate-300 text-center">{i + 1}</td>
-                        <td className="px-4 py-4">
-                          <Link className="group flex items-center justify-start space-x-3 w-fit" href={`https://explorer.hiro.so/address/${usr.stxAddr}`} target="_blank" rel="noreferrer">
-                            {isFldStr(avtThbnl) && <Image className="shrink-0 grow-0 rounded-full size-10" width={40} height={40} src={avtThbnl} alt="" unoptimized={true} placeholder="empty" />}
+                        <td className="whitespace-nowrap py-4 pl-5 pr-4 text-center text-sm text-slate-300">{i + 1}</td>
+                        <td className="p-4">
+                          <Link className="group flex w-fit items-center justify-start space-x-3" href={`https://explorer.hiro.so/address/${usr.stxAddr}`} target="_blank" rel="noreferrer">
+                            {isFldStr(avtThbnl) && <Image className="size-10 shrink-0 grow-0 rounded-full" width={40} height={40} src={avtThbnl} alt="" unoptimized={true} placeholder="empty" />}
                             {isFldStr(usr.username) && <p className="whitespace-nowrap text-base text-slate-300 group-hover:underline">{truncateUsername(usr.username)}</p>}
                             {!isFldStr(usr.username) && <p className="whitespace-nowrap text-sm text-slate-300 group-hover:underline">{truncateStxAddr(usr.stxAddr)}</p>}
                           </Link>
                         </td>
-                        <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-300 text-right">{usr.nWins}</td>
-                        <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-300 text-right">{usr.nLoses}</td>
-                        <td className="whitespace-nowrap py-4 pl-4 pr-6 text-sm text-slate-300 text-right">{usr.nNA}</td>
+                        <td className="whitespace-nowrap p-4 text-right text-sm text-slate-300">{usr.nWins}</td>
+                        <td className="whitespace-nowrap p-4 text-right text-sm text-slate-300">{usr.nLoses}</td>
+                        <td className="whitespace-nowrap py-4 pl-4 pr-6 text-right text-sm text-slate-300">{usr.nNA}</td>
                       </tr>
                     );
                   })}

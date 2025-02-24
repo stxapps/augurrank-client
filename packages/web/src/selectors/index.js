@@ -192,10 +192,11 @@ export const getLdbBtcUsrs = createSelector(
   state => state.user.username,
   state => state.user.avatar,
   (data, uStxAddr, uUsername, uAvatar) => {
-    if (!isObject(data)) return null;
+    const usrs = [];
+    if (!isObject(data)) return usrs;
 
     const tss = Object.keys(data);
-    if (tss.length === 0) return null;
+    if (tss.length === 0) return usrs;
 
     const stss = tss.map(ts => parseInt(ts, 10)).sort((a, b) => b - a);
     const { totals: curTotals, users: curUsers } = data[stss[0]];
@@ -240,11 +241,10 @@ export const getLdbBtcUsrs = createSelector(
       prevSums.sort((a, b) => b.nWins - a.nWins);
     }
 
-    const usrs = [];
     for (let i = 0; i < curSums.length; i++) {
       const { stxAddr, nWins, nLoses, nNA } = curSums[i];
 
-      let username = null, avtWthObj = { str: null, obj: {} }, isUser = false;
+      let username = null, isUser = false; const avtWthObj = { str: null, obj: {} };
       if (isObject(curUsers[stxAddr])) {
         if (isFldStr(curUsers[stxAddr].username)) {
           username = curUsers[stxAddr].username;
