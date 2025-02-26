@@ -113,8 +113,8 @@ export function PlyrStats() {
     return (
       <div className="border-2 border-transparent py-1 sm:py-2">
         <div className="flex h-60 flex-col items-center justify-center sm:h-32">
-          <p className="text-center text-lg text-slate-400"></p>
-
+          <p className="text-center text-2xl font-medium text-slate-200">Unable to find the player.</p>
+          <p className="mt-4 text-center text-base text-slate-400">It looks like the URL is incorrect. Please verify it and try again.</p>
         </div>
       </div>
     );
@@ -124,8 +124,8 @@ export function PlyrStats() {
     return (
       <div className="border-2 border-transparent py-1 sm:py-2">
         <div className="flex h-60 flex-col items-center justify-center sm:h-32">
-          <p className="text-center text-lg text-slate-400"></p>
-
+          <p className="text-center text-2xl font-medium text-slate-200">No data was found for this player.</p>
+          <p className="mt-4 text-center text-base text-slate-400">It might be this player's story is still being written! Stay tuned for updates.</p>
         </div>
       </div>
     );
