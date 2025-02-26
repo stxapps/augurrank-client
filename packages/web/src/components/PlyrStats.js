@@ -1,57 +1,50 @@
 'use client';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next-image-export-optimizer';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { UserIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
+import { UserIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 
-import { chooseWallet, signStxTstStr } from '@/actions';
-import { fetchBurnHeight, fetchMe, showMeEditorPopup } from '@/actions/chunk';
-import { getMeStats, getAvtWthObj } from '@/selectors';
-import { getSignInStatus, isFldStr, localeNumber, getAvtThbnl } from '@/utils';
+import { fetchPlyr, updatePlyr } from '@/actions/chunk';
+import { getPlyrStats } from '@/selectors';
+import {
+  isObject, isString, isFldStr, localeNumber, parseAvatar, getAvtThbnl,
+} from '@/utils';
 
-export function MeStats() {
-  const signInStatus = useSelector(state => getSignInStatus(state.user));
-  const username = useSelector(state => state.user.username);
-  const avtWthObj = useSelector(state => getAvtWthObj(state));
-  const stxAddr = useSelector(state => state.user.stxAddr);
-  const bio = useSelector(state => state.user.bio);
-  const burnHeight = useSelector(state => state.gameBtc.burnHeight);
-  const didFetch = useSelector(state => state.me.didFetch);
-  const stats = useSelector(state => getMeStats(state));
+function PlyrSParam() {
+  const stxAddr = useSearchParams().get('s');
   const dispatch = useDispatch();
 
-  const avtThbnl = getAvtThbnl(avtWthObj.obj);
+  useEffect(() => {
+    const derived = isString(stxAddr) ? stxAddr : '';
+    dispatch(updatePlyr({ stxAddr: derived }));
+  }, [stxAddr, dispatch]);
 
-  const onEdtBtnClick = () => {
-    dispatch(showMeEditorPopup());
-  };
+  return null;
+}
 
-  const onCwBtnClick = () => {
-    dispatch(chooseWallet());
-  };
-
-  const onStsBtnClick = () => {
-    dispatch(signStxTstStr());
-  };
+export function PlyrStats() {
+  const stxAddr = useSelector(state => state.plyr.stxAddr);
+  const didFetch = useSelector(state => state.plyr.didFetch);
+  const data = useSelector(state => state.plyr.data);
+  const stats = useSelector(state => getPlyrStats(state));
+  const dispatch = useDispatch();
 
   const onRetryBtnClick = () => {
-    if (burnHeight === -1) dispatch(fetchBurnHeight(true, true));
-    if (didFetch === false) dispatch(fetchMe(true, true));
+    dispatch(fetchPlyr(true, true));
   };
 
   useEffect(() => {
-    dispatch(fetchBurnHeight());
-  }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(fetchMe());
-  }, [signInStatus, dispatch]);
+    dispatch(fetchPlyr());
+  }, [stxAddr, dispatch]);
 
   const renderCntPane = () => {
-    let avatarPane, usernamePane, stxAddrPane, bioPane, btnPane;
+    let avatarPane, usernamePane, stxAddrPane, bioPane;
     if (renderCode === 2) {
+      const avtThbnl = getAvtThbnl(parseAvatar(data.avatar));
+
       if (isFldStr(avtThbnl)) {
         avatarPane = (
           <Image className="size-32 rounded-full" width={128} height={128} src={avtThbnl} alt="User avatar" unoptimized={true} placeholder="empty" priority={true} />
@@ -63,12 +56,12 @@ export function MeStats() {
       }
       usernamePane = (
         <Link href={`https://explorer.hiro.so/address/${stxAddr}`} target="_blank" rel="noreferrer">
-          <h1 className="truncate text-center text-4xl font-medium text-slate-100 sm:text-left sm:text-5xl sm:leading-tight">{isFldStr(username) ? username : 'Username'}</h1>
+          <h1 className="truncate text-center text-4xl font-medium text-slate-100 sm:text-left sm:text-5xl sm:leading-tight">{isFldStr(data.username) ? data.username : 'Username'}</h1>
         </Link>
       );
-      if (isFldStr(bio)) {
+      if (isFldStr(data.bio)) {
         bioPane = (
-          <p className="mt-3 max-h-72 overflow-hidden whitespace-pre-wrap text-center text-base text-slate-400 sm:mt-1.5 sm:text-left">{bio}</p>
+          <p className="mt-3 max-h-72 overflow-hidden whitespace-pre-wrap text-center text-base text-slate-400 sm:mt-1.5 sm:text-left">{data.bio}</p>
         );
       } else {
         stxAddrPane = (
@@ -77,12 +70,6 @@ export function MeStats() {
           </div>
         );
       }
-      btnPane = (
-        <button onClick={onEdtBtnClick} className="group flex w-full items-center justify-center py-3 sm:w-auto sm:justify-start">
-          <PencilSquareIcon className="mb-0.5 size-4 text-slate-400 group-hover:text-orange-200" />
-          <span className="ml-0.5 text-sm font-medium text-slate-400 group-hover:text-orange-200">Edit</span>
-        </button>
-      );
     } else {
       avatarPane = (
         <div className={clsx('size-32 rounded-full bg-slate-800', renderCode === 0 && 'animate-pulse')} />
@@ -100,35 +87,12 @@ export function MeStats() {
     }
 
     return (
-      <div className={clsx('flex flex-col items-center justify-start sm:flex-row sm:justify-center', isFldStr(bio) ? 'sm:items-start' : 'sm:items-center')}>
+      <div className={clsx('flex flex-col items-center justify-start sm:flex-row sm:justify-center', isObject(data) && isFldStr(data.bio) ? 'sm:items-start' : 'sm:items-center')}>
         <div className="rounded-full border-2 border-slate-800 p-2">{avatarPane}</div>
         <div className="mt-6 w-full max-w-md sm:ml-6 sm:mt-0 sm:w-auto sm:min-w-52">
           {usernamePane}
           {stxAddrPane}
           {bioPane}
-          {btnPane}
-        </div>
-      </div>
-    );
-  };
-
-  const renderCwPane = () => {
-    return (
-      <div className="border-2 border-transparent py-1 sm:py-2">
-        <div className="flex h-60 flex-col items-center justify-center sm:h-32">
-          <p className="text-center text-3xl font-medium text-slate-200">Connect your wallet to get started.</p>
-          <button onClick={onCwBtnClick} className="mt-4 rounded-full bg-orange-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110">Connect Wallet</button>
-        </div>
-      </div>
-    );
-  };
-
-  const renderStsPane = () => {
-    return (
-      <div className="border-2 border-transparent py-1 sm:py-2">
-        <div className="flex h-60 flex-col items-center justify-center sm:h-32">
-          <p className="text-center text-2xl font-medium text-slate-200">Sign a message to prove you own your STX address so we can give you access to our server.</p>
-          <button onClick={onStsBtnClick} className="mt-4 rounded-full bg-orange-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110">Sign Message</button>
         </div>
       </div>
     );
@@ -145,22 +109,44 @@ export function MeStats() {
     );
   };
 
+  const renderIvdPane = () => {
+    return (
+      <div className="border-2 border-transparent py-1 sm:py-2">
+        <div className="flex h-60 flex-col items-center justify-center sm:h-32">
+          <p className="text-center text-lg text-slate-400"></p>
+
+        </div>
+      </div>
+    );
+  };
+
+  const renderEpyPane = () => {
+    return (
+      <div className="border-2 border-transparent py-1 sm:py-2">
+        <div className="flex h-60 flex-col items-center justify-center sm:h-32">
+          <p className="text-center text-lg text-slate-400"></p>
+
+        </div>
+      </div>
+    );
+  };
+
   let renderCode, content;
-  if (signInStatus === 0) { // loading
+  if (stxAddr === null) { // loading
     renderCode = 0;
     content = renderCntPane();
-  } else if (signInStatus === 1) { // connect wallet
+  } else if (!isFldStr(stxAddr)) {
     renderCode = 1;
-    content = renderCwPane();
-  } else if (signInStatus === 2) { // sign test string
-    renderCode = 1;
-    content = renderStsPane();
-  } else if (burnHeight === null || didFetch === null) { // loading
+    content = renderIvdPane();
+  } else if (didFetch === null) { // loading
     renderCode = 0;
     content = renderCntPane();
-  } else if (burnHeight === -1 || didFetch === false) { // show retry button
+  } else if (didFetch === false) { // show retry button
     renderCode = 1;
     content = renderRtPane();
+  } else if (!isObject(data)) {
+    renderCode = 1;
+    content = renderEpyPane();
   } else {
     renderCode = 2;
     content = renderCntPane();
@@ -175,7 +161,7 @@ export function MeStats() {
       <p className="text-center text-4xl font-medium tracking-tight text-slate-100">{localeNumber(stats.nLosses)}</p>
     );
     pendingPane = (
-      <p className="text-center text-4xl font-medium tracking-tight text-slate-100">{localeNumber(stats.nPending)}</p>
+      <p className="text-center text-4xl font-medium tracking-tight text-slate-100">-</p>
     );
   } else {
     winsPane = (
@@ -218,6 +204,9 @@ export function MeStats() {
 
   return (
     <>
+      <Suspense fallback={null}>
+        <PlyrSParam />
+      </Suspense>
       {content}
       <div className="mt-10 rounded-xl bg-slate-800/75">
         <div className="sm:flex sm:items-stretch sm:justify-stretch">

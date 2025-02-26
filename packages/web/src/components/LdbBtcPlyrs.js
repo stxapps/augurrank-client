@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 
 import { fetchLdbBtc } from '@/actions/chunk';
-import { getLdbBtcUsrs } from '@/selectors';
+import { getLdbBtcPlyrs } from '@/selectors';
 import { isFldStr, getAvtThbnl } from '@/utils';
 
 const truncateStxAddr = (stxAddr) => {
@@ -18,9 +18,9 @@ const truncateUsername = (username) => {
   return username.slice(0, 24) + '...';
 };
 
-export function LdbBtcUsrs() {
+export function LdbBtcPlyrs() {
   const didFetch = useSelector(state => state.ldbBtc.didFetch);
-  const usrs = useSelector(state => getLdbBtcUsrs(state));
+  const plyrs = useSelector(state => getLdbBtcPlyrs(state));
   const dispatch = useDispatch();
 
   const onRetryBtnClick = () => {
@@ -51,7 +51,7 @@ export function LdbBtcUsrs() {
     );
   };
 
-  const renderUsrs = () => {
+  const renderPlyrs = () => {
     return (
       <div className="mx-auto mt-10">
         <div className="-mx-4 overflow-x-auto sm:-mx-6 md:mx-0">
@@ -68,22 +68,22 @@ export function LdbBtcUsrs() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-700 bg-slate-800/75">
-                  {usrs.map((usr, i) => {
-                    const avtThbnl = getAvtThbnl(usr.avtWthObj.obj);
+                  {plyrs.map((plyr, i) => {
+                    const avtThbnl = getAvtThbnl(plyr.avtWthObj.obj);
 
                     return (
-                      <tr key={i} className={clsx(usr.isUser && 'bg-slate-800/75')}>
+                      <tr key={i} className={clsx(plyr.isUser && 'bg-slate-800/75')}>
                         <td className="whitespace-nowrap py-4 pl-5 pr-4 text-center text-sm text-slate-300">{i + 1}</td>
                         <td className="p-4">
-                          <Link className="group flex w-fit items-center justify-start space-x-3" href={`https://explorer.hiro.so/address/${usr.stxAddr}`} target="_blank" rel="noreferrer">
+                          <Link className="group flex w-fit items-center justify-start space-x-3" href={`/player?s=${plyr.stxAddr}`} prefetch={false}>
                             {isFldStr(avtThbnl) && <Image className="size-10 shrink-0 grow-0 rounded-full" width={40} height={40} src={avtThbnl} alt="" unoptimized={true} placeholder="empty" />}
-                            {isFldStr(usr.username) && <p className="whitespace-nowrap text-base text-slate-300 group-hover:underline">{truncateUsername(usr.username)}</p>}
-                            {!isFldStr(usr.username) && <p className="whitespace-nowrap text-sm text-slate-300 group-hover:underline">{truncateStxAddr(usr.stxAddr)}</p>}
+                            {isFldStr(plyr.username) && <p className="whitespace-nowrap text-base text-slate-300 group-hover:underline">{truncateUsername(plyr.username)}</p>}
+                            {!isFldStr(plyr.username) && <p className="whitespace-nowrap text-sm text-slate-300 group-hover:underline">{truncateStxAddr(plyr.stxAddr)}</p>}
                           </Link>
                         </td>
-                        <td className="whitespace-nowrap p-4 text-right text-sm text-slate-300">{usr.nWins}</td>
-                        <td className="whitespace-nowrap p-4 text-right text-sm text-slate-300">{usr.nLoses}</td>
-                        <td className="whitespace-nowrap py-4 pl-4 pr-6 text-right text-sm text-slate-300">{usr.nNA}</td>
+                        <td className="whitespace-nowrap p-4 text-right text-sm text-slate-300">{plyr.nWins}</td>
+                        <td className="whitespace-nowrap p-4 text-right text-sm text-slate-300">{plyr.nLoses}</td>
+                        <td className="whitespace-nowrap py-4 pl-4 pr-6 text-right text-sm text-slate-300">{plyr.nNA}</td>
                       </tr>
                     );
                   })}
@@ -102,7 +102,7 @@ export function LdbBtcUsrs() {
   } else if (didFetch === false) { // show retry button
     content = renderRtPane();
   } else {
-    content = renderUsrs();
+    content = renderPlyrs();
   }
 
   return content;

@@ -269,6 +269,21 @@ const fetchMe = async () => {
   return obj;
 };
 
+const fetchPlyr = async (stxAddr, fname = 'index.json') => {
+  // If not index.json, can use cache e.g. IndexedDb
+  const plyrUrl = `${AUGUR_RANK_STORAGE_URL}/player/${stxAddr}/${fname}`;
+  const res = await fetch(plyrUrl);
+  if ([403, 404].includes(res.status)) {
+    throw new Error(ERR_NOT_FOUND);
+  }
+  if (!res.ok) {
+    throw new Error(getStatusText(res));
+  }
+
+  const obj = await res.json();
+  return obj;
+};
+
 const fetchPreds = async (
   ids, game, createDate, operator, excludingIds, fthMeStsIfVrfd = false
 ) => {
@@ -390,8 +405,8 @@ const deleteUnsavedPred = (id) => {
 
 const data = {
   fetchBtcPrice, fetchBurnHeight, fetchTxInfo, fetchBnsNames, fetchNfts, fetchGame,
-  fetchLdb, fetchMe, fetchPreds, putUser, putPred, getUnsavedPreds, putUnsavedPred,
-  deleteUnsavedPred,
+  fetchLdb, fetchMe, fetchPlyr, fetchPreds, putUser, putPred, getUnsavedPreds,
+  putUnsavedPred, deleteUnsavedPred,
 };
 
 export default data;

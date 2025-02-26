@@ -25,9 +25,10 @@ export function TopBar() {
   let leftItem;
   if (pathname === '/') {
     leftItem = null;
-  } else if (pathname === '/game-btc') {
+  } else if (['/game-btc', '/player'].includes(pathname)) {
+    const href = pathname === '/player' ? '/game-btc/leaderboard' : '/';
     leftItem = (
-      <Link className="group flex items-center justify-center p-1 text-slate-100 hover:text-orange-200 focus:outline-none" href="/">
+      <Link className="group flex items-center justify-center p-1 text-slate-100 hover:text-orange-200 focus:outline-none" href={href}>
         <div className="flex items-center justify-center rounded-full group-focus-visible:outline group-focus-visible:outline-1">
           <ChevronLeftIcon className="size-8" />
         </div>

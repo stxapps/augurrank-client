@@ -3,19 +3,19 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
-import { getPndgGameBtcPredWthSts, getLdbBtcUsrs } from '@/selectors';
+import { getPndgGameBtcPredWthSts, getLdbBtcPlyrs } from '@/selectors';
 import { getSignInStatus, isObject } from '@/utils';
 
 export function LdbBtcCta() {
   const signInStatus = useSelector(state => getSignInStatus(state.user));
   const predWthSts = useSelector(state => getPndgGameBtcPredWthSts(state));
   const didFetch = useSelector(state => state.ldbBtc.didFetch);
-  const usrs = useSelector(state => getLdbBtcUsrs(state));
+  const plyrs = useSelector(state => getLdbBtcPlyrs(state));
 
   const rank = useMemo(() => {
-    if (!Array.isArray(usrs)) return -1;
-    return usrs.findIndex(usr => usr.isUser);
-  }, [usrs]);
+    if (!Array.isArray(plyrs)) return -1;
+    return plyrs.findIndex(plyr => plyr.isUser);
+  }, [plyrs]);
 
   if (didFetch !== true) return null;
   if (isObject(predWthSts) && isObject(predWthSts.pred)) return null;

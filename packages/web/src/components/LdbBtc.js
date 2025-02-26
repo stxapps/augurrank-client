@@ -1,5 +1,5 @@
 import { TrophyIcon } from '@heroicons/react/24/solid';
-import { LdbBtcUsrs } from '@/components/LdbBtcUsrs';
+import { LdbBtcPlyrs } from '@/components/LdbBtcPlyrs';
 import { LdbBtcCta } from '@/components/LdbBtcCta';
 
 export function LdbBtc() {
@@ -17,7 +17,7 @@ export function LdbBtc() {
           <p className="mt-3 text-center text-xl text-slate-400 sm:text-left">Top players in the BTC Game</p>
         </div>
       </div>
-      <LdbBtcUsrs />
+      <LdbBtcPlyrs />
       <LdbBtcCta />
     </main>
   );

@@ -6,6 +6,7 @@ import joinNewsletterReducer from './joinNewsletterReducer';
 import userReducer from './userReducer';
 import meReducer from './meReducer';
 import meEditorReducer from './meEditorReducer';
+import plyrReducer from './plyrReducer';
 import gameBtcReducer from './gameBtcReducer';
 import gameBtcPredsReducer from './gameBtcPredsReducer';
 import ldbBtcReducer from './ldbBtcReducer';
@@ -18,6 +19,7 @@ const reducers = combineReducers({
   user: userReducer,
   me: meReducer,
   meEditor: meEditorReducer,
+  plyr: plyrReducer,
   gameBtc: gameBtcReducer,
   gameBtcPreds: gameBtcPredsReducer,
   ldbBtc: ldbBtcReducer,

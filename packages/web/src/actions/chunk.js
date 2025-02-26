@@ -5,6 +5,7 @@ import dataApi from '@/apis/data';
 import { updatePopup, updateUser, updateErrorPopup } from '@/actions';
 import {
   UPDATE_GAME_BTC, REMOVE_GAME_BTC_PREDS, UPDATE_LDB_BTC, UPDATE_ME, UPDATE_ME_EDITOR,
+  UPDATE_PLYR,
 } from '@/types/actionTypes';
 import {
   AGREE_POPUP, CONTRACT_ADDR, GAME_BTC, GAME_BTC_CONTRACT_NAME, GAME_BTC_FUNCTION_NAME,
@@ -403,6 +404,59 @@ export const updateMeData = (doForce = false) => async (
 
   dispatch(updateUser(newUser));
   dispatch(updateMeEditor({ username: null, avatar: null, bio: null, saving: null }));
+};
+
+export const fetchPlyr = (doForce = false, doLoad = false) => async (
+  dispatch, getState
+) => {
+  const stxAddr = getState().plyr.stxAddr;
+  if (!isFldStr(stxAddr)) return;
+
+  if (!doForce && vars.plyr.stxAddr === stxAddr) return;
+  vars.plyr.stxAddr = stxAddr;
+
+  let data = null;
+  if (doLoad) dispatch(updatePlyr({ didFetch: null }));
+  try {
+    data = await dataApi.fetchPlyr(stxAddr);
+  } catch (error) {
+    if (error.message !== ERR_NOT_FOUND) {
+      console.log('fetchPlyr error:', error);
+      dispatch(updatePlyr({ didFetch: false }));
+      return;
+    }
+
+    data = { data: null, prevFName: null };
+  }
+
+  dispatch(updatePlyr({ ...data, didFetch: true }));
+};
+
+export const fetchPlyrMore = (doForce = false) => async (dispatch, getState) => {
+  const { stxAddr, prevFName } = getState().plyr;
+  if (!isFldStr(stxAddr) || !isFldStr(prevFName)) return;
+
+  const fetchingMore = getState().plyr.fetchingMore;
+  if (fetchingMore === true) return;
+  if (!doForce && fetchingMore !== null) return;
+  dispatch(updatePlyr({ fetchingMore: true }));
+
+  let data;
+  try {
+    data = await dataApi.fetchPlyr(stxAddr, prevFName);
+  } catch (error) {
+    console.log('fetchPlyrMore error:', error);
+    dispatch(updatePlyr({ fetchingMore: false }));
+    return;
+  }
+
+  dispatch(updatePlyr({
+    dataMore: data.data, prevFName: data.prevFName, fetchingMore: null,
+  }));
+};
+
+export const updatePlyr = (payload) => {
+  return { type: UPDATE_PLYR, payload };
 };
 
 export const agreeTerms = () => async (dispatch, getState) => {

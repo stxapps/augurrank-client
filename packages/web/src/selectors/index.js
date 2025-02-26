@@ -84,7 +84,7 @@ export const getMeStats = createSelector(
   state => state.gameBtcPreds,
   state => state.me.stats,
   (burnHeight, gameBtcPreds, stats) => {
-    const meStats = {
+    const res = {
       nWins: 0, nLosses: 0, nPending: 0, nContDays: 0, nContWins: 0, maxContDays: 0,
       maxContWins: 0,
     };
@@ -94,7 +94,7 @@ export const getMeStats = createSelector(
       if (![
         PRED_STATUS_CONFIRMED_ERROR, PRED_STATUS_VERIFIED_OK,
         PRED_STATUS_VERIFIED_ERROR,
-      ].includes(status)) meStats.nPending += 1;
+      ].includes(status)) res.nPending += 1;
     }
 
     if (isObject(stats)) {
@@ -102,26 +102,26 @@ export const getMeStats = createSelector(
         if (!isNumber(value)) continue;
 
         if (key.endsWith('-up-verified_ok-TRUE-count')) {
-          meStats.nWins += value;
+          res.nWins += value;
         } else if (key.endsWith('-up-verified_ok-FALSE-count')) {
-          meStats.nLosses += value;
+          res.nLosses += value;
         } else if (key.endsWith('-down-verified_ok-TRUE-count')) {
-          meStats.nWins += value;
+          res.nWins += value;
         } else if (key.endsWith('-down-verified_ok-FALSE-count')) {
-          meStats.nLosses += value;
+          res.nLosses += value;
         } else if (key.endsWith('-confirmed_ok-count-cont-day')) {
-          meStats.nContDays = value;
+          res.nContDays = value;
         } else if (key.endsWith('-verified_ok-TRUE-count-cont')) {
-          meStats.nContWins = value;
+          res.nContWins = value;
         } else if (key.endsWith('-confirmed_ok-max-cont-day')) {
-          meStats.maxContDays = value;
+          res.maxContDays = value;
         } else if (key.endsWith('-verified_ok-TRUE-max-cont')) {
-          meStats.maxContWins = value;
+          res.maxContWins = value;
         }
       }
     }
 
-    return meStats;
+    return res;
   }
 );
 
@@ -186,17 +186,77 @@ export const getAvlbAvtsHasMore = createSelector(
   }
 );
 
-export const getLdbBtcUsrs = createSelector(
+export const getPlyrStats = createSelector(
+  state => state.plyr.data,
+  (data) => {
+    const res = {
+      nWins: 0, nLosses: 0, nPending: 0, nContDays: 0, nContWins: 0, maxContDays: 0,
+      maxContWins: 0,
+    };
+
+    if (isObject(data) && isObject(data.stats)) {
+      for (const [key, value] of Object.entries(data.stats)) {
+        if (!isNumber(value)) continue;
+
+        if (key.endsWith('-up-verified_ok-TRUE-count')) {
+          res.nWins += value;
+        } else if (key.endsWith('-up-verified_ok-FALSE-count')) {
+          res.nLosses += value;
+        } else if (key.endsWith('-down-verified_ok-TRUE-count')) {
+          res.nWins += value;
+        } else if (key.endsWith('-down-verified_ok-FALSE-count')) {
+          res.nLosses += value;
+        } else if (key.endsWith('-confirmed_ok-count-cont-day')) {
+          res.nContDays = value;
+        } else if (key.endsWith('-verified_ok-TRUE-count-cont')) {
+          res.nContWins = value;
+        } else if (key.endsWith('-confirmed_ok-max-cont-day')) {
+          res.maxContDays = value;
+        } else if (key.endsWith('-verified_ok-TRUE-max-cont')) {
+          res.maxContWins = value;
+        }
+      }
+    }
+
+    return res;
+  }
+);
+
+export const getPlyrPredsWthSts = createSelector(
+  state => state.gameBtc.burnHeight,
+  state => state.plyr.data,
+  (burnHeight, data) => {
+    const predsWthSts = [];
+    if (isObject(data) && isObject(data.preds)) {
+      for (const pred of Object.values(data.preds)) {
+        const status = getPredStatus(pred, burnHeight);
+        predsWthSts.push({ pred, status });
+      }
+
+      predsWthSts.sort((a, b) => b.pred.createDate - a.pred.createDate);
+    }
+    return predsWthSts;
+  }
+);
+
+export const getPlyrPredsHasMore = createSelector(
+  state => state.plyr.prevFName,
+  (prevFName) => {
+    return isFldStr(prevFName);
+  }
+);
+
+export const getLdbBtcPlyrs = createSelector(
   state => state.ldbBtc.data,
   state => state.user.stxAddr,
   state => state.user.username,
   state => state.user.avatar,
   (data, uStxAddr, uUsername, uAvatar) => {
-    const usrs = [];
-    if (!isObject(data)) return usrs;
+    const plyrs = [];
+    if (!isObject(data)) return plyrs;
 
     const tss = Object.keys(data);
-    if (tss.length === 0) return usrs;
+    if (tss.length === 0) return plyrs;
 
     const stss = tss.map(ts => parseInt(ts, 10)).sort((a, b) => b - a);
     const { totals: curTotals, users: curUsers } = data[stss[0]];
@@ -268,11 +328,11 @@ export const getLdbBtcUsrs = createSelector(
         isUser = true;
       }
 
-      usrs.push({
+      plyrs.push({
         stxAddr, username, avtWthObj, rankChange, nWins, nLoses, nNA, isUser,
       });
     }
 
-    return usrs;
+    return plyrs;
   }
 );

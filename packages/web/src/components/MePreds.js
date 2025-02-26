@@ -1,5 +1,7 @@
 'use client';
+import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
+import { ArrowTrendingUpIcon } from '@heroicons/react/24/solid';
 
 import { fetchMeMore } from '@/actions/chunk';
 import { PredList } from '@/components/PredList';
@@ -23,9 +25,20 @@ export function MePreds() {
     dispatch(fetchMeMore(true));
   };
 
+  const renderEmpty = () => {
+    return (
+      <div className="flex flex-col items-center justify-center pt-6 text-center">
+        <ArrowTrendingUpIcon className="size-12 text-slate-400" />
+        <h3 className="mt-3 text-base font-semibold text-slate-100">There are no predictions yet.</h3>
+        <p className="mt-1 text-sm text-slate-400">Get started by predicting the BTC price.</p>
+        <Link className="mt-4 rounded-full bg-orange-400 px-4 py-2 text-sm font-medium text-white hover:brightness-110" href="/game-btc" prefetch={false}>Game</Link>
+      </div>
+    );
+  };
+
   const renderPdsPane = () => {
     return (
-      <PredList predsWthSts={predsWthSts} hasMore={hasMore} fetchingMore={fetchingMore} onMoreBtnClick={onMoreBtnClick} onRetryMoreBtnClick={onRetryMoreBtnClick} />
+      <PredList predsWthSts={predsWthSts} hasMore={hasMore} fetchingMore={fetchingMore} onMoreBtnClick={onMoreBtnClick} onRetryMoreBtnClick={onRetryMoreBtnClick} renderEmpty={renderEmpty} />
     );
   };
 

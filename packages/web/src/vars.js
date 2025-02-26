@@ -25,6 +25,10 @@ const meEditor = {
   didFthAvlbAvts: false,
 };
 
+const plyr = {
+  stxAddr: null,
+};
+
 const agreeTerms = {
   pred: null,
 };
@@ -36,7 +40,7 @@ const refreshPreds = {
 };
 
 const vars = {
-  btcPrice, burnHeight, gameBtc, ldbBtc, me, meEditor, agreeTerms, refreshPreds,
+  btcPrice, burnHeight, gameBtc, ldbBtc, me, meEditor, plyr, agreeTerms, refreshPreds,
 };
 
 export default vars;
