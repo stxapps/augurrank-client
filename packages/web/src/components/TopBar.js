@@ -6,10 +6,14 @@ import Image from 'next-image-export-optimizer';
 import { ChevronLeftIcon } from '@heroicons/react/24/solid';
 
 import { chooseWallet, signOut } from '@/actions';
+import { SM_WIDTH } from '@/types/const';
 import Logo from '@/images/logo.svg';
 import { getSignInStatus } from '@/utils';
 
+import { useSafeAreaFrame } from '.';
+
 export function TopBar() {
+  const { width: safeAreaWidth } = useSafeAreaFrame();
   const signInStatus = useSelector(state => getSignInStatus(state.user));
   const pathname = usePathname();
   const dispatch = useDispatch();
@@ -54,7 +58,7 @@ export function TopBar() {
       {pathname !== '/game-btc' && <Link className="group px-0.5 py-1.5 text-lg font-medium text-slate-100 hover:text-orange-200 focus:outline-none" href="/game-btc" prefetch={true}>
         <div className="rounded-full px-2 py-0.5 group-focus-visible:outline group-focus-visible:outline-1">Game</div>
       </Link>}
-      {pathname !== '/game-btc/leaderboard' && <Link className="group px-0.5 py-1.5 text-lg font-medium text-slate-100 hover:text-orange-200 focus:outline-none" href="/game-btc/leaderboard" prefetch={false}>
+      {(pathname !== '/game-btc/leaderboard' && (pathname === '/game-btc' || safeAreaWidth >= SM_WIDTH)) && <Link className="group px-0.5 py-1.5 text-lg font-medium text-slate-100 hover:text-orange-200 focus:outline-none" href="/game-btc/leaderboard" prefetch={false}>
         <div className="rounded-full px-2 py-0.5 group-focus-visible:outline group-focus-visible:outline-1">Leaderboard</div>
       </Link>}
       {([2, 3].includes(signInStatus) && pathname !== '/me') && <Link className="group px-0.5 py-1.5 text-lg font-medium text-slate-100 hover:text-orange-200 focus:outline-none" href="/me" prefetch={false}>
