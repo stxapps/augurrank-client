@@ -3,13 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { fetchPlyrMore } from '@/actions/chunk';
 import { PredList } from '@/components/PredList';
-import { getPlyrPredsWthSts, getPlyrPredsHasMore } from '@/selectors';
+import { getPlyrDesc, getPlyrPredsWthSts, getPlyrPredsHasMore } from '@/selectors';
 import { isObject, isFldStr } from '@/utils';
 
 export function PlyrPreds() {
   const stxAddr = useSelector(state => state.plyr.stxAddr);
   const didFetch = useSelector(state => state.plyr.didFetch);
-  const data = useSelector(state => state.plyr.data);
+  const desc = useSelector(state => getPlyrDesc(state));
   const predsWthSts = useSelector(state => getPlyrPredsWthSts(state));
   const hasMore = useSelector(state => getPlyrPredsHasMore(state));
   const fetchingMore = useSelector(state => state.plyr.fetchingMore);
@@ -41,7 +41,9 @@ export function PlyrPreds() {
     return null;
   } else if (didFetch === false) {
     return null;
-  } else if (!isObject(data)) {
+  } else if (!isObject(desc)) {
+    return null;
+  } else if (desc.noPlyrPg === true) {
     return null;
   } else {
     return renderPdsPane();
