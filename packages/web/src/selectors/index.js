@@ -186,6 +186,32 @@ export const getAvlbAvtsHasMore = createSelector(
   }
 );
 
+export const getPlyrDesc = createSelector(
+  state => state.plyr.stxAddr,
+  state => state.plyr.data,
+  state => state.user.stxAddr,
+  state => state.user.username,
+  state => state.user.avatar,
+  state => state.user.bio,
+  (stxAddr, data, uStxAddr, uUsername, uAvatar, uBio) => {
+    if (!isObject(data)) return data;
+
+    let username = data.username;
+    let avtWthObj = { str: data.avatar, obj: parseAvatar(data.avatar) };
+    let bio = data.bio;
+
+    if (stxAddr === uStxAddr) {
+      if (isString(uUsername)) username = uUsername;
+      if (isString(uAvatar)) {
+        avtWthObj = { str: uAvatar, obj: parseAvatar(uAvatar) }
+      }
+      if (isString(uBio)) bio = uBio;
+    }
+
+    return { username, avtWthObj, bio, noPlyrPg: data.noPlyrPg };
+  }
+);
+
 export const getPlyrStats = createSelector(
   state => state.plyr.data,
   (data) => {
@@ -233,7 +259,7 @@ export const getPlyrPredsWthSts = createSelector(
         predsWthSts.push({ pred, status });
       }
 
-      predsWthSts.sort((a, b) => b.pred.createDate - a.pred.createDate);
+      predsWthSts.sort((a, b) => b.pred.updateDate - a.pred.updateDate);
     }
     return predsWthSts;
   }

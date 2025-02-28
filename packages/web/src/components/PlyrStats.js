@@ -8,10 +8,8 @@ import { UserIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 
 import { fetchPlyr, updatePlyr } from '@/actions/chunk';
-import { getPlyrStats } from '@/selectors';
-import {
-  isObject, isString, isFldStr, localeNumber, parseAvatar, getAvtThbnl,
-} from '@/utils';
+import { getPlyrDesc, getPlyrStats } from '@/selectors';
+import { isObject, isString, isFldStr, localeNumber, getAvtThbnl } from '@/utils';
 
 function PlyrSParam() {
   const stxAddr = useSearchParams().get('s');
@@ -28,7 +26,7 @@ function PlyrSParam() {
 export function PlyrStats() {
   const stxAddr = useSelector(state => state.plyr.stxAddr);
   const didFetch = useSelector(state => state.plyr.didFetch);
-  const data = useSelector(state => state.plyr.data);
+  const desc = useSelector(state => getPlyrDesc(state));
   const stats = useSelector(state => getPlyrStats(state));
   const dispatch = useDispatch();
 
@@ -43,7 +41,7 @@ export function PlyrStats() {
   const renderCntPane = () => {
     let avatarPane, usernamePane, stxAddrPane, bioPane;
     if (renderCode === 2) {
-      const avtThbnl = getAvtThbnl(parseAvatar(data.avatar));
+      const avtThbnl = getAvtThbnl(desc.avtWthObj.obj);
 
       if (isFldStr(avtThbnl)) {
         avatarPane = (
@@ -56,12 +54,12 @@ export function PlyrStats() {
       }
       usernamePane = (
         <Link href={`https://explorer.hiro.so/address/${stxAddr}`} target="_blank" rel="noreferrer">
-          <h1 className="truncate text-center text-4xl font-medium text-slate-100 sm:text-left sm:text-5xl sm:leading-tight">{isFldStr(data.username) ? data.username : 'Username'}</h1>
+          <h1 className="truncate text-center text-4xl font-medium text-slate-100 sm:text-left sm:text-5xl sm:leading-tight">{isFldStr(desc.username) ? desc.username : 'Username'}</h1>
         </Link>
       );
-      if (isFldStr(data.bio)) {
+      if (isFldStr(desc.bio)) {
         bioPane = (
-          <p className="mt-3 max-h-72 overflow-hidden whitespace-pre-wrap text-center text-base text-slate-400 sm:mt-1.5 sm:text-left">{data.bio}</p>
+          <p className="mt-3 max-h-72 overflow-hidden whitespace-pre-wrap text-center text-base text-slate-400 sm:mt-1.5 sm:text-left">{desc.bio}</p>
         );
       } else {
         stxAddrPane = (
@@ -87,7 +85,7 @@ export function PlyrStats() {
     }
 
     return (
-      <div className={clsx('flex flex-col items-center justify-start sm:flex-row sm:justify-center', isObject(data) && isFldStr(data.bio) ? 'sm:items-start' : 'sm:items-center')}>
+      <div className={clsx('flex flex-col items-center justify-start sm:flex-row sm:justify-center', isObject(desc) && isFldStr(desc.bio) ? 'sm:items-start' : 'sm:items-center')}>
         <div className="rounded-full border-2 border-slate-800 p-2">{avatarPane}</div>
         <div className="mt-6 w-full max-w-md sm:ml-6 sm:mt-0 sm:w-auto sm:min-w-52">
           {usernamePane}
@@ -131,6 +129,17 @@ export function PlyrStats() {
     );
   };
 
+  const renderPvPane = () => {
+    return (
+      <div className="border-2 border-transparent py-1 sm:py-2">
+        <div className="flex h-60 flex-col items-center justify-center sm:h-32">
+          <p className="text-center text-2xl font-medium text-slate-200">This player is private.</p>
+          <p className="mt-4 text-center text-base text-slate-400">The player has made their page private.</p>
+        </div>
+      </div>
+    );
+  };
+
   let renderCode, content;
   if (stxAddr === null) { // loading
     renderCode = 0;
@@ -144,9 +153,12 @@ export function PlyrStats() {
   } else if (didFetch === false) { // show retry button
     renderCode = 1;
     content = renderRtPane();
-  } else if (!isObject(data)) {
+  } else if (!isObject(desc)) {
     renderCode = 1;
     content = renderEpyPane();
+  } else if (desc.noPlyrPg === true) { // show private
+    renderCode = 1;
+    content = renderPvPane();
   } else {
     renderCode = 2;
     content = renderCntPane();
