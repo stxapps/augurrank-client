@@ -203,7 +203,7 @@ export const getPlyrDesc = createSelector(
     if (stxAddr === uStxAddr) {
       if (isString(uUsername)) username = uUsername;
       if (isString(uAvatar)) {
-        avtWthObj = { str: uAvatar, obj: parseAvatar(uAvatar) }
+        avtWthObj = { str: uAvatar, obj: parseAvatar(uAvatar) };
       }
       if (isString(uBio)) bio = uBio;
     }

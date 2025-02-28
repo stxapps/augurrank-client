@@ -14,7 +14,7 @@ const PlyrReducer = (state = initialState, action) => {
   if (action.type === UPDATE_PLYR) {
     const { stxAddr, didFetch, data, dataMore, prevFName, fetchingMore } = action.payload;
 
-    let newState = { ...state };
+    let newState = structuredClone(state);
     if (stxAddr === null || isString(stxAddr)) {
       if (newState.stxAddr !== stxAddr) newState = { ...initialState, stxAddr };
     }
